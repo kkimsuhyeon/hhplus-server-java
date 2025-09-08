@@ -12,8 +12,4 @@ public class PayRequest {
     @NotNull
     private Long reservationId;
 
-    @Schema(description = "잔액")
-    @JsonProperty("amount")
-    @NotNull
-    private Long amount;
 }

@@ -17,10 +17,10 @@ import org.hibernate.annotations.Comment;
 public class PaymentHistoryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "payment_history_id")
     @Comment("결제 내역 아이디")
-    private Long id;
+    private String id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "예약 관리(reservation-controller", description = "예약 관리 API")
+@Tag(name = "예약 관리[reservation-controller]", description = "예약 관리 API")
 @RestController
 @RequestMapping("/api/v1/reservations")
 @Validated
@@ -32,6 +32,6 @@ public class ReservationController {
     public ResponseEntity<Void> reserveSeat(
             @RequestBody @Valid ReserveSeatRequest request
     ) {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

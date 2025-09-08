@@ -31,7 +31,7 @@ public class ConcertEntity {
 
     @Column(name = "description", nullable = false)
     @Comment("콘서트 설명")
-    private String decription;
+    private String description;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

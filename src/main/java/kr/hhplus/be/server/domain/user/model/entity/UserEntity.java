@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Comment;
 
+import java.math.BigInteger;
+
 @Entity
 @Table(name = "users")
 public class UserEntity {
@@ -19,5 +21,5 @@ public class UserEntity {
 
     @Column(name = "balance", nullable = false)
     @Comment("잔액")
-    private Long balance;
+    private BigInteger balance;
 }
