@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import kr.hhplus.be.server.domain.reservation.model.entity.ReservationEntity;
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
 import org.hibernate.annotations.Comment;
 
@@ -31,8 +32,8 @@ public class PaymentHistoryEntity {
     private Long amount;
 
     @ManyToOne
-    @JoinColumn(name = "payment_id", nullable = false)
-    private PaymentEntity payment;
+    @JoinColumn(name = "reservation_id", nullable = false)
+    private ReservationEntity reservation;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
