@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.Comment;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class UserEntity {
 
     @Id
