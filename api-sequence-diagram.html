@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Sequence Diagrams (Korean)</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #d1d5db;
+            padding: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #374151;
+            margin-bottom: 40px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .api-section {
+            margin-bottom: 50px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            background: #fafafa;
+        }
+        .api-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #e5e7eb;
+            border-radius: 4px;
+        }
+        .sequence-svg {
+            width: 100%;
+            height: 350px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+        }
+        .actor {
+            font-size: 12px;
+            font-weight: 600;
+            fill: #374151;
+        }
+        .lifeline {
+            stroke: #9ca3af;
+            stroke-width: 2;
+            stroke-dasharray: 5,5;
+        }
+        .message {
+            stroke: #374151;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+        .return-message {
+            stroke: #059669;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead-return);
+            stroke-dasharray: 3,3;
+        }
+        .message-text {
+            font-size: 11px;
+            fill: #374151;
+        }
+        .activation {
+            fill: #f3f4f6;
+            stroke: #374151;
+            stroke-width: 1;
+        }
+        .controller-box {
+            fill: #e0f2fe;
+            stroke: #0277bd;
+            stroke-width: 2;
+            rx: 4;
+        }
+        .service-box {
+            fill: #e8f5e8;
+            stroke: #388e3c;
+            stroke-width: 2;
+            rx: 4;
+        }
+        .db-box {
+            fill: #fff3e0;
+            stroke: #f57c00;
+            stroke-width: 2;
+            rx: 4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 API 시퀀스 다이어그램</h1>
+        
+        <!-- 1. Token API -->
+        <div class="api-section">
+            <div class="api-title">1. 토큰 생성 API - POST /api/v1/token</div>
+            <svg class="sequence-svg" viewBox="0 0 900 320">
+                <!-- Participants -->
+                <rect x="60" y="20" width="90" height="30" class="controller-box"/>
+                <text x="105" y="40" text-anchor="middle" class="actor">Client</text>
+                
+                <rect x="200" y="20" width="120" height="30" class="controller-box"/>
+                <text x="260" y="40" text-anchor="middle" class="actor">TokenController</text>
+                
+                <rect x="370" y="20" width="100" height="30" class="service-box"/>
+                <text x="420" y="40" text-anchor="middle" class="actor">TokenService</text>
+                
+                <rect x="520" y="20" width="90" height="30" class="db-box"/>
+                <text x="565" y="40" text-anchor="middle" class="actor">Redis</text>
+                
+                <!-- Lifelines -->
+                <line x1="105" y1="50" x2="105" y2="290" class="lifeline"/>
+                <line x1="260" y1="50" x2="260" y2="290" class="lifeline"/>
+                <line x1="420" y1="50" x2="420" y2="290" class="lifeline"/>
+                <line x1="565" y1="50" x2="565" y2="290" class="lifeline"/>
+                
+                <!-- Messages -->
+                <line x1="105" y1="80" x2="260" y2="80" class="message"/>
+                <text x="182" y="75" class="message-text">토큰 생성 요청</text>
+                <rect x="255" y="85" width="10" height="100" class="activation"/>
+                
+                <line x1="260" y1="105" x2="420" y2="105" class="message"/>
+                <text x="340" y="100" class="message-text">토큰 생성 처리</text>
+                <rect x="415" y="110" width="10" height="60" class="activation"/>
+                
+                <line x1="420" y1="130" x2="565" y2="130" class="message"/>
+                <text x="492" y="125" class="message-text">토큰 정보 저장</text>
+                
+                <line x1="565" y1="155" x2="420" y2="155" class="return-message"/>
+                <text x="492" y="150" class="message-text">저장 완료</text>
+                
+                <line x1="420" y1="175" x2="260" y2="175" class="return-message"/>
+                <text x="340" y="170" class="message-text">토큰 정보 반환</text>
+                
+                <line x1="260" y1="200" x2="105" y2="200" class="return-message"/>
+                <text x="182" y="195" class="message-text">토큰 생성 완료</text>
+                
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#374151"/>
+                    </marker>
+                    <marker id="arrowhead-return" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#059669"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- 2. User Balance API -->
+        <div class="api-section">
+            <div class="api-title">2. 잔액 조회 API - GET /api/v1/users/balance</div>
+            <svg class="sequence-svg" viewBox="0 0 900 350" style="height: 350px;">
+                <!-- Participants -->
+                <rect x="60" y="20" width="90" height="30" class="controller-box"/>
+                <text x="105" y="40" text-anchor="middle" class="actor">Client</text>
+                
+                <rect x="200" y="20" width="120" height="30" class="controller-box"/>
+                <text x="260" y="40" text-anchor="middle" class="actor">UserController</text>
+                
+                <rect x="370" y="20" width="100" height="30" class="service-box"/>
+                <text x="420" y="40" text-anchor="middle" class="actor">UserService</text>
+                
+                <rect x="520" y="20" width="90" height="30" class="db-box"/>
+                <text x="565" y="40" text-anchor="middle" class="actor">MySQL</text>
+                
+                <!-- Lifelines -->
+                <line x1="105" y1="50" x2="105" y2="320" class="lifeline"/>
+                <line x1="260" y1="50" x2="260" y2="320" class="lifeline"/>
+                <line x1="420" y1="50" x2="420" y2="320" class="lifeline"/>
+                <line x1="565" y1="50" x2="565" y2="320" class="lifeline"/>
+                
+                <!-- Messages -->
+                <line x1="105" y1="80" x2="260" y2="80" class="message"/>
+                <text x="182" y="75" class="message-text" style="font-size: 11px;">잔액 조회 요청</text>
+                <rect x="255" y="85" width="10" height="120" class="activation"/>
+                
+                <line x1="260" y1="110" x2="420" y2="110" class="message"/>
+                <text x="340" y="105" class="message-text" style="font-size: 11px;">사용자 잔액 조회</text>
+                <rect x="415" y="115" width="10" height="70" class="activation"/>
+                
+                <line x1="420" y1="140" x2="565" y2="140" class="message"/>
+                <text x="492" y="135" class="message-text" style="font-size: 11px;">사용자 정보 조회</text>
+                
+                <line x1="565" y1="165" x2="420" y2="165" class="return-message"/>
+                <text x="492" y="160" class="message-text" style="font-size: 11px;">사용자 정보 반환</text>
+                
+                <line x1="420" y1="185" x2="260" y2="185" class="return-message"/>
+                <text x="340" y="180" class="message-text" style="font-size: 11px;">잔액 정보 반환</text>
+                
+                <line x1="260" y1="210" x2="105" y2="210" class="return-message"/>
+                <text x="182" y="205" class="message-text" style="font-size: 11px;">잔액 조회 완료</text>
+                
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#374151"/>
+                    </marker>
+                    <marker id="arrowhead-return" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#059669"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- 3. Balance Charge API -->
+        <div class="api-section">
+            <div class="api-title">3. 잔액 충전 API - POST /api/v1/users/balance/charge</div>
+            <svg class="sequence-svg" viewBox="0 0 900 400" style="height: 400px;">
+                <!-- Participants -->
+                <rect x="60" y="20" width="90" height="30" class="controller-box"/>
+                <text x="105" y="40" text-anchor="middle" class="actor">Client</text>
+                
+                <rect x="200" y="20" width="120" height="30" class="controller-box"/>
+                <text x="260" y="40" text-anchor="middle" class="actor">UserController</text>
+                
+                <rect x="370" y="20" width="100" height="30" class="service-box"/>
+                <text x="420" y="40" text-anchor="middle" class="actor">UserService</text>
+                
+                <rect x="520" y="20" width="90" height="30" class="db-box"/>
+                <text x="565" y="40" text-anchor="middle" class="actor">MySQL</text>
+                
+                <!-- Lifelines -->
+                <line x1="105" y1="50" x2="105" y2="370" class="lifeline"/>
+                <line x1="260" y1="50" x2="260" y2="370" class="lifeline"/>
+                <line x1="420" y1="50" x2="420" y2="370" class="lifeline"/>
+                <line x1="565" y1="50" x2="565" y2="370" class="lifeline"/>
+                
+                <!-- Messages -->
+                <line x1="105" y1="80" x2="260" y2="80" class="message"/>
+                <text x="182" y="75" class="message-text" style="font-size: 11px;">잔액 충전 요청</text>
+                <rect x="255" y="85" width="10" height="180" class="activation"/>
+                
+                <line x1="260" y1="110" x2="420" y2="110" class="message"/>
+                <text x="340" y="105" class="message-text" style="font-size: 11px;">잔액 충전 처리</text>
+                <rect x="415" y="115" width="10" height="130" class="activation"/>
+                
+                <line x1="420" y1="140" x2="565" y2="140" class="message"/>
+                <text x="492" y="135" class="message-text" style="font-size: 11px;">사용자 정보 조회</text>
+                
+                <line x1="565" y1="165" x2="420" y2="165" class="return-message"/>
+                <text x="492" y="160" class="message-text" style="font-size: 11px;">사용자 정보 반환</text>
+                
+                <line x1="420" y1="190" x2="565" y2="190" class="message"/>
+                <text x="492" y="185" class="message-text" style="font-size: 11px;">잔액 업데이트</text>
+                
+                <line x1="565" y1="215" x2="420" y2="215" class="return-message"/>
+                <text x="492" y="210" class="message-text" style="font-size: 11px;">업데이트 완료</text>
+                
+                <line x1="420" y1="240" x2="260" y2="240" class="return-message"/>
+                <text x="340" y="235" class="message-text" style="font-size: 11px;">충전 결과 반환</text>
+                
+                <line x1="260" y1="265" x2="105" y2="265" class="return-message"/>
+                <text x="182" y="260" class="message-text" style="font-size: 11px;">잔액 충전 완료</text>
+                
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#374151"/>
+                    </marker>
+                    <marker id="arrowhead-return" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#059669"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- 4. Concert Schedules API -->
+        <div class="api-section">
+            <div class="api-title">4. 콘서트 일정 조회 API - GET /api/v1/concerts/{id}/schedules</div>
+            <svg class="sequence-svg" viewBox="0 0 900 350" style="height: 350px;">
+                <!-- Participants -->
+                <rect x="60" y="20" width="90" height="30" class="controller-box"/>
+                <text x="105" y="40" text-anchor="middle" class="actor">Client</text>
+                
+                <rect x="200" y="20" width="120" height="30" class="controller-box"/>
+                <text x="260" y="40" text-anchor="middle" class="actor">ConcertController</text>
+                
+                <rect x="370" y="20" width="100" height="30" class="service-box"/>
+                <text x="420" y="40" text-anchor="middle" class="actor">ConcertService</text>
+                
+                <rect x="520" y="20" width="90" height="30" class="db-box"/>
+                <text x="565" y="40" text-anchor="middle" class="actor">MySQL</text>
+                
+                <!-- Lifelines -->
+                <line x1="105" y1="50" x2="105" y2="320" class="lifeline"/>
+                <line x1="260" y1="50" x2="260" y2="320" class="lifeline"/>
+                <line x1="420" y1="50" x2="420" y2="320" class="lifeline"/>
+                <line x1="565" y1="50" x2="565" y2="320" class="lifeline"/>
+                
+                <!-- Messages -->
+                <line x1="105" y1="80" x2="260" y2="80" class="message"/>
+                <text x="182" y="75" class="message-text" style="font-size: 11px;">예약 가능 날짜 조회 요청</text>
+                <rect x="255" y="85" width="10" height="120" class="activation"/>
+                
+                <line x1="260" y1="110" x2="420" y2="110" class="message"/>
+                <text x="340" y="105" class="message-text" style="font-size: 11px;">콘서트 일정 조회</text>
+                <rect x="415" y="115" width="10" height="70" class="activation"/>
+                
+                <line x1="420" y1="140" x2="565" y2="140" class="message"/>
+                <text x="492" y="135" class="message-text" style="font-size: 11px;">일정 정보 조회</text>
+                
+                <line x1="565" y1="165" x2="420" y2="165" class="return-message"/>
+                <text x="492" y="160" class="message-text" style="font-size: 11px;">일정 목록 반환</text>
+                
+                <line x1="420" y1="185" x2="260" y2="185" class="return-message"/>
+                <text x="340" y="180" class="message-text" style="font-size: 11px;">날짜 목록 전달</text>
+                
+                <line x1="260" y1="210" x2="105" y2="210" class="return-message"/>
+                <text x="182" y="205" class="message-text" style="font-size: 11px;">날짜 조회 완료</text>
+                
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#374151"/>
+                    </marker>
+                    <marker id="arrowhead-return" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#059669"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- 5. Seat Reservation API -->
+        <div class="api-section">
+            <div class="api-title">5. 좌석 예약 API - POST /api/v1/reservations</div>
+            <svg class="sequence-svg" viewBox="0 0 1000 400" style="height: 400px;">
+                <!-- Participants -->
+                <rect x="50" y="20" width="80" height="30" class="controller-box"/>
+                <text x="90" y="40" text-anchor="middle" class="actor">Client</text>
+                
+                <rect x="180" y="20" width="100" height="30" class="controller-box"/>
+                <text x="230" y="40" text-anchor="middle" class="actor">ReservationController</text>
+                
+                <rect x="330" y="20" width="100" height="30" class="service-box"/>
+                <text x="380" y="40" text-anchor="middle" class="actor">ReservationService</text>
+                
+                <rect x="480" y="20" width="80" height="30" class="db-box"/>
+                <text x="520" y="40" text-anchor="middle" class="actor">MySQL</text>
+                
+                <rect x="610" y="20" width="80" height="30" class="db-box"/>
+                <text x="650" y="40" text-anchor="middle" class="actor">Redis</text>
+                
+                <!-- Lifelines -->
+                <line x1="90" y1="50" x2="90" y2="370" class="lifeline"/>
+                <line x1="230" y1="50" x2="230" y2="370" class="lifeline"/>
+                <line x1="380" y1="50" x2="380" y2="370" class="lifeline"/>
+                <line x1="520" y1="50" x2="520" y2="370" class="lifeline"/>
+                <line x1="650" y1="50" x2="650" y2="370" class="lifeline"/>
+                
+                <!-- Messages -->
+                <line x1="90" y1="80" x2="230" y2="80" class="message"/>
+                <text x="160" y="75" class="message-text" style="font-size: 11px;">좌석 예약 요청</text>
+                <rect x="225" y="85" width="10" height="200" class="activation"/>
+                
+                <line x1="230" y1="105" x2="380" y2="105" class="message"/>
+                <text x="305" y="100" class="message-text" style="font-size: 11px;">예약 처리 시작</text>
+                <rect x="375" y="110" width="10" height="160" class="activation"/>
+                
+                <line x1="380" y1="130" x2="520" y2="130" class="message"/>
+                <text x="450" y="125" class="message-text" style="font-size: 11px;">좌석 상태 확인</text>
+                
+                <line x1="520" y1="155" x2="380" y2="155" class="return-message"/>
+                <text x="450" y="150" class="message-text" style="font-size: 11px;">좌석 정보 반환</text>
+                
+                <line x1="380" y1="180" x2="520" y2="180" class="message"/>
+                <text x="450" y="175" class="message-text" style="font-size: 11px;">예약 정보 생성</text>
+                
+                <line x1="380" y1="205" x2="520" y2="205" class="message"/>
+                <text x="450" y="200" class="message-text" style="font-size: 11px;">좌석 상태 변경</text>
+                
+                <line x1="380" y1="230" x2="650" y2="230" class="message"/>
+                <text x="515" y="225" class="message-text" style="font-size: 11px;">임시 예약 저장</text>
+                
+                <line x1="650" y1="255" x2="380" y2="255" class="return-message"/>
+                <text x="515" y="250" class="message-text" style="font-size: 11px;">저장 완료</text>
+                
+                <line x1="380" y1="280" x2="230" y2="280" class="return-message"/>
+                <text x="305" y="275" class="message-text" style="font-size: 11px;">예약 정보 반환</text>
+                
+                <line x1="230" y1="305" x2="90" y2="305" class="return-message"/>
+                <text x="160" y="300" class="message-text" style="font-size: 11px;">예약 완료</text>
+                
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#374151"/>
+                    </marker>
+                    <marker id="arrowhead-return" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#059669"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- 6. Payment API -->
+        <div class="api-section">
+            <div class="api-title">6. 결제 API - POST /api/v1/payments</div>
+            <svg class="sequence-svg" viewBox="0 0 1000 500" style="height: 500px;">
+                <!-- Participants -->
+                <rect x="50" y="20" width="80" height="30" class="controller-box"/>
+                <text x="90" y="40" text-anchor="middle" class="actor">Client</text>
+                
+                <rect x="180" y="20" width="100" height="30" class="controller-box"/>
+                <text x="230" y="40" text-anchor="middle" class="actor">PaymentController</text>
+                
+                <rect x="330" y="20" width="100" height="30" class="service-box"/>
+                <text x="380" y="40" text-anchor="middle" class="actor">PaymentService</text>
+                
+                <rect x="480" y="20" width="80" height="30" class="db-box"/>
+                <text x="520" y="40" text-anchor="middle" class="actor">MySQL</text>
+                
+                <rect x="610" y="20" width="80" height="30" class="db-box"/>
+                <text x="650" y="40" text-anchor="middle" class="actor">Redis</text>
+                
+                <!-- Lifelines -->
+                <line x1="90" y1="50" x2="90" y2="470" class="lifeline"/>
+                <line x1="230" y1="50" x2="230" y2="470" class="lifeline"/>
+                <line x1="380" y1="50" x2="380" y2="470" class="lifeline"/>
+                <line x1="520" y1="50" x2="520" y2="470" class="lifeline"/>
+                <line x1="650" y1="50" x2="650" y2="470" class="lifeline"/>
+                
+                <!-- Messages -->
+                <line x1="90" y1="80" x2="230" y2="80" class="message"/>
+                <text x="160" y="75" class="message-text" style="font-size: 11px;">결제 요청</text>
+                <rect x="225" y="85" width="10" height="280" class="activation"/>
+                
+                <line x1="230" y1="105" x2="380" y2="105" class="message"/>
+                <text x="305" y="100" class="message-text" style="font-size: 11px;">결제 처리 시작</text>
+                <rect x="375" y="110" width="10" height="240" class="activation"/>
+                
+                <line x1="380" y1="130" x2="520" y2="130" class="message"/>
+                <text x="450" y="125" class="message-text" style="font-size: 11px;">예약 정보 확인</text>
+                
+                <line x1="520" y1="155" x2="380" y2="155" class="return-message"/>
+                <text x="450" y="150" class="message-text" style="font-size: 11px;">예약 정보 반환</text>
+                
+                <line x1="380" y1="180" x2="520" y2="180" class="message"/>
+                <text x="450" y="175" class="message-text" style="font-size: 11px;">잔액 확인</text>
+                
+                <line x1="520" y1="205" x2="380" y2="205" class="return-message"/>
+                <text x="450" y="200" class="message-text" style="font-size: 11px;">잔액 정보 반환</text>
+                
+                <line x1="380" y1="230" x2="520" y2="230" class="message"/>
+                <text x="450" y="225" class="message-text" style="font-size: 11px;">결제 정보 생성</text>
+                
+                <line x1="380" y1="255" x2="520" y2="255" class="message"/>
+                <text x="450" y="250" class="message-text" style="font-size: 11px;">잔액 차감</text>
+                
+                <line x1="380" y1="280" x2="520" y2="280" class="message"/>
+                <text x="450" y="275" class="message-text" style="font-size: 11px;">예약 상태 변경</text>
+                
+                <line x1="380" y1="305" x2="650" y2="305" class="message"/>
+                <text x="515" y="300" class="message-text" style="font-size: 11px;">임시 예약 삭제</text>
+                
+                <line x1="380" y1="330" x2="520" y2="330" class="message"/>
+                <text x="450" y="325" class="message-text" style="font-size: 11px;">결제 기록 저장</text>
+                
+                <line x1="380" y1="355" x2="230" y2="355" class="return-message"/>
+                <text x="305" y="350" class="message-text" style="font-size: 11px;">결제 결과 반환</text>
+                
+                <line x1="230" y1="380" x2="90" y2="380" class="return-message"/>
+                <text x="160" y="375" class="message-text" style="font-size: 11px;">결제 완료</text>
+                
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#374151"/>
+                    </marker>
+                    <marker id="arrowhead-return" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#059669"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+</body>
+</html>
