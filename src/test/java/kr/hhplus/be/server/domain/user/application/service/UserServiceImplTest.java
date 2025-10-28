@@ -2,7 +2,6 @@ package kr.hhplus.be.server.domain.user.application.service;
 
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
 import kr.hhplus.be.server.domain.user.model.repository.UserRepository;
-import kr.hhplus.be.server.domain.user.model.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +13,10 @@ import java.math.BigInteger;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UserService 테스트")
@@ -28,15 +29,42 @@ class UserServiceImplTest {
     private UserRepository userRepository;
 
     @Test
+    @DisplayName("유저 조회 - 성공")
     void getUser_Success() {
-        UserEntity user = UserEntity.builder().id("1").balance(BigInteger.valueOf(10)).build();
+        UserEntity expectedUser = UserEntity.builder().id("1").balance(BigInteger.valueOf(10000)).build();
 
-        given(userRepository.findById("1")).willReturn(user);
+        given(userRepository.findById("1")).willReturn(Optional.of(expectedUser));
 
-        UserEntity actual = userService.getUser("1");
+        UserEntity actualUser = userService.getUser("1");
 
-        assertThat(actual).isNotNull();
-        assertThat(actual.getId()).isEqualTo(user.get().getId());
+        assertThat(actualUser).isNotNull();
+        assertThat(actualUser.getId()).isEqualTo("1");
+        assertThat(actualUser.getBalance()).isEqualTo(BigInteger.valueOf(10000));
+        assertThat(actualUser)
+                .extracting("id", "balance")
+                .containsExactly("1", BigInteger.valueOf(10000));
+        assertThat(actualUser).isEqualTo(expectedUser);
+    }
+
+    @Test
+    @DisplayName("유저 조회 - 실패")
+    void getUser_Fail() {
+        given(userRepository.findById("1")).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userService.getUser("1"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("유저가 존재하지 않음");
+
+    }
+
+    @Test
+    @DisplayName("유저 생성")
+    void createUser() {
+        UserEntity expectedUser = UserEntity.builder().id("1").build();
+
+        userService.create(expectedUser);
+
+        verify(userRepository, times(1)).save(expectedUser);
     }
 
 }
