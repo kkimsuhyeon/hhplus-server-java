@@ -57,4 +57,12 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
     systemProperty("user.timezone", "UTC")
+    
+    // Mockito를 Java Agent로 명시적으로 로드 (정석 방법)
+    val mockitoAgent = classpath.elements.map { files ->
+        files.single { it.asFile.name.startsWith("mockito-core-") }
+    }
+    jvmArgumentProviders.add(CommandLineArgumentProvider {
+        listOf("-javaagent:${mockitoAgent.get().asFile}")
+    })
 }
