@@ -42,4 +42,8 @@ public class SeatEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
+    public boolean isReservable() {
+        return this.status == SeatStatus.AVAILABLE;
+    }
+
 }

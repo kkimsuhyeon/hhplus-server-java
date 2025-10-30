@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Comment;
 import org.springframework.data.annotation.CreatedDate;
@@ -15,6 +16,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -35,6 +37,9 @@ public class ConcertScheduleEntity {
     @JoinColumn(name = "concert_id", nullable = false)
     private ConcertEntity concert;
 
+    @OneToMany(mappedBy = "schedule")
+    private List<SeatEntity> seats;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     @Comment("등록 일시")
@@ -44,5 +49,16 @@ public class ConcertScheduleEntity {
     @Column(name = "updated_at", nullable = false)
     @Comment("수정 일시")
     private LocalDateTime updatedAt;
+
+    public boolean isReservable() {
+        return seats.stream()
+                .anyMatch(SeatEntity::isReservable);
+    }
+
+    public long getReservableSeatCount() {
+        return seats.stream()
+                .filter(SeatEntity::isReservable)
+                .count();
+    }
 
 }

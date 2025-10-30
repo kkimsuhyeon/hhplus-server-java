@@ -56,4 +56,9 @@ public class ConcertEntity {
     @Column(name = "updated_at", nullable = false)
     @Comment("수정 일시")
     private LocalDateTime updatedAt;
+
+    public boolean isReservable() {
+        return concertSchedules.stream()
+                .anyMatch(ConcertScheduleEntity::isReservable);
+    }
 }
