@@ -31,6 +31,13 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public ConcertEntity getConcert(String concertId) {
+        return concertRepository.findById(concertId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 콘서트 입니다."));
+    }
+
+    @Override
     @Transactional
     public void createConcert(CreateConcertCommand command) {
         ConcertEntity entity = mapper.toEntity(command);

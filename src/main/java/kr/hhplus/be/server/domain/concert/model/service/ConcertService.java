@@ -10,5 +10,7 @@ public interface ConcertService {
 
     Page<ConcertEntity> getConcerts(FindConcertQuery query, Pageable pageable);
 
+    ConcertEntity getConcert(String concertId);
+
     void createConcert(CreateConcertCommand command);
 }

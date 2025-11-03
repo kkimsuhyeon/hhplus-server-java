@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class ConcertRepositoryAdapter implements ConcertRepository {
@@ -21,6 +23,11 @@ public class ConcertRepositoryAdapter implements ConcertRepository {
         Specification<ConcertEntity> spc = ConcertSpecification.likeTitle(criteria.getTitle());
 
         return jpaRepository.findAll(spc, pageable);
+    }
+
+    @Override
+    public Optional<ConcertEntity> findById(String concertId) {
+        return jpaRepository.findByIdWithSchedulesAndSeats(concertId);
     }
 
     @Override
