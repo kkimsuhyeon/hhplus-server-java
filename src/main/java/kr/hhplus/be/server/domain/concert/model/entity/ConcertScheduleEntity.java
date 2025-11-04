@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Comment;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -48,6 +49,7 @@ public class ConcertScheduleEntity {
     private ConcertEntity concert;
 
     @OneToMany(mappedBy = "schedule")
+    @BatchSize(size = 100)
     private List<SeatEntity> seats;
 
     @CreatedDate

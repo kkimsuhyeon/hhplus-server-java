@@ -18,7 +18,7 @@ class ConcertEntityTest {
         List<ConcertScheduleEntity> actualSchedule = new ArrayList<>();
         actualSchedule.add(createReservableSchedule());
         ConcertEntity actual = ConcertEntity.builder()
-                .concertSchedules(actualSchedule)
+                .schedules(actualSchedule)
                 .build();
 
         assertThat(actual.isReservable()).isTrue();
@@ -30,7 +30,7 @@ class ConcertEntityTest {
         List<ConcertScheduleEntity> actualSchedule = new ArrayList<>();
         actualSchedule.add(createNonReservableSchedule());
         ConcertEntity actual = ConcertEntity.builder()
-                .concertSchedules(actualSchedule)
+                .schedules(actualSchedule)
                 .build();
 
         assertThat(actual.isReservable()).isFalse();
@@ -41,7 +41,7 @@ class ConcertEntityTest {
     void isReservable_empty() {
         List<ConcertScheduleEntity> actualSchedule = new ArrayList<>();
         ConcertEntity actual = ConcertEntity.builder()
-                .concertSchedules(actualSchedule)
+                .schedules(actualSchedule)
                 .build();
 
         assertThat(actual.isReservable()).isFalse();
@@ -64,7 +64,7 @@ class ConcertEntityTest {
         }
 
         return ConcertEntity.builder()
-                .concertSchedules(schedules)
+                .schedules(schedules)
                 .build();
     }
 

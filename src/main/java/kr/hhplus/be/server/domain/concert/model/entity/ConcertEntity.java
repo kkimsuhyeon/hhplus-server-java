@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Comment;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -45,7 +46,8 @@ public class ConcertEntity {
     private String description;
 
     @OneToMany(mappedBy = "concert")
-    private List<ConcertScheduleEntity> concertSchedules;
+    @BatchSize(size = 10)
+    private List<ConcertScheduleEntity> schedules;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -58,7 +60,7 @@ public class ConcertEntity {
     private LocalDateTime updatedAt;
 
     public boolean isReservable() {
-        return concertSchedules.stream()
+        return schedules.stream()
                 .anyMatch(ConcertScheduleEntity::isReservable);
     }
 }

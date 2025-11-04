@@ -16,7 +16,7 @@ public interface ConcertJpaRepository extends JpaRepository<ConcertEntity, Strin
 
     Page<ConcertEntity> findAll(Specification<ConcertEntity> spec, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"schedules", "schedules.seats"})
-    Optional<ConcertEntity> findByIdWithSchedulesAndSeats(String id);
+    @EntityGraph(attributePaths = {"schedules"})
+    Optional<ConcertEntity> findWithSchedulesById(String id);
 
 }

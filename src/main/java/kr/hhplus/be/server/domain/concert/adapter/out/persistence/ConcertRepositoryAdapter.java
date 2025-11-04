@@ -27,7 +27,7 @@ public class ConcertRepositoryAdapter implements ConcertRepository {
 
     @Override
     public Optional<ConcertEntity> findById(String concertId) {
-        return jpaRepository.findByIdWithSchedulesAndSeats(concertId);
+        return jpaRepository.findWithSchedulesById(concertId);
     }
 
     @Override
