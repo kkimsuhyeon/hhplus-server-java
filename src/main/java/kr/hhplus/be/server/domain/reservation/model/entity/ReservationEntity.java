@@ -80,20 +80,4 @@ public class ReservationEntity {
 
         return reservation;
     }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-    public void changeSeat(SeatEntity newSeat) {
-        // 기존 좌석에서 제거
-        if (this.seat != null) {
-            this.seat.removeReservation(this);
-        }
-
-        // 새 좌석에 추가
-        this.seat = newSeat;
-        newSeat.addReservation(this);
-    }
-
 }

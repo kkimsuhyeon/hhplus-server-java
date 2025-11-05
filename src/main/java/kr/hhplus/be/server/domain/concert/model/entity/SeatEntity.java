@@ -59,7 +59,6 @@ public class SeatEntity {
     @JoinColumn(name = "schedule_id", nullable = false)
     private ConcertScheduleEntity schedule;
 
-    @Setter
     @OneToMany(mappedBy = "seat")
     @BatchSize(size = 10)
     private List<ReservationEntity> reservations;
@@ -69,13 +68,7 @@ public class SeatEntity {
     }
 
     public void addReservation(ReservationEntity reservation) {
-        if (!this.reservations.contains(reservation)) {
-            this.reservations.add(reservation);
-        }
-    }
-
-    public void removeReservation(ReservationEntity reservation) {
-        this.reservations.remove(reservation);
+        reservations.add(reservation);
     }
 
 }
