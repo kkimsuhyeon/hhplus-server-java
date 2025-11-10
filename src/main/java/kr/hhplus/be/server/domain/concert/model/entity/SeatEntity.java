@@ -25,6 +25,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Comment;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Getter
@@ -54,7 +55,7 @@ public class SeatEntity {
 
     @Column(name = "price", nullable = false)
     @Comment("가격")
-    private Long price;
+    private BigInteger price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id", nullable = false)

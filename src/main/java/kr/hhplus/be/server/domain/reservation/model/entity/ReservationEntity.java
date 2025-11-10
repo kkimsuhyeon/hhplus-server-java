@@ -80,4 +80,31 @@ public class ReservationEntity {
 
         return reservation;
     }
+
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(expiredAt);
+    }
+
+    public boolean isPayable() {
+        return this.status == ReservationStatus.PENDING_PAYMENT;
+    }
+
+    public boolean isOwnedBy(String userId) {
+        return this.getId().equals(userId);
+    }
+
+    public boolean isOwnedBy(UserEntity user) {
+        return this.user.getId().equals(user.getId());
+    }
+
+    public void validateForPayment(String userId) {
+        if (isExpired()) throw new IllegalArgumentException("예약이 만료되었습니다"); // todo check, 에러 타입 변경
+        if (!isPayable()) throw new IllegalArgumentException("결제 가능 상태가 아닙니다"); // todo check, 에러 타입 변경
+        if (isOwnedBy(userId)) throw new IllegalArgumentException("접근 권한이 없습니다"); // todo check, 에러 타입 변경
+    }
+
+    public void completePayment(String userId) {
+        validateForPayment(userId);
+        this.status = ReservationStatus.CONFIRMED;
+    }
 }
