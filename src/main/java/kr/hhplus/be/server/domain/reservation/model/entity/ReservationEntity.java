@@ -98,13 +98,12 @@ public class ReservationEntity {
     }
 
     public void validateForPayment(String userId) {
+        if (!isOwnedBy(userId)) throw new IllegalArgumentException("접근 권한이 없습니다"); // todo check, 에러 타입 변경
         if (isExpired()) throw new IllegalArgumentException("예약이 만료되었습니다"); // todo check, 에러 타입 변경
         if (!isPayable()) throw new IllegalArgumentException("결제 가능 상태가 아닙니다"); // todo check, 에러 타입 변경
-        if (isOwnedBy(userId)) throw new IllegalArgumentException("접근 권한이 없습니다"); // todo check, 에러 타입 변경
     }
 
-    public void completePayment(String userId) {
-        validateForPayment(userId);
+    public void completePayment() {
         this.status = ReservationStatus.CONFIRMED;
     }
 }

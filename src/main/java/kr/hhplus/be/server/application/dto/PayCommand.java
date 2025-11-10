@@ -7,8 +7,9 @@ import lombok.Data;
 @Builder
 public class PayCommand {
 
-    private String reservationId;
-
+    // todo remove, 임시로 userId 추가
     private String userId;
+
+    private String reservationId;
 
 }

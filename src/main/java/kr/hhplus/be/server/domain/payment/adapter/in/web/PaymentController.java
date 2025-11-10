@@ -38,7 +38,7 @@ public class PaymentController {
             @RequestBody @Valid PayRequest request
     ) {
         PayCommand command = commandFactory.toPayCommand(request);
-        paymentUseCase.execute(command);
+        paymentUseCase.pay(command);
         return ResponseEntity.ok().build();
     }
 }

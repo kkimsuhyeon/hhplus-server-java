@@ -19,18 +19,18 @@ public class PaymentUseCase {
     private final ReservationService reservationService;
     private final UserService userService;
 
-    public void execute(PayCommand command) {
+    public void pay(PayCommand command) {
         ReservationEntity reservation = reservationService.getReservation(command.getReservationId());
         UserEntity user = userService.getUser(command.getUserId());
 
         reservation.validateForPayment(command.getUserId());
 
         BigInteger price = reservation.getSeat().getPrice();
-        if (price.compareTo(user.getBalance()) < 0) {
-            throw new IllegalArgumentException("포인트가 모자랍니다");
-        }
-
         user.deductBalance(price);
-        reservation.completePayment(command.getUserId());
+
+        reservation.completePayment();
+    }
+
+    public void cancel() {
     }
 }
