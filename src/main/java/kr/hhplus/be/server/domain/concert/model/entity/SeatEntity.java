@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.concert.model.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -59,7 +60,7 @@ public class SeatEntity {
     @JoinColumn(name = "schedule_id", nullable = false)
     private ConcertScheduleEntity schedule;
 
-    @OneToMany(mappedBy = "seat")
+    @OneToMany(mappedBy = "seat", cascade = CascadeType.ALL)
     @BatchSize(size = 10)
     private List<ReservationEntity> reservations;
 

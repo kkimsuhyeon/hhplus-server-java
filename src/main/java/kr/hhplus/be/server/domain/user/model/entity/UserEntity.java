@@ -34,4 +34,20 @@ public class UserEntity {
     @Column(name = "balance", nullable = false)
     @Comment("잔액")
     private BigInteger balance;
+
+    public void addBalance(BigInteger amount) {
+        if (amount.compareTo(BigInteger.ZERO) < 0) {
+            throw new IllegalArgumentException("충전 금액은 0보다 커야합니다");
+        }
+
+        this.balance = this.balance.add(amount);
+    }
+
+    public void deductBalance(BigInteger amount) {
+        if (this.balance.compareTo(amount) < 0) {
+            throw new IllegalArgumentException("잔액이 부족합니다");
+        }
+
+        this.balance = this.balance.subtract(amount);
+    }
 }

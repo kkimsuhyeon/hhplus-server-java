@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -25,4 +27,19 @@ public class UserServiceImpl implements UserService {
     public void create(UserEntity user) {
         repository.save(user);
     }
+
+    @Override
+    @Transactional
+    public void addBalance(String userId, BigInteger amount) {
+        UserEntity user = this.getUser(userId);
+        user.addBalance(amount);
+    }
+
+    @Override
+    @Transactional
+    public void deductBalance(String userId, BigInteger amount) {
+        UserEntity user = this.getUser(userId);
+        user.deductBalance(amount);
+    }
+
 }
