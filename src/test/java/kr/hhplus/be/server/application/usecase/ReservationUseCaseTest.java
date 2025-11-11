@@ -1,8 +1,10 @@
 package kr.hhplus.be.server.application.usecase;
 
 import kr.hhplus.be.server.application.dto.ReserveSeatCommand;
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.concert.model.entity.SeatEntity;
 import kr.hhplus.be.server.domain.concert.model.entity.SeatStatus;
+import kr.hhplus.be.server.domain.concert.model.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.concert.model.service.SeatService;
 import kr.hhplus.be.server.domain.reservation.model.entity.ReservationEntity;
 import kr.hhplus.be.server.domain.reservation.model.repository.ReservationRepository;
@@ -68,11 +70,14 @@ class ReservationUseCaseTest {
         when(seatMock.isReservable()).thenReturn(false);
         given(seatService.getSeat("1")).willReturn(seatMock);
 
-        ReserveSeatCommand request = ReserveSeatCommand.builder().seatId("1").userId("1").build();
+        ReserveSeatCommand request = ReserveSeatCommand.builder()
+                .seatId("1")
+                .userId("1")
+                .build();
 
         assertThatThrownBy(() -> reservationUseCase.execute(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("예약이 불가능한 좌석");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(SeatErrorCode.ALREADY_RESERVED.getMessage());
     }
 
 }

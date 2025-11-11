@@ -1,11 +1,10 @@
 package kr.hhplus.be.server.application.usecase;
 
 import kr.hhplus.be.server.application.dto.ReserveSeatCommand;
-import kr.hhplus.be.server.domain.concert.model.entity.ConcertEntity;
-import kr.hhplus.be.server.domain.concert.model.entity.ConcertScheduleEntity;
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.concert.model.entity.SeatEntity;
 import kr.hhplus.be.server.domain.concert.model.entity.SeatStatus;
-import kr.hhplus.be.server.domain.concert.model.service.ConcertService;
+import kr.hhplus.be.server.domain.concert.model.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.concert.model.service.SeatService;
 import kr.hhplus.be.server.domain.reservation.model.entity.ReservationEntity;
 import kr.hhplus.be.server.domain.reservation.model.repository.ReservationRepository;
@@ -28,7 +27,7 @@ public class ReservationUseCase {
     public void execute(ReserveSeatCommand request) {
         SeatEntity seatEntity = seatService.getSeat(request.getSeatId());
 
-        if (!seatEntity.isReservable()) throw new IllegalArgumentException("예약이 불가능한 좌석");
+        if (!seatEntity.isReservable()) throw new BusinessException(SeatErrorCode.ALREADY_RESERVED);
 
         UserEntity userEntity = userService.getUser(request.getUserId());
 

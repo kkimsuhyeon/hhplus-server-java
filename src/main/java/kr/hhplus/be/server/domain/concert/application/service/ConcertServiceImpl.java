@@ -1,9 +1,11 @@
 package kr.hhplus.be.server.domain.concert.application.service;
 
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.concert.application.command.CreateConcertCommand;
 import kr.hhplus.be.server.domain.concert.application.mapper.ConcertMapper;
 import kr.hhplus.be.server.domain.concert.application.query.FindConcertQuery;
 import kr.hhplus.be.server.domain.concert.model.entity.ConcertEntity;
+import kr.hhplus.be.server.domain.concert.model.exception.ConcertErrorCode;
 import kr.hhplus.be.server.domain.concert.model.factory.ConcertCriteriaFactory;
 import kr.hhplus.be.server.domain.concert.model.repository.ConcertCriteria;
 import kr.hhplus.be.server.domain.concert.model.repository.ConcertRepository;
@@ -34,7 +36,7 @@ public class ConcertServiceImpl implements ConcertService {
     @Transactional(readOnly = true)
     public ConcertEntity getConcert(String concertId) {
         return concertRepository.findById(concertId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 콘서트 입니다."));
+                .orElseThrow(() -> new BusinessException(ConcertErrorCode.NOT_FOUND));
     }
 
     @Override

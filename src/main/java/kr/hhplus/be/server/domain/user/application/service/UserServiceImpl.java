@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.user.application.service;
 
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
+import kr.hhplus.be.server.domain.user.model.exception.UserErrorCode;
 import kr.hhplus.be.server.domain.user.model.repository.UserRepository;
 import kr.hhplus.be.server.domain.user.model.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserEntity getUser(String id) {
         return repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않음"));
+                .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
     }
 
     @Override

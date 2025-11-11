@@ -7,6 +7,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
+import kr.hhplus.be.server.domain.user.model.exception.UserErrorCode;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,7 +40,7 @@ public class UserEntity {
 
     public void addBalance(BigInteger amount) {
         if (amount.compareTo(BigInteger.ZERO) < 0) {
-            throw new IllegalArgumentException("충전 금액은 0보다 커야합니다");
+            throw new BusinessException(CommonErrorCode.INVALID_INPUT);
         }
 
         this.balance = this.balance.add(amount);
@@ -45,7 +48,7 @@ public class UserEntity {
 
     public void deductBalance(BigInteger amount) {
         if (this.balance.compareTo(amount) < 0) {
-            throw new IllegalArgumentException("잔액이 부족합니다");
+            throw new BusinessException(UserErrorCode.NOT_ENOUGH_POINT);
         }
 
         this.balance = this.balance.subtract(amount);

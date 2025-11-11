@@ -17,6 +17,7 @@ import kr.hhplus.be.server.domain.concert.application.command.CreateConcertComma
 import kr.hhplus.be.server.domain.concert.application.query.FindConcertQuery;
 import kr.hhplus.be.server.domain.concert.model.entity.ConcertEntity;
 import kr.hhplus.be.server.domain.concert.model.service.ConcertService;
+import kr.hhplus.be.server.shared.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -45,7 +46,7 @@ public class ConcertController {
 
     @GetMapping
     @Operation(summary = "콘서트 조회", description = "콘서트 조회 API")
-    public ResponseEntity<Page<ConcertResponse>> getConcerts(
+    public ResponseEntity<BaseResponse<Page<ConcertResponse>>> getConcerts(
             @Parameter(in = ParameterIn.QUERY) @ModelAttribute FindConcertRequest request,
             @ParameterObject Pageable pageable) {
 
@@ -54,7 +55,7 @@ public class ConcertController {
 
         Page<ConcertResponse> responses = concerts.map(ConcertResponse::fromEntity);
 
-        return ResponseEntity.status(HttpStatus.OK).body(responses);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.success(responses));
     }
 
     @GetMapping("/{concertId}/schedules")

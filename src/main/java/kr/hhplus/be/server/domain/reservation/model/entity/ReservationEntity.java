@@ -12,7 +12,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
+import kr.hhplus.be.server.config.exception.exceptions.ServerErrorException;
 import kr.hhplus.be.server.domain.concert.model.entity.SeatEntity;
+import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -98,9 +102,18 @@ public class ReservationEntity {
     }
 
     public void validateForPayment(String userId) {
-        if (!isOwnedBy(userId)) throw new IllegalArgumentException("접근 권한이 없습니다"); // todo check, 에러 타입 변경
-        if (isExpired()) throw new IllegalArgumentException("예약이 만료되었습니다"); // todo check, 에러 타입 변경
-        if (!isPayable()) throw new IllegalArgumentException("결제 가능 상태가 아닙니다"); // todo check, 에러 타입 변경
+        if (!isOwnedBy(userId)) throw new BusinessException(CommonErrorCode.FORBIDDEN_ERROR);
+        if (isExpired()) throw new BusinessException(ReservationErrorCode.EXPIRED); // todo check, 에러 타입 변경
+        if (!isPayable()) {
+            if (this.status == ReservationStatus.CONFIRMED) {
+                throw new BusinessException(ReservationErrorCode.ALREADY_PAID);
+            }
+            if (this.status == ReservationStatus.CANCELLED) {
+                throw new BusinessException(ReservationErrorCode.CANCELED);
+            }
+
+            throw new ServerErrorException("validateForPayment : 이상한 에러");
+        }
     }
 
     public void completePayment() {

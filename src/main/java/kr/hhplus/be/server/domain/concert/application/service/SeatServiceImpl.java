@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.concert.application.service;
 
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.concert.model.entity.SeatEntity;
+import kr.hhplus.be.server.domain.concert.model.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.concert.model.repository.SeatRepository;
 import kr.hhplus.be.server.domain.concert.model.service.SeatService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,6 @@ public class SeatServiceImpl implements SeatService {
     @Override
     public SeatEntity getSeat(String seatId) {
         return seatRepository.findById(seatId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 좌석입니다."));
+                .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
     }
 }

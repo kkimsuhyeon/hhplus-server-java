@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.reservation.application.service;
 
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.reservation.adapter.out.persistence.ReservationRepositoryAdapter;
+import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import kr.hhplus.be.server.domain.reservation.model.entity.ReservationEntity;
 import kr.hhplus.be.server.domain.reservation.model.service.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,6 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional(readOnly = true)
     public ReservationEntity getReservation(String reservationId) {
         return repository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("예약이 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ReservationErrorCode.NOT_FOUND));
     }
 }
