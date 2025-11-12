@@ -1,8 +1,11 @@
 package kr.hhplus.be.server.domain.user.adapter.out.persistence;
 
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
+import kr.hhplus.be.server.domain.user.model.repository.UserCriteria;
 import kr.hhplus.be.server.domain.user.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -12,6 +15,11 @@ import java.util.Optional;
 public class UserRepositoryAdapter implements UserRepository {
 
     private final UserJpaRepository jpaRepository;
+
+    @Override
+    public Page<UserEntity> findAllByCriteria(UserCriteria criteria, Pageable pageable) {
+        return jpaRepository.findAll(pageable);
+    }
 
     @Override
     public Optional<UserEntity> findById(String id) {

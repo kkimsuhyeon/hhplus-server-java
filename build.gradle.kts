@@ -51,8 +51,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // swagger
-    implementation(group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version = "2.8.9")
-}
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")}
 
 tasks.withType<Test> {
     useJUnitPlatform()

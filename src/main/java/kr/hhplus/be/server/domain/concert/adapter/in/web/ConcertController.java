@@ -18,6 +18,7 @@ import kr.hhplus.be.server.domain.concert.application.query.FindConcertQuery;
 import kr.hhplus.be.server.domain.concert.model.entity.ConcertEntity;
 import kr.hhplus.be.server.domain.concert.model.service.ConcertService;
 import kr.hhplus.be.server.shared.dto.BaseResponse;
+import kr.hhplus.be.server.shared.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -46,34 +47,35 @@ public class ConcertController {
 
     @GetMapping
     @Operation(summary = "콘서트 조회", description = "콘서트 조회 API")
-    public ResponseEntity<BaseResponse<Page<ConcertResponse>>> getConcerts(
-            @Parameter(in = ParameterIn.QUERY) @ModelAttribute FindConcertRequest request,
+    public ResponseEntity<BaseResponse<PageResponse<ConcertResponse>>> getConcerts(
+            @ParameterObject @ModelAttribute FindConcertRequest request,
             @ParameterObject Pageable pageable) {
 
         FindConcertQuery query = queryFactory.toFindQuery(request);
         Page<ConcertEntity> concerts = concertService.getConcerts(query, pageable);
 
-        Page<ConcertResponse> responses = concerts.map(ConcertResponse::fromEntity);
+        Page<ConcertResponse> response = concerts.map(ConcertResponse::fromEntity);
+        PageResponse<ConcertResponse> parsedResponse = PageResponse.of(response);
 
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.success(responses));
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.success(parsedResponse));
     }
 
     @GetMapping("/{concertId}/schedules")
     @Operation(summary = "콘서트 예약 가능 날짜 조회", description = "콘서트 예약 가능 날짜 조회 API")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "콘서트 예약 가능 날짜 정상 조회", content = {@Content(mediaType = "application/json", array = @io.swagger.v3.oas.annotations.media.ArraySchema(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ScheduleResponse.class)))})})
-    public ResponseEntity<List<ScheduleResponse>> getConcertAvailableDate(
+    public ResponseEntity<BaseResponse<List<ScheduleResponse>>> getConcertAvailableDate(
             @Parameter(description = "콘서트 ID", in = ParameterIn.PATH)
             @PathVariable(name = "concertId", required = true) Long concertId
     ) {
-        return ResponseEntity.ok().body(List.of());
+        return ResponseEntity.ok().body(BaseResponse.success(List.of()));
     }
 
     @PostMapping
     @Operation(summary = "콘서트 생성", description = "콘서트 생성 API [DEV]")
-    public ResponseEntity<HttpStatus> createConcert(@RequestBody CreateConcertRequest request) {
+    public ResponseEntity<BaseResponse<Void>> createConcert(@RequestBody CreateConcertRequest request) {
         CreateConcertCommand command = commandFactory.toCreateCommand(request);
         concertService.createConcert(command);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(BaseResponse.success());
     }
 }

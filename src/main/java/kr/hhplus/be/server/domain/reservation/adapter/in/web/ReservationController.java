@@ -9,6 +9,7 @@ import kr.hhplus.be.server.application.dto.ReserveSeatCommand;
 import kr.hhplus.be.server.application.usecase.ReservationUseCase;
 import kr.hhplus.be.server.domain.reservation.adapter.in.web.factory.ReservationCommandFactory;
 import kr.hhplus.be.server.domain.reservation.adapter.in.web.request.ReserveSeatRequest;
+import kr.hhplus.be.server.shared.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,11 +39,11 @@ public class ReservationController {
                     content = {@io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json")}
             )
     })
-    public ResponseEntity<Void> reserveSeat(
+    public ResponseEntity<BaseResponse<Void>> reserveSeat(
             @RequestBody @Valid ReserveSeatRequest request
     ) {
         ReserveSeatCommand command = commandFactory.toReserveSeatCommand(request);
         reservationUseCase.execute(command);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponse.success());
     }
 }
