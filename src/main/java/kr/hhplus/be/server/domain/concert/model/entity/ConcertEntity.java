@@ -20,6 +20,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -45,9 +46,10 @@ public class ConcertEntity {
     @Comment("콘서트 설명")
     private String description;
 
+    @Builder.Default
     @OneToMany(mappedBy = "concert")
     @BatchSize(size = 10)
-    private List<ConcertScheduleEntity> schedules;
+    private List<ConcertScheduleEntity> schedules = new ArrayList<>();
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

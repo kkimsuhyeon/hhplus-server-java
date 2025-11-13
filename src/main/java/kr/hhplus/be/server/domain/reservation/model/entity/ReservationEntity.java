@@ -94,7 +94,7 @@ public class ReservationEntity {
     }
 
     public boolean isOwnedBy(String userId) {
-        return this.getId().equals(userId);
+        return this.user.getId().equals(userId);
     }
 
     public boolean isOwnedBy(UserEntity user) {
@@ -103,7 +103,7 @@ public class ReservationEntity {
 
     public void validateForPayment(String userId) {
         if (!isOwnedBy(userId)) throw new BusinessException(CommonErrorCode.FORBIDDEN_ERROR);
-        if (isExpired()) throw new BusinessException(ReservationErrorCode.EXPIRED); // todo check, 에러 타입 변경
+        if (isExpired()) throw new BusinessException(ReservationErrorCode.EXPIRED);
         if (!isPayable()) {
             if (this.status == ReservationStatus.CONFIRMED) {
                 throw new BusinessException(ReservationErrorCode.ALREADY_PAID);

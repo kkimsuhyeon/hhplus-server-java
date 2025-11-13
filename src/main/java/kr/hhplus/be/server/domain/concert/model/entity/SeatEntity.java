@@ -26,6 +26,7 @@ import org.hibernate.annotations.Comment;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -61,9 +62,10 @@ public class SeatEntity {
     @JoinColumn(name = "schedule_id", nullable = false)
     private ConcertScheduleEntity schedule;
 
+    @Builder.Default
     @OneToMany(mappedBy = "seat", cascade = CascadeType.ALL)
     @BatchSize(size = 10)
-    private List<ReservationEntity> reservations;
+    private List<ReservationEntity> reservations = new ArrayList<>();
 
     public boolean isReservable() {
         return this.status == SeatStatus.AVAILABLE;
