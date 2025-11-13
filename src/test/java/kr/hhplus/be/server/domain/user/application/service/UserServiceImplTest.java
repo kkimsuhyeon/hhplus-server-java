@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.user.application.service;
 
+import kr.hhplus.be.server.domain.user.application.command.CreateUserCommand;
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
 import kr.hhplus.be.server.domain.user.model.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -60,11 +62,12 @@ class UserServiceImplTest {
     @Test
     @DisplayName("유저 생성")
     void createUser() {
-        UserEntity expectedUser = UserEntity.builder().id("1").build();
+        CreateUserCommand command = CreateUserCommand.builder().build();
+        UserEntity userMock = mock(UserEntity.class);
 
-        userService.create(expectedUser);
+        userService.create(command);
 
-        verify(userRepository, times(1)).save(expectedUser);
+        verify(userRepository, times(1)).save(userMock);
     }
 
 }

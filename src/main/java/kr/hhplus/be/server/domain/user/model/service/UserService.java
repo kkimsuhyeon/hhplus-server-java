@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.user.model.service;
 
+import kr.hhplus.be.server.domain.user.application.command.CreateUserCommand;
 import kr.hhplus.be.server.domain.user.application.query.FindUserQuery;
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ public interface UserService {
 
     UserEntity getUser(String id);
 
-    void create(UserEntity user);
+    void create(CreateUserCommand command);
 
     void addBalance(String userId, BigInteger amount);
 

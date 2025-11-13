@@ -1,13 +1,17 @@
 package kr.hhplus.be.server.domain.user.adapter.in.web;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import kr.hhplus.be.server.domain.user.adapter.in.web.factory.UserCommandFactory;
 import kr.hhplus.be.server.domain.user.adapter.in.web.factory.UserQueryFactory;
 import kr.hhplus.be.server.domain.user.adapter.in.web.request.BalanceChargeRequest;
+import kr.hhplus.be.server.domain.user.adapter.in.web.request.CreateUserRequest;
 import kr.hhplus.be.server.domain.user.adapter.in.web.request.FindUserRequest;
 import kr.hhplus.be.server.domain.user.adapter.in.web.response.BalanceResponse;
 import kr.hhplus.be.server.domain.user.adapter.in.web.response.UserResponse;
+import kr.hhplus.be.server.domain.user.application.command.CreateUserCommand;
 import kr.hhplus.be.server.domain.user.application.query.FindUserQuery;
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
 import kr.hhplus.be.server.domain.user.model.service.UserService;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,20 +42,7 @@ public class UserController {
     private final UserQueryFactory queryFactory;
 
     private final UserService userService;
-
-    @GetMapping
-    @Operation(summary = "[DEV] 유저 조회", description = "[DEV] 유저 조회 API")
-    public ResponseEntity<BaseResponse<PageResponse<UserResponse>>> getUsers(
-            @ParameterObject @ModelAttribute FindUserRequest request,
-            @ParameterObject Pageable pageable
-    ) {
-        FindUserQuery query = queryFactory.toFindQuery(request);
-        Page<UserEntity> users = userService.getUsers(query, pageable);
-        Page<UserResponse> response = users.map(UserResponse::fromEntity);
-
-        PageResponse<UserResponse> parsedResponse = PageResponse.of(response);
-        return ResponseEntity.ok().body(BaseResponse.success(parsedResponse));
-    }
+    private final UserCommandFactory userCommandFactory;
 
     @PatchMapping("/{userId}/balance")
     @Operation(summary = "잔액 충전", description = "잔액 충전 API")
@@ -74,5 +66,29 @@ public class UserController {
                 .build();
 
         return ResponseEntity.ok().body(BaseResponse.success(response));
+    }
+
+    @GetMapping
+    @Operation(summary = "[DEV] 유저 조회", description = "[DEV] 유저 조회 API")
+    public ResponseEntity<BaseResponse<PageResponse<UserResponse>>> getUsers(
+            @ParameterObject @ModelAttribute FindUserRequest request,
+            @ParameterObject Pageable pageable
+    ) {
+        FindUserQuery query = queryFactory.toFindQuery(request);
+        Page<UserEntity> users = userService.getUsers(query, pageable);
+        Page<UserResponse> response = users.map(UserResponse::fromEntity);
+
+        PageResponse<UserResponse> parsedResponse = PageResponse.of(response);
+        return ResponseEntity.ok().body(BaseResponse.success(parsedResponse));
+    }
+
+    @PostMapping
+    @Operation(summary = "[DEV] 유저 생성", description = "[DEV] 유저 생성 API")
+    public ResponseEntity<BaseResponse<Void>> createUser(
+            @Parameter @RequestBody CreateUserRequest request
+    ) {
+        CreateUserCommand command = userCommandFactory.toCreateCommand(request);
+        userService.create(command);
+        return ResponseEntity.ok().body(BaseResponse.success());
     }
 }

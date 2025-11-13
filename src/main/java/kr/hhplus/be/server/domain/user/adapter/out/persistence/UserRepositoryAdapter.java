@@ -28,6 +28,6 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public UserEntity save(UserEntity user) {
-        return null;
+        return jpaRepository.save(user);
     }
 }

@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.user.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.domain.user.application.command.CreateUserCommand;
+import kr.hhplus.be.server.domain.user.application.mapper.UserMapper;
 import kr.hhplus.be.server.domain.user.application.query.FindUserQuery;
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
 import kr.hhplus.be.server.domain.user.model.exception.UserErrorCode;
@@ -21,6 +23,7 @@ import java.math.BigInteger;
 public class UserServiceImpl implements UserService {
 
     private final UserCriteriaFactory criteriaFactory;
+    private final UserMapper userMapper;
 
     private final UserRepository repository;
 
@@ -39,8 +42,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void create(UserEntity user) {
-        repository.save(user);
+    public void create(CreateUserCommand command) {
+        UserEntity userEntity = userMapper.toEntity(command);
+        repository.save(userEntity);
     }
 
     @Override

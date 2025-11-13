@@ -34,9 +34,10 @@ public class UserEntity {
     @Column(name = "user_id")
     private String id;
 
+    @Builder.Default
     @Column(name = "balance", nullable = false)
     @Comment("잔액")
-    private BigInteger balance;
+    private BigInteger balance = BigInteger.ZERO;
 
     public void addBalance(BigInteger amount) {
         if (amount.compareTo(BigInteger.ZERO) < 0) {
