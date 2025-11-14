@@ -112,7 +112,7 @@ public class ReservationEntity {
                 throw new BusinessException(ReservationErrorCode.CANCELED);
             }
 
-            throw new ServerErrorException("validateForPayment : 이상한 에러");
+            throw new ServerErrorException(String.format("Invalid reservation status for payment. reservationId: %s, status: %s", this.id, this.status));
         }
     }
 

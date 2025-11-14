@@ -32,9 +32,7 @@ public class ReservationUseCase {
         UserEntity userEntity = userService.getUser(request.getUserId());
 
         ReservationEntity reservationEntity = ReservationEntity.create(userEntity, seatEntity);
-        reservationRepository.save(reservationEntity);
 
-        seatEntity.setStatus(SeatStatus.RESERVING);
-        seatEntity.addReservation(reservationEntity);
+        seatEntity.reserve(reservationEntity);
     }
 }

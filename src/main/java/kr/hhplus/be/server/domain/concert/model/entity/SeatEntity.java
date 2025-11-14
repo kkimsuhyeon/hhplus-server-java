@@ -48,7 +48,6 @@ public class SeatEntity {
     @Comment("좌석 번호")
     private int seatNumber;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     @Comment("좌석 상태")
@@ -73,6 +72,11 @@ public class SeatEntity {
 
     public void addReservation(ReservationEntity reservation) {
         reservations.add(reservation);
+    }
+
+    public void reserve(ReservationEntity reservation){
+        this.status = SeatStatus.RESERVING;
+        this.addReservation(reservation);
     }
 
 }

@@ -1,7 +1,10 @@
 package kr.hhplus.be.server.domain.user.application.service;
 
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.user.application.command.CreateUserCommand;
+import kr.hhplus.be.server.domain.user.application.mapper.UserMapper;
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
+import kr.hhplus.be.server.domain.user.model.exception.UserErrorCode;
 import kr.hhplus.be.server.domain.user.model.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,10 +18,12 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UserService 테스트")
@@ -29,6 +34,9 @@ class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private UserMapper userMapper;
 
     @Test
     @DisplayName("유저 조회 - 성공")
@@ -54,8 +62,8 @@ class UserServiceImplTest {
         given(userRepository.findById("1")).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.getUser("1"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("유저가 존재하지 않음");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(UserErrorCode.NOT_FOUND.getMessage());
 
     }
 
@@ -64,6 +72,8 @@ class UserServiceImplTest {
     void createUser() {
         CreateUserCommand command = CreateUserCommand.builder().build();
         UserEntity userMock = mock(UserEntity.class);
+
+        when(userMapper.toEntity(command)).thenReturn(userMock);
 
         userService.create(command);
 

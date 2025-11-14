@@ -65,7 +65,7 @@ public class ConcertController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "콘서트 예약 가능 날짜 정상 조회", content = {@Content(mediaType = "application/json", array = @io.swagger.v3.oas.annotations.media.ArraySchema(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ScheduleResponse.class)))})})
     public ResponseEntity<BaseResponse<List<ScheduleResponse>>> getConcertAvailableDate(
             @Parameter(description = "콘서트 ID", in = ParameterIn.PATH)
-            @PathVariable(name = "concertId", required = true) Long concertId
+            @PathVariable(name = "concertId", required = true) String concertId
     ) {
         return ResponseEntity.ok().body(BaseResponse.success(List.of()));
     }

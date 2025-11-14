@@ -7,6 +7,7 @@ import kr.hhplus.be.server.domain.concert.model.entity.SeatStatus;
 import kr.hhplus.be.server.domain.concert.model.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.concert.model.service.SeatService;
 import kr.hhplus.be.server.domain.reservation.model.entity.ReservationEntity;
+import kr.hhplus.be.server.domain.reservation.model.entity.ReservationStatus;
 import kr.hhplus.be.server.domain.reservation.model.repository.ReservationRepository;
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
 import kr.hhplus.be.server.domain.user.model.service.UserService;
@@ -46,20 +47,16 @@ class ReservationUseCaseTest {
         SeatEntity seatMock = Mockito.mock(SeatEntity.class);
         UserEntity userMock = Mockito.mock(UserEntity.class);
 
-        when(seatMock.isReservable()).thenReturn(true);
-
         given(seatService.getSeat("1")).willReturn(seatMock);
+        when(seatMock.isReservable()).thenReturn(true);
         given(userService.getUser("1")).willReturn(userMock);
-        given(reservationRepository.save(any(ReservationEntity.class)))
-                .willAnswer(invocation -> invocation.getArgument(0));
 
         ReserveSeatCommand request = ReserveSeatCommand.builder().seatId("1").userId("1").build();
         reservationUseCase.execute(request);
 
         verify(seatService, times(1)).getSeat("1");
         verify(userService, times(1)).getUser("1");
-        verify(reservationRepository, times(1)).save(any(ReservationEntity.class));
-        verify(seatMock, times(1)).setStatus(SeatStatus.RESERVING);
+        verify(seatMock, times(1)).reserve(any(ReservationEntity.class));
     }
 
     @Test
