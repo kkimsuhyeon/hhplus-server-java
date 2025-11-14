@@ -21,18 +21,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ServerErrorException.class)
     public ResponseEntity<BaseResponse<?>> handleServerErrorException(ServerErrorException exception) {
+        log.error("SERVER ERROR: ", exception);
         return ResponseEntity.status(exception.getErrorCode().getStatus())
                 .body(BaseResponse.fail(exception.getErrorCode(), exception.getDescription()));
     }
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<BaseResponse<?>> handleBusinessException(BusinessException exception) {
+        log.error("BUSINESS ERROR: ", exception);
         return ResponseEntity.status(exception.getErrorCode().getStatus())
                 .body(BaseResponse.fail(exception.getErrorCode()));
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<BaseResponse<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        log.error("VALIDATION ERROR: ", exception);
         List<ValidationError> errors = exception.getBindingResult().getFieldErrors().stream()
                 .map(ValidationError::new)
                 .toList();
@@ -43,7 +46,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<BaseResponse<?>> handleException(Exception exception) {
-        log.error("SERVER ERROR: ", exception);
+        log.error("UNKNOWN ERROR: ", exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(BaseResponse.fail(CommonErrorCode.SERVER_ERROR, "서버 에러"));
     }
