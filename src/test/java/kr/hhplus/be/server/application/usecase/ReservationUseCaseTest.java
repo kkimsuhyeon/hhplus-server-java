@@ -47,14 +47,14 @@ class ReservationUseCaseTest {
         SeatEntity seatMock = Mockito.mock(SeatEntity.class);
         UserEntity userMock = Mockito.mock(UserEntity.class);
 
-        given(seatService.getSeat("1")).willReturn(seatMock);
+        given(seatService.getSeatExclusive("1")).willReturn(seatMock);
         when(seatMock.isReservable()).thenReturn(true);
         given(userService.getUser("1")).willReturn(userMock);
 
         ReserveSeatCommand request = ReserveSeatCommand.builder().seatId("1").userId("1").build();
         reservationUseCase.execute(request);
 
-        verify(seatService, times(1)).getSeat("1");
+        verify(seatService, times(1)).getSeatExclusive("1");
         verify(userService, times(1)).getUser("1");
         verify(seatMock, times(1)).reserve(any(ReservationEntity.class));
     }
@@ -65,7 +65,7 @@ class ReservationUseCaseTest {
         SeatEntity seatMock = Mockito.mock(SeatEntity.class);
 
         when(seatMock.isReservable()).thenReturn(false);
-        given(seatService.getSeat("1")).willReturn(seatMock);
+        given(seatService.getSeatExclusive("1")).willReturn(seatMock);
 
         ReserveSeatCommand request = ReserveSeatCommand.builder()
                 .seatId("1")

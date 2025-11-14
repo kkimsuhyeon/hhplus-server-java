@@ -22,10 +22,8 @@ public class ReservationUseCase {
     private final SeatService seatService;
     private final UserService userService;
 
-    private final ReservationRepository reservationRepository;
-
     public void execute(ReserveSeatCommand request) {
-        SeatEntity seatEntity = seatService.getSeat(request.getSeatId());
+        SeatEntity seatEntity = seatService.getSeatExclusive(request.getSeatId());
 
         if (!seatEntity.isReservable()) throw new BusinessException(SeatErrorCode.ALREADY_RESERVED);
 

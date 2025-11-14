@@ -17,4 +17,9 @@ public class SeatRepositoryAdapter implements SeatRepository {
     public Optional<SeatEntity> findById(String id) {
         return jpaRepository.findById(id);
     }
+
+    @Override
+    public Optional<SeatEntity> findByIdForUpdate(String id) {
+        return jpaRepository.findByIdForUpdate(id);
+    }
 }

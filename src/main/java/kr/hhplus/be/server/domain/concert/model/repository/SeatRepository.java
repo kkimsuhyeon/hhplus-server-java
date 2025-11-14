@@ -6,5 +6,7 @@ import java.util.Optional;
 
 public interface SeatRepository {
 
-    public Optional<SeatEntity> findById(String id);
+    Optional<SeatEntity> findById(String id);
+
+    Optional<SeatEntity> findByIdForUpdate(String id);
 }
