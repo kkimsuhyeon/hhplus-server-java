@@ -1,9 +1,9 @@
-package kr.hhplus.be.server.domain.user.adapter.in.web.factory;
+package kr.hhplus.be.server.domain.user.adapter.in.web.mapper;
 
 import kr.hhplus.be.server.domain.user.adapter.in.web.request.BalanceChargeRequest;
 import kr.hhplus.be.server.domain.user.adapter.in.web.request.CreateUserRequest;
-import kr.hhplus.be.server.domain.user.application.command.BalanceChargeCommand;
-import kr.hhplus.be.server.domain.user.application.command.CreateUserCommand;
+import kr.hhplus.be.server.domain.user.application.dto.command.BalanceChargeCommand;
+import kr.hhplus.be.server.domain.user.application.dto.command.CreateUserCommand;
 import org.springframework.stereotype.Component;
 
 @Component

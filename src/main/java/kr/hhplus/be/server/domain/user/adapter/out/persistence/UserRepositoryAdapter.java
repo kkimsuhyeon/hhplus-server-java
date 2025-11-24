@@ -1,9 +1,12 @@
 package kr.hhplus.be.server.domain.user.adapter.out.persistence;
 
-import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
+import kr.hhplus.be.server.domain.user.application.UserRepository;
+import kr.hhplus.be.server.domain.user.application.dto.UserCriteria;
+import kr.hhplus.be.server.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -15,17 +18,21 @@ public class UserRepositoryAdapter implements UserRepository {
     private final UserJpaRepository jpaRepository;
 
     @Override
-    public Page<UserEntity> findAllByCriteria(UserCriteria criteria, Pageable pageable) {
-        return jpaRepository.findAll(pageable);
+    public Page<User> findAllByCriteria(UserCriteria criteria, Pageable pageable) {
+        Specification<UserJpaEntity> userJpaEntitySpecification = UserSpecification.likeId("");
+        return jpaRepository.findAll(userJpaEntitySpecification, pageable)
+                .map(UserJpaEntity::toModel);
     }
 
     @Override
-    public Optional<UserEntity> findById(String id) {
-        return jpaRepository.findById(id);
+    public Optional<User> findById(String id) {
+        return jpaRepository.findById(id)
+                .map(UserJpaEntity::toModel);
     }
 
     @Override
-    public UserEntity save(UserEntity user) {
-        return jpaRepository.save(user);
+    public User save(User user) {
+        return null;
     }
+
 }

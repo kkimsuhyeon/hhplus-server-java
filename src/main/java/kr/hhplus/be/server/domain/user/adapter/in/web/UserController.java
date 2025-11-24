@@ -4,15 +4,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import kr.hhplus.be.server.domain.user.adapter.in.web.factory.UserCommandFactory;
-import kr.hhplus.be.server.domain.user.adapter.in.web.factory.UserQueryFactory;
+import kr.hhplus.be.server.domain.user.adapter.in.web.mapper.UserCommandMapper;
+import kr.hhplus.be.server.domain.user.adapter.in.web.mapper.UserQueryMapper;
 import kr.hhplus.be.server.domain.user.adapter.in.web.request.BalanceChargeRequest;
 import kr.hhplus.be.server.domain.user.adapter.in.web.request.CreateUserRequest;
 import kr.hhplus.be.server.domain.user.adapter.in.web.request.FindUserRequest;
 import kr.hhplus.be.server.domain.user.adapter.in.web.response.BalanceResponse;
 import kr.hhplus.be.server.domain.user.adapter.in.web.response.UserResponse;
-import kr.hhplus.be.server.domain.user.application.command.CreateUserCommand;
-import kr.hhplus.be.server.domain.user.application.query.FindUserQuery;
+import kr.hhplus.be.server.domain.user.application.dto.command.CreateUserCommand;
+import kr.hhplus.be.server.domain.user.application.dto.query.FindUserQuery;
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
 import kr.hhplus.be.server.domain.user.model.service.UserService;
 import kr.hhplus.be.server.shared.dto.BaseResponse;
@@ -39,10 +39,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/users")
 public class UserController {
 
-    private final UserQueryFactory queryFactory;
+    private final UserQueryMapper queryFactory;
 
     private final UserService userService;
-    private final UserCommandFactory userCommandFactory;
+    private final UserCommandMapper userCommandMapper;
 
     @PatchMapping("/{userId}/balance")
     @Operation(summary = "잔액 충전", description = "잔액 충전 API")
@@ -87,7 +87,7 @@ public class UserController {
     public ResponseEntity<BaseResponse<Void>> createUser(
             @Parameter @RequestBody CreateUserRequest request
     ) {
-        CreateUserCommand command = userCommandFactory.toCreateCommand(request);
+        CreateUserCommand command = userCommandMapper.toCreateCommand(request);
         userService.create(command);
         return ResponseEntity.ok().body(BaseResponse.success());
     }
