@@ -1,11 +1,11 @@
 package kr.hhplus.be.server.domain.user.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.domain.user.application.UserService;
 import kr.hhplus.be.server.domain.user.application.command.CreateUserCommand;
 import kr.hhplus.be.server.domain.user.application.mapper.UserMapper;
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
-import kr.hhplus.be.server.domain.user.model.exception.UserErrorCode;
-import kr.hhplus.be.server.domain.user.model.repository.UserRepository;
+import kr.hhplus.be.server.domain.user.exception.UserErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 class UserServiceImplTest {
 
     @InjectMocks
-    private UserServiceImpl userService;
+    private UserService userService;
 
     @Mock
     private UserRepository userRepository;

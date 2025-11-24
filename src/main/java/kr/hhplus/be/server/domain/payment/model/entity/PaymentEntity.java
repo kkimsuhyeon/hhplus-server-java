@@ -9,10 +9,21 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import kr.hhplus.be.server.domain.reservation.model.entity.ReservationEntity;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table(name = "payments")
 public class PaymentEntity {
 
     @Id
@@ -33,4 +44,11 @@ public class PaymentEntity {
     @OneToOne
     @JoinColumn(name = "reservation_id", nullable = false)
     private ReservationEntity reservation;
+
+    /**
+     * 도메인 Model의 변경사항을 Entity에 반영 (Adapter용)
+     */
+    public void updateFromDomain(PaymentStatus status) {
+        this.status = status;
+    }
 }

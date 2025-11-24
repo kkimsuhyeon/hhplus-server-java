@@ -13,6 +13,7 @@ public enum ReservationErrorCode implements ErrorCode {
     EXPIRED(HttpStatus.BAD_REQUEST, "RSV002", "예약이 만료되었습니다"),
     ALREADY_PAID(HttpStatus.BAD_REQUEST, "RSV003", "이미 결제된 예약입니다"),
     CANCELED(HttpStatus.BAD_REQUEST, "RSV004", "취소된 예약입니다"),
+    NOT_PAYABLE(HttpStatus.BAD_REQUEST, "RSV005", "결제 가능한 상태가 아닙니다"),
     ;
 
     private final HttpStatus status;

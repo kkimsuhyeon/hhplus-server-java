@@ -1,34 +1,39 @@
 package kr.hhplus.be.server.application.usecase;
 
 import kr.hhplus.be.server.application.dto.PayCommand;
-import kr.hhplus.be.server.domain.reservation.model.entity.ReservationEntity;
-import kr.hhplus.be.server.domain.reservation.model.service.ReservationService;
-import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
-import kr.hhplus.be.server.domain.user.model.service.UserService;
+import kr.hhplus.be.server.domain.reservation.application.ReservationRepository;
+import kr.hhplus.be.server.domain.reservation.model.Reservation;
+import kr.hhplus.be.server.domain.user.application.UserRepository;
+import kr.hhplus.be.server.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigInteger;
-
+/**
+ * 결제 UseCase
+ * 순수 도메인 Model만 다루며, JPA Entity에 대해 전혀 알지 못함
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class PaymentUseCase {
 
-    private final ReservationService reservationService;
-    private final UserService userService;
+    private final ReservationRepository reservationRepository;
+    private final UserRepository userRepository;
 
     public void pay(PayCommand command) {
-        ReservationEntity reservation = reservationService.getReservation(command.getReservationId());
-        UserEntity user = userService.getUser(command.getUserId());
+        // 1. 순수 도메인 Model을 조회
+        Reservation reservation = reservationRepository.findById(command.getReservationId());
+        User user = userRepository.findById(command.getUserId());
 
+        // 2. 도메인 Model의 비즈니스 메서드 호출
         reservation.validateForPayment(command.getUserId());
-
-        BigInteger price = reservation.getSeat().getPrice();
-        user.deductBalance(price);
-
+        user.deductBalance(reservation.getSeatPrice());
         reservation.completePayment();
+
+        // 3. 변경된 Model을 저장
+        reservationRepository.save(reservation);
+        userRepository.save(user);
     }
 
     public void cancel() {

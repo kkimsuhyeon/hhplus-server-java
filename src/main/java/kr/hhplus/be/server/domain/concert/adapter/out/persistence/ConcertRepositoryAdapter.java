@@ -1,9 +1,7 @@
 package kr.hhplus.be.server.domain.concert.adapter.out.persistence;
 
 import kr.hhplus.be.server.domain.concert.model.entity.ConcertEntity;
-import kr.hhplus.be.server.domain.concert.model.repository.ConcertCriteria;
 import kr.hhplus.be.server.domain.concert.model.repository.ConcertRepository;
-import kr.hhplus.be.server.domain.concert.model.specification.ConcertSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

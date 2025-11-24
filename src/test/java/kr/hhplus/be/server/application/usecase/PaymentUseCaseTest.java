@@ -8,7 +8,7 @@ import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import kr.hhplus.be.server.domain.reservation.model.entity.ReservationEntity;
 import kr.hhplus.be.server.domain.reservation.model.service.ReservationService;
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
-import kr.hhplus.be.server.domain.user.model.exception.UserErrorCode;
+import kr.hhplus.be.server.domain.user.exception.UserErrorCode;
 import kr.hhplus.be.server.domain.user.model.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

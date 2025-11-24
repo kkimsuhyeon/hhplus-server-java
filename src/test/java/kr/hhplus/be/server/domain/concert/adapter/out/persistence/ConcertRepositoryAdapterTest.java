@@ -3,7 +3,6 @@ package kr.hhplus.be.server.domain.concert.adapter.out.persistence;
 import kr.hhplus.be.server.config.TestJpaAuditingConfig;
 import kr.hhplus.be.server.domain.concert.model.entity.ConcertEntity;
 import kr.hhplus.be.server.domain.concert.model.entity.ConcertScheduleEntity;
-import kr.hhplus.be.server.domain.concert.model.repository.ConcertCriteria;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

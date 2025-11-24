@@ -5,7 +5,6 @@ import kr.hhplus.be.server.domain.concert.application.mapper.ConcertMapper;
 import kr.hhplus.be.server.domain.concert.application.query.FindConcertQuery;
 import kr.hhplus.be.server.domain.concert.model.entity.ConcertEntity;
 import kr.hhplus.be.server.domain.concert.model.factory.ConcertCriteriaFactory;
-import kr.hhplus.be.server.domain.concert.model.repository.ConcertCriteria;
 import kr.hhplus.be.server.domain.concert.model.repository.ConcertRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +32,7 @@ import static org.mockito.Mockito.verify;
 class ConcertServiceImplTest {
 
     @InjectMocks
-    private ConcertServiceImpl concertService;
+    private ConcertService concertService;
 
     @Mock
     private ConcertCriteriaFactory criteriaFactory;

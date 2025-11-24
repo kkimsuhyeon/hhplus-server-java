@@ -2,35 +2,54 @@ package kr.hhplus.be.server.application.usecase;
 
 import kr.hhplus.be.server.application.dto.ReserveSeatCommand;
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.concert.model.entity.SeatEntity;
-import kr.hhplus.be.server.domain.concert.model.entity.SeatStatus;
-import kr.hhplus.be.server.domain.concert.model.exception.SeatErrorCode;
-import kr.hhplus.be.server.domain.concert.model.service.SeatService;
-import kr.hhplus.be.server.domain.reservation.model.entity.ReservationEntity;
-import kr.hhplus.be.server.domain.reservation.model.repository.ReservationRepository;
-import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
-import kr.hhplus.be.server.domain.user.model.service.UserService;
+import kr.hhplus.be.server.domain.concert.application.repository.SeatRepository;
+import kr.hhplus.be.server.domain.concert.model.Seat;
+import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
+import kr.hhplus.be.server.domain.reservation.application.ReservationRepository;
+import kr.hhplus.be.server.domain.reservation.model.Reservation;
+import kr.hhplus.be.server.domain.user.application.UserRepository;
+import kr.hhplus.be.server.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 예약 UseCase
+ * JPA Entity를 전혀 모르며, 순수 도메인 모델과 Repository 인터페이스만 사용
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class ReservationUseCase {
 
-    private final SeatService seatService;
-    private final UserService userService;
+    private final SeatRepository seatRepository;
+    private final UserRepository userRepository;
+    private final ReservationRepository reservationRepository;
 
-    public void execute(ReserveSeatCommand request) {
-        SeatEntity seatEntity = seatService.getSeatExclusive(request.getSeatId());
+    public Reservation execute(ReserveSeatCommand request) {
+        // 1. 좌석 조회 (비관적 락)
+        Seat seat = seatRepository.findByIdForUpdate(request.getSeatId());
 
-        if (!seatEntity.isReservable()) throw new BusinessException(SeatErrorCode.ALREADY_RESERVED);
+        // 2. 예약 가능 여부 검증
+        if (!seat.isReservable()) {
+            throw new BusinessException(SeatErrorCode.ALREADY_RESERVED);
+        }
 
-        UserEntity userEntity = userService.getUser(request.getUserId());
+        // 3. 사용자 조회 (존재 여부 확인)
+        User user = userRepository.findById(request.getUserId());
 
-        ReservationEntity reservationEntity = ReservationEntity.create(userEntity, seatEntity);
+        // 4. 예약 생성 (도메인 모델)
+        Reservation reservation = Reservation.create(
+                user.getId(),
+                seat.getId(),
+                seat.getPrice()
+        );
 
-        seatEntity.reserve(reservationEntity);
+        // 5. 좌석 상태 변경
+        seat.reserve();
+
+        // 6. 저장
+        seatRepository.save(seat);
+        return reservationRepository.save(reservation);
     }
 }
