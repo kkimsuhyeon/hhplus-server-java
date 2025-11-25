@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.concert.application;
+package kr.hhplus.be.server.domain.concert.application.repository;
 
 import kr.hhplus.be.server.domain.concert.model.Seat;
 

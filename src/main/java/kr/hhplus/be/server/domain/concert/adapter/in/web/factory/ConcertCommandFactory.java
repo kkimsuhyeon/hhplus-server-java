@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.domain.concert.adapter.in.web.factory;
 
 import kr.hhplus.be.server.domain.concert.adapter.in.web.request.CreateConcertRequest;
-import kr.hhplus.be.server.domain.concert.application.command.CreateConcertCommand;
+import kr.hhplus.be.server.domain.concert.application.dto.command.CreateConcertCommand;
 import org.springframework.stereotype.Component;
 
 @Component

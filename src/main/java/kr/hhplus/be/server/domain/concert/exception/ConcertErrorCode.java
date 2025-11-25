@@ -13,8 +13,6 @@ public enum ConcertErrorCode implements ErrorCode {
     ;
 
     private final HttpStatus status;
-
     private final String code;
-
     private final String message;
 }

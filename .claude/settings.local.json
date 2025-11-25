@@ -6,7 +6,8 @@
       "Bash(dir:*)",
       "Bash(git rm:*)",
       "Bash(git add:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "mcp__jetbrains__list_directory_tree"
     ],
     "deny": [],
     "ask": []

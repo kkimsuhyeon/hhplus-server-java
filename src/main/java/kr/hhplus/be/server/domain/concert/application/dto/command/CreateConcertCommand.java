@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.concert.application.command;
+package kr.hhplus.be.server.domain.concert.application.dto.command;
 
 
 import lombok.Builder;

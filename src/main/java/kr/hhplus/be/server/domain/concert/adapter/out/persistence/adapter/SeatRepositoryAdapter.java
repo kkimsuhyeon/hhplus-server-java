@@ -1,7 +1,9 @@
-package kr.hhplus.be.server.domain.concert.adapter.out.persistence;
+package kr.hhplus.be.server.domain.concert.adapter.out.persistence.adapter;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.concert.application.SeatRepository;
+import kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity.SeatEntity;
+import kr.hhplus.be.server.domain.concert.adapter.out.persistence.repository.SeatJpaRepository;
+import kr.hhplus.be.server.domain.concert.application.repository.SeatRepository;
 import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.concert.model.Seat;
 import lombok.RequiredArgsConstructor;
@@ -19,14 +21,14 @@ public class SeatRepositoryAdapter implements SeatRepository {
     @Override
     public Seat findById(String id) {
         return jpaRepository.findById(id)
-                .map(SeatJpaEntity::toModel)
+                .map(SeatEntity::toModel)
                 .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
     }
 
     @Override
     public Seat findByIdForUpdate(String id) {
         return jpaRepository.findByIdForUpdate(id)
-                .map(SeatJpaEntity::toModel)
+                .map(SeatEntity::toModel)
                 .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
     }
 
@@ -35,22 +37,22 @@ public class SeatRepositoryAdapter implements SeatRepository {
         return jpaRepository.findAll()
                 .stream()
                 .filter(entity -> entity.getScheduleId().equals(scheduleId))
-                .map(SeatJpaEntity::toModel)
+                .map(SeatEntity::toModel)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Seat save(Seat seat) {
         if (seat.getId() != null) {
-            SeatJpaEntity entity = jpaRepository.findById(seat.getId())
+            SeatEntity entity = jpaRepository.findById(seat.getId())
                     .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
 
             entity.update(seat);
 
             return entity.toModel();
         } else {
-            SeatJpaEntity entity = SeatJpaEntity.create(seat);
-            SeatJpaEntity savedEntity = jpaRepository.save(entity);
+            SeatEntity entity = SeatEntity.create(seat);
+            SeatEntity savedEntity = jpaRepository.save(entity);
 
             return savedEntity.toModel();
         }

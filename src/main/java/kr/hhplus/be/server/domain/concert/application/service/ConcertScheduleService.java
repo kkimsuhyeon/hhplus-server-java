@@ -1,5 +1,6 @@
-package kr.hhplus.be.server.domain.concert.application;
+package kr.hhplus.be.server.domain.concert.application.service;
 
+import kr.hhplus.be.server.domain.concert.application.repository.ConcertScheduleRepository;
 import kr.hhplus.be.server.domain.concert.model.ConcertSchedule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

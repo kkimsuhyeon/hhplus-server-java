@@ -2,7 +2,7 @@ package kr.hhplus.be.server.application.usecase;
 
 import kr.hhplus.be.server.application.dto.ReserveSeatCommand;
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.concert.application.SeatRepository;
+import kr.hhplus.be.server.domain.concert.application.repository.SeatRepository;
 import kr.hhplus.be.server.domain.concert.model.Seat;
 import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.reservation.application.ReservationRepository;

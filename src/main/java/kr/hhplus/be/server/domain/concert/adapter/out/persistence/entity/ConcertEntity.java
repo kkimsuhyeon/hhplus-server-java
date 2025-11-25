@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.concert.adapter.out.persistence;
+package kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
 import kr.hhplus.be.server.domain.concert.model.Concert;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "concerts")
-public class ConcertJpaEntity {
+public class ConcertEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -43,8 +43,8 @@ public class ConcertJpaEntity {
     @Comment("수정 일시")
     private LocalDateTime updatedAt;
 
-    public static ConcertJpaEntity create(Concert concert) {
-        return ConcertJpaEntity.builder()
+    public static ConcertEntity create(Concert concert) {
+        return ConcertEntity.builder()
                 .title(concert.getTitle())
                 .description(concert.getDescription())
                 .build();

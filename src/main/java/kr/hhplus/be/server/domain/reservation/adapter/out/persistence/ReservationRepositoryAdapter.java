@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.concert.adapter.out.persistence.SeatJpaEntity;
-import kr.hhplus.be.server.domain.concert.adapter.out.persistence.SeatJpaRepository;
+import kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity.SeatEntity;
+import kr.hhplus.be.server.domain.concert.adapter.out.persistence.repository.SeatJpaRepository;
 import kr.hhplus.be.server.domain.reservation.application.ReservationRepository;
 import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
@@ -32,7 +32,7 @@ public class ReservationRepositoryAdapter implements ReservationRepository {
     @Override
     public Reservation save(Reservation reservation) {
         UserJpaEntity userEntity = userRepository.getReferenceById(reservation.getUserId());
-        SeatJpaEntity seatEntity = seatRepository.getReferenceById(reservation.getSeatId());
+        SeatEntity seatEntity = seatRepository.getReferenceById(reservation.getSeatId());
 
         ReservationJpaEntity entity = ReservationJpaEntity.create(reservation, userEntity, seatEntity);
         ReservationJpaEntity savedEntity = jpaRepository.save(entity);

@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.domain.concert.application.service;
 
-import kr.hhplus.be.server.domain.concert.application.command.CreateConcertCommand;
+import kr.hhplus.be.server.domain.concert.application.dto.command.CreateConcertCommand;
 import kr.hhplus.be.server.domain.concert.application.mapper.ConcertMapper;
-import kr.hhplus.be.server.domain.concert.application.query.FindConcertQuery;
+import kr.hhplus.be.server.domain.concert.application.dto.query.FindConcertQuery;
 import kr.hhplus.be.server.domain.concert.model.entity.ConcertEntity;
 import kr.hhplus.be.server.domain.concert.model.factory.ConcertCriteriaFactory;
 import kr.hhplus.be.server.domain.concert.model.repository.ConcertRepository;

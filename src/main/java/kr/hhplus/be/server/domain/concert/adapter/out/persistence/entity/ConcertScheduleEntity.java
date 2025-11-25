@@ -1,8 +1,21 @@
-package kr.hhplus.be.server.domain.concert.adapter.out.persistence;
+package kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import kr.hhplus.be.server.domain.concert.model.ConcertSchedule;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -17,7 +30,7 @@ import java.time.LocalDateTime;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "concert_schedules")
-public class ConcertScheduleJpaEntity {
+public class ConcertScheduleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -29,9 +42,9 @@ public class ConcertScheduleJpaEntity {
     @Comment("콘서트 날짜")
     private LocalDateTime concertDate;
 
-    @Column(name = "concert_id", nullable = false)
-    @Comment("콘서트 아이디")
-    private String concertId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "concert_id", nullable = false)
+    private ConcertEntity concert;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -43,10 +56,10 @@ public class ConcertScheduleJpaEntity {
     @Comment("수정 일시")
     private LocalDateTime updatedAt;
 
-    public static ConcertScheduleJpaEntity create(ConcertSchedule schedule) {
-        return ConcertScheduleJpaEntity.builder()
+    public static ConcertScheduleEntity create(ConcertSchedule schedule, ConcertEntity concert) {
+        return ConcertScheduleEntity.builder()
                 .concertDate(schedule.getConcertDate())
-                .concertId(schedule.getConcertId())
+                .concert(concert)
                 .build();
     }
 
@@ -54,9 +67,9 @@ public class ConcertScheduleJpaEntity {
         return ConcertSchedule.builder()
                 .id(this.id)
                 .concertDate(this.concertDate)
-                .concertId(this.concertId)
                 .createdAt(this.createdAt)
                 .updatedAt(this.updatedAt)
+                .concertId(this.concert.getId())
                 .build();
     }
 

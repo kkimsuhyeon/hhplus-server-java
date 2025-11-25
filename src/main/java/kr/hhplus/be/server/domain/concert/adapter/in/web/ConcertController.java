@@ -13,15 +13,12 @@ import kr.hhplus.be.server.domain.concert.adapter.in.web.request.CreateConcertRe
 import kr.hhplus.be.server.domain.concert.adapter.in.web.request.FindConcertRequest;
 import kr.hhplus.be.server.domain.concert.adapter.in.web.response.ConcertResponse;
 import kr.hhplus.be.server.domain.concert.adapter.in.web.response.ScheduleResponse;
-import kr.hhplus.be.server.domain.concert.application.command.CreateConcertCommand;
-import kr.hhplus.be.server.domain.concert.application.query.FindConcertQuery;
-import kr.hhplus.be.server.domain.concert.application.ConcertService;
+import kr.hhplus.be.server.domain.concert.application.dto.query.FindConcertQuery;
+import kr.hhplus.be.server.domain.concert.application.service.ConcertService;
 import kr.hhplus.be.server.domain.concert.model.Concert;
 import kr.hhplus.be.server.shared.dto.BaseResponse;
-import kr.hhplus.be.server.shared.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,12 +1,26 @@
-package kr.hhplus.be.server.domain.concert.adapter.out.persistence;
+package kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import kr.hhplus.be.server.domain.concert.model.Seat;
 import kr.hhplus.be.server.domain.concert.model.SeatStatus;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 
 @Getter
 @Builder(access = AccessLevel.PACKAGE)
@@ -14,17 +28,13 @@ import java.math.BigInteger;
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Entity
 @Table(name = "seats")
-public class SeatJpaEntity {
+public class SeatEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "seat_id")
     @Comment("좌석 아이디")
     private String id;
-
-    @Column(name = "seat_number", nullable = false)
-    @Comment("좌석 번호")
-    private int seatNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -33,28 +43,26 @@ public class SeatJpaEntity {
 
     @Column(name = "price", nullable = false)
     @Comment("가격")
-    private BigInteger price;
+    private BigDecimal price;
 
-    @Column(name = "schedule_id", nullable = false)
-    @Comment("스케줄 아이디")
-    private String scheduleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_id")
+    private ConcertScheduleEntity schedule;
 
-    public static SeatJpaEntity create(Seat seat) {
-        return SeatJpaEntity.builder()
-                .seatNumber(seat.getSeatNumber())
+    public static SeatEntity create(Seat seat, ConcertScheduleEntity schedule) {
+        return SeatEntity.builder()
                 .status(seat.getStatus())
                 .price(seat.getPrice())
-                .scheduleId(seat.getScheduleId())
+                .schedule(schedule)
                 .build();
     }
 
     public Seat toModel() {
         return Seat.builder()
                 .id(this.id)
-                .seatNumber(this.seatNumber)
                 .status(this.status)
                 .price(this.price)
-                .scheduleId(this.scheduleId)
+                .scheduleId(this.schedule.getId())
                 .build();
     }
 
