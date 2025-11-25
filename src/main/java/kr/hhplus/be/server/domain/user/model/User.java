@@ -1,14 +1,13 @@
 package kr.hhplus.be.server.domain.user.model;
 
+import java.math.BigDecimal;
+
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
 import kr.hhplus.be.server.domain.user.exception.UserErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 @Getter
 @Builder

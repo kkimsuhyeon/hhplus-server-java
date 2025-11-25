@@ -1,14 +1,14 @@
 package kr.hhplus.be.server.domain.concert.adapter.out.persistence;
 
-import kr.hhplus.be.server.domain.concert.model.entity.ConcertEntity;
-import kr.hhplus.be.server.domain.concert.model.repository.ConcertRepository;
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.domain.concert.application.ConcertRepository;
+import kr.hhplus.be.server.domain.concert.exception.ConcertErrorCode;
+import kr.hhplus.be.server.domain.concert.model.Concert;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -17,19 +17,34 @@ public class ConcertRepositoryAdapter implements ConcertRepository {
     private final ConcertJpaRepository jpaRepository;
 
     @Override
-    public Page<ConcertEntity> findAllByCriteria(ConcertCriteria criteria, Pageable pageable) {
-        Specification<ConcertEntity> spc = ConcertSpecification.likeTitle(criteria.getTitle());
-
-        return jpaRepository.findAll(spc, pageable);
+    public Concert findById(String id) {
+        return jpaRepository.findById(id)
+                .map(ConcertJpaEntity::toModel)
+                .orElseThrow(() -> new BusinessException(ConcertErrorCode.NOT_FOUND));
     }
 
     @Override
-    public Optional<ConcertEntity> findById(String concertId) {
-        return jpaRepository.findWithSchedulesById(concertId);
+    public List<Concert> findAll() {
+        return jpaRepository.findAll()
+                .stream()
+                .map(ConcertJpaEntity::toModel)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public ConcertEntity save(ConcertEntity entity) {
-        return jpaRepository.save(entity);
+    public Concert save(Concert concert) {
+        if (concert.getId() != null) {
+            ConcertJpaEntity entity = jpaRepository.findById(concert.getId())
+                    .orElseThrow(() -> new BusinessException(ConcertErrorCode.NOT_FOUND));
+
+            entity.update(concert);
+
+            return entity.toModel();
+        } else {
+            ConcertJpaEntity entity = ConcertJpaEntity.create(concert);
+            ConcertJpaEntity savedEntity = jpaRepository.save(entity);
+
+            return savedEntity.toModel();
+        }
     }
 }

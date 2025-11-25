@@ -7,7 +7,6 @@ import lombok.Getter;
 @Schema(name = "CreateUserRequest", description = "유저 생성용 Request")
 public class CreateUserRequest {
 
-    // todo check, 추후 개발
     private String name;
     private String email;
     private String password;

@@ -23,12 +23,14 @@ public class PaymentUseCase {
 
     public void pay(PayCommand command) {
         // 1. 순수 도메인 Model을 조회
-        Reservation reservation = reservationRepository.findById(command.getReservationId());
-        User user = userRepository.findById(command.getUserId());
+        Reservation reservation = reservationRepository.findById(command.getReservationId())
+                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+        User user = userRepository.findById(command.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         // 2. 도메인 Model의 비즈니스 메서드 호출
         reservation.validateForPayment(command.getUserId());
-        user.deductBalance(reservation.getSeatPrice());
+        user.deductBalance(new java.math.BigDecimal(reservation.getSeatPrice()));
         reservation.completePayment();
 
         // 3. 변경된 Model을 저장

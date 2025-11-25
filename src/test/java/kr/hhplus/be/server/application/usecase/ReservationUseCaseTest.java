@@ -54,7 +54,7 @@ class ReservationUseCaseTest {
 
         verify(seatService, times(1)).getSeatExclusive("1");
         verify(userService, times(1)).getUser("1");
-        verify(seatMock, times(1)).reserve(any(ReservationEntity.class));
+        verify(seatMock, times(1)).reserve(any(ReservationJpaEntity.class));
     }
 
     @Test

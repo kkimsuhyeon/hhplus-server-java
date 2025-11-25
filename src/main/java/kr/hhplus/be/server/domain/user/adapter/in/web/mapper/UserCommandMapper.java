@@ -4,19 +4,18 @@ import kr.hhplus.be.server.domain.user.adapter.in.web.request.BalanceChargeReque
 import kr.hhplus.be.server.domain.user.adapter.in.web.request.CreateUserRequest;
 import kr.hhplus.be.server.domain.user.application.dto.command.BalanceChargeCommand;
 import kr.hhplus.be.server.domain.user.application.dto.command.CreateUserCommand;
-import org.springframework.stereotype.Component;
 
-@Component
-public class UserCommandFactory {
+public class UserCommandMapper {
 
-    public BalanceChargeCommand toChargeCommand(String userId, BalanceChargeRequest request) {
+    public static CreateUserCommand toCreateCommand(CreateUserRequest request) {
+        return CreateUserCommand.builder().build();
+    }
+
+    public static BalanceChargeCommand toChargeCommand(String userId, BalanceChargeRequest request) {
         return BalanceChargeCommand.builder()
                 .userId(userId)
                 .balance(request.getAmount())
                 .build();
     }
 
-    public CreateUserCommand toCreateCommand(CreateUserRequest request) {
-        return CreateUserCommand.builder().build();
-    }
 }

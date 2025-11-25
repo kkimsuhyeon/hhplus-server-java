@@ -1,11 +1,11 @@
 package kr.hhplus.be.server.domain.user.adapter.in.web.response;
 
+import java.math.BigDecimal;
+
 import io.swagger.v3.oas.annotations.media.Schema;
-import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
+import kr.hhplus.be.server.domain.user.model.User;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.math.BigInteger;
 
 @Getter
 @Builder
@@ -16,12 +16,12 @@ public class UserResponse {
     private String id;
 
     @Schema(description = "잔고")
-    private BigInteger balance;
+    private BigDecimal balance;
 
-    public static UserResponse fromEntity(UserEntity entity){
+    public static UserResponse fromModel(User model){
         return UserResponse.builder()
-                .id(entity.getId())
-                .balance(entity.getBalance())
+                .id(model.getId())
+                .balance(model.getBalance())
                 .build();
     }
 

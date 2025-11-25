@@ -15,8 +15,8 @@ import kr.hhplus.be.server.domain.concert.adapter.in.web.response.ConcertRespons
 import kr.hhplus.be.server.domain.concert.adapter.in.web.response.ScheduleResponse;
 import kr.hhplus.be.server.domain.concert.application.command.CreateConcertCommand;
 import kr.hhplus.be.server.domain.concert.application.query.FindConcertQuery;
-import kr.hhplus.be.server.domain.concert.model.entity.ConcertEntity;
-import kr.hhplus.be.server.domain.concert.model.service.ConcertService;
+import kr.hhplus.be.server.domain.concert.application.ConcertService;
+import kr.hhplus.be.server.domain.concert.model.Concert;
 import kr.hhplus.be.server.shared.dto.BaseResponse;
 import kr.hhplus.be.server.shared.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
@@ -47,17 +47,18 @@ public class ConcertController {
 
     @GetMapping
     @Operation(summary = "콘서트 조회", description = "콘서트 조회 API")
-    public ResponseEntity<BaseResponse<PageResponse<ConcertResponse>>> getConcerts(
+    public ResponseEntity<BaseResponse<List<ConcertResponse>>> getConcerts(
             @ParameterObject @ModelAttribute FindConcertRequest request,
             @ParameterObject Pageable pageable) {
 
         FindConcertQuery query = queryFactory.toFindQuery(request);
-        Page<ConcertEntity> concerts = concertService.getConcerts(query, pageable);
+        List<Concert> concerts = concertService.getConcerts();
 
-        Page<ConcertResponse> response = concerts.map(ConcertResponse::fromEntity);
-        PageResponse<ConcertResponse> parsedResponse = PageResponse.of(response);
+        List<ConcertResponse> responses = concerts.stream()
+                .map(ConcertResponse::fromModel)
+                .collect(java.util.stream.Collectors.toList());
 
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.success(parsedResponse));
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.success(responses));
     }
 
     @GetMapping("/{concertId}/schedules")
@@ -73,8 +74,11 @@ public class ConcertController {
     @PostMapping
     @Operation(summary = "콘서트 생성", description = "콘서트 생성 API [DEV]")
     public ResponseEntity<BaseResponse<Void>> createConcert(@RequestBody CreateConcertRequest request) {
-        CreateConcertCommand command = commandFactory.toCreateCommand(request);
-        concertService.createConcert(command);
+        Concert concert = Concert.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .build();
+        concertService.createConcert(concert);
 
         return ResponseEntity.ok().body(BaseResponse.success());
     }

@@ -43,7 +43,7 @@ class PaymentUseCaseTest {
     @Test
     @DisplayName("결제 - 성공")
     void pay_success() {
-        ReservationEntity reservationMock = mock(ReservationEntity.class);
+        ReservationJpaEntity reservationMock = mock(ReservationJpaEntity.class);
         UserEntity userMock = mock(UserEntity.class);
         SeatEntity seatMock = mock(SeatEntity.class);
 
@@ -84,7 +84,7 @@ class PaymentUseCaseTest {
     @Test
     @DisplayName("결제 - 실패(소유자가 아님)")
     void pay_fail_noOwner() {
-        ReservationEntity reservationMock = mock(ReservationEntity.class);
+        ReservationJpaEntity reservationMock = mock(ReservationJpaEntity.class);
         UserEntity userMock = mock(UserEntity.class);
 
         when(reservationService.getReservation("test"))
@@ -111,7 +111,7 @@ class PaymentUseCaseTest {
     @DisplayName("결제 - 실패(포인트 부족)")
     void pay_fail_noPoint() {
 
-        ReservationEntity reservationMock = mock(ReservationEntity.class);
+        ReservationJpaEntity reservationMock = mock(ReservationJpaEntity.class);
         UserEntity userMock = mock(UserEntity.class);
         SeatEntity seatEntity = mock(SeatEntity.class);
 

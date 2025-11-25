@@ -2,7 +2,7 @@ package kr.hhplus.be.server.domain.concert.adapter.in.web.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import kr.hhplus.be.server.domain.concert.model.entity.SeatStatus;
+import kr.hhplus.be.server.domain.concert.model.SeatStatus;
 
 @Schema(name = "SeatResponse", description = "콘서트 좌석 정보")
 public class SeatResponse {

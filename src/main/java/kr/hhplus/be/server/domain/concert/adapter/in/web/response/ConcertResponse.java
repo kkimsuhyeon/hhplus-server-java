@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.domain.concert.adapter.in.web.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import kr.hhplus.be.server.domain.concert.model.entity.ConcertEntity;
+import kr.hhplus.be.server.domain.concert.model.Concert;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -19,11 +19,11 @@ public class ConcertResponse {
     @Schema(description = "콘서트 설명")
     private String description;
 
-    public static ConcertResponse fromEntity(ConcertEntity entity) {
+    public static ConcertResponse fromModel(Concert concert) {
         return ConcertResponse.builder()
-                .id(entity.getId())
-                .title(entity.getTitle())
-                .description(entity.getDescription())
+                .id(concert.getId())
+                .title(concert.getTitle())
+                .description(concert.getDescription())
                 .build();
     }
 

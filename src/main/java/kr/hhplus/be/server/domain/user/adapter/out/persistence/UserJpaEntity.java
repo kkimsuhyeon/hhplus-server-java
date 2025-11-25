@@ -37,6 +37,12 @@ public class UserJpaEntity {
     @Comment("잔액")
     private BigDecimal balance = BigDecimal.ZERO;
 
+    public static UserJpaEntity create(User user) {
+        return UserJpaEntity.builder()
+                .balance(user.getBalance())
+                .build();
+    }
+
     public User toModel() {
         return User.builder()
                 .id(this.id)

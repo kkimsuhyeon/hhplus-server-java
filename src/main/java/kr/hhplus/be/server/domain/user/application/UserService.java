@@ -1,5 +1,12 @@
 package kr.hhplus.be.server.domain.user.application;
 
+import java.math.BigDecimal;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.user.application.dto.UserCriteria;
 import kr.hhplus.be.server.domain.user.application.dto.command.CreateUserCommand;
@@ -7,12 +14,6 @@ import kr.hhplus.be.server.domain.user.application.dto.query.FindUserQuery;
 import kr.hhplus.be.server.domain.user.exception.UserErrorCode;
 import kr.hhplus.be.server.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -42,12 +43,16 @@ public class UserService {
     public void addBalance(String userId, BigDecimal amount) {
         User user = findUserById(userId);
         user.addBalance(amount);
+
+        repository.update(user);
     }
 
     @Transactional
     public void deductBalance(String userId, BigDecimal amount) {
         User user = findUserById(userId);
         user.deductBalance(amount);
+
+        repository.update(user);
     }
 
     private User findUserById(String userId) {

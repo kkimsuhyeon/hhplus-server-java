@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:claude.ai)",
-      "Bash(./gradlew compileJava:*)"
+      "Bash(./gradlew compileJava:*)",
+      "Bash(dir:*)",
+      "Bash(git rm:*)",
+      "Bash(git add:*)",
+      "Bash(git mv:*)"
     ],
     "deny": [],
     "ask": []

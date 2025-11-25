@@ -1,15 +1,18 @@
 package kr.hhplus.be.server.domain.user.adapter.out.persistence;
 
-import kr.hhplus.be.server.domain.user.application.UserRepository;
-import kr.hhplus.be.server.domain.user.application.dto.UserCriteria;
-import kr.hhplus.be.server.domain.user.model.User;
-import lombok.RequiredArgsConstructor;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.domain.user.application.UserRepository;
+import kr.hhplus.be.server.domain.user.application.dto.UserCriteria;
+import kr.hhplus.be.server.domain.user.exception.UserErrorCode;
+import kr.hhplus.be.server.domain.user.model.User;
+import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
@@ -32,7 +35,20 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public User save(User user) {
-        return null;
+        UserJpaEntity entity = UserJpaEntity.create(user);
+        UserJpaEntity savedEntity = jpaRepository.save(entity);
+
+        return savedEntity.toModel();
+    }
+
+    @Override
+    public User update(User user) {
+        UserJpaEntity entity = jpaRepository.findById(user.getId())
+                .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
+
+        entity.update(user);
+        
+        return entity.toModel();
     }
 
 }

@@ -1,13 +1,13 @@
 package kr.hhplus.be.server.domain.user.application.dto.command;
 
+import java.math.BigDecimal;
+
 import lombok.Builder;
 import lombok.Getter;
-
-import java.math.BigInteger;
 
 @Getter
 @Builder
 public class BalanceChargeCommand {
     private String userId;
-    private BigInteger balance;
+    private BigDecimal balance;
 }

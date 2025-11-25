@@ -1,6 +1,7 @@
-package kr.hhplus.be.server.domain.payment.adapter.persistence;
+package kr.hhplus.be.server.domain.payment.adapter.out.persistence;
 
 import jakarta.persistence.*;
+import kr.hhplus.be.server.domain.payment.model.Payment;
 import kr.hhplus.be.server.domain.payment.model.PaymentStatus;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -34,10 +35,25 @@ public class PaymentJpaEntity {
     @Comment("예약 아이디")
     private String reservationId;
 
-    /**
-     * 도메인 Model의 변경사항을 Entity에 반영 (Adapter용)
-     */
-    void updateFromDomain(PaymentStatus status) {
-        this.status = status;
+    public static PaymentJpaEntity create(Payment payment) {
+        return PaymentJpaEntity.builder()
+                .status(payment.getStatus())
+                .amount(payment.getAmount())
+                .reservationId(payment.getReservationId())
+                .build();
+    }
+
+    public Payment toModel() {
+        return Payment.builder()
+                .id(this.id)
+                .status(this.status)
+                .amount(this.amount)
+                .reservationId(this.reservationId)
+                .build();
+    }
+
+    public void update(Payment payment) {
+        this.status = payment.getStatus();
+        this.amount = payment.getAmount();
     }
 }

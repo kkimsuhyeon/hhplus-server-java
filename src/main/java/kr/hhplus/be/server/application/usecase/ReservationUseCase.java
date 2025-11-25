@@ -2,7 +2,7 @@ package kr.hhplus.be.server.application.usecase;
 
 import kr.hhplus.be.server.application.dto.ReserveSeatCommand;
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.concert.application.repository.SeatRepository;
+import kr.hhplus.be.server.domain.concert.application.SeatRepository;
 import kr.hhplus.be.server.domain.concert.model.Seat;
 import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.reservation.application.ReservationRepository;
@@ -36,7 +36,8 @@ public class ReservationUseCase {
         }
 
         // 3. 사용자 조회 (존재 여부 확인)
-        User user = userRepository.findById(request.getUserId());
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         // 4. 예약 생성 (도메인 모델)
         Reservation reservation = Reservation.create(
