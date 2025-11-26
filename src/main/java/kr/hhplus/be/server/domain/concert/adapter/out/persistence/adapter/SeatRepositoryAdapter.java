@@ -1,7 +1,9 @@
 package kr.hhplus.be.server.domain.concert.adapter.out.persistence.adapter;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity.ConcertScheduleEntity;
 import kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity.SeatEntity;
+import kr.hhplus.be.server.domain.concert.adapter.out.persistence.repository.ConcertScheduleJpaRepository;
 import kr.hhplus.be.server.domain.concert.adapter.out.persistence.repository.SeatJpaRepository;
 import kr.hhplus.be.server.domain.concert.application.repository.SeatRepository;
 import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
@@ -10,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,43 +20,43 @@ public class SeatRepositoryAdapter implements SeatRepository {
 
     private final SeatJpaRepository jpaRepository;
 
+    private final ConcertScheduleJpaRepository concertScheduleRepository;
+
     @Override
-    public Seat findById(String id) {
+    public Optional<Seat> findById(String id) {
         return jpaRepository.findById(id)
-                .map(SeatEntity::toModel)
-                .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
+                .map(SeatEntity::toModel);
     }
 
     @Override
-    public Seat findByIdForUpdate(String id) {
+    public Optional<Seat> findByIdForUpdate(String id) {
         return jpaRepository.findByIdForUpdate(id)
-                .map(SeatEntity::toModel)
-                .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
+                .map(SeatEntity::toModel);
     }
 
     @Override
     public List<Seat> findByScheduleId(String scheduleId) {
-        return jpaRepository.findAll()
+        return jpaRepository.findBySchedule_Id(scheduleId)
                 .stream()
-                .filter(entity -> entity.getScheduleId().equals(scheduleId))
                 .map(SeatEntity::toModel)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public Seat save(Seat seat) {
-        if (seat.getId() != null) {
-            SeatEntity entity = jpaRepository.findById(seat.getId())
-                    .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
+        ConcertScheduleEntity scheduleEntity = concertScheduleRepository.getReferenceById(seat.getScheduleId());
 
-            entity.update(seat);
+        SeatEntity entity = SeatEntity.create(seat, scheduleEntity);
+        return jpaRepository.save(entity).toModel();
+    }
 
-            return entity.toModel();
-        } else {
-            SeatEntity entity = SeatEntity.create(seat);
-            SeatEntity savedEntity = jpaRepository.save(entity);
+    @Override
+    public Seat update(Seat seat) {
+        SeatEntity seatEntity = jpaRepository.findByIdForUpdate(seat.getId())
+                .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
 
-            return savedEntity.toModel();
-        }
+        seatEntity.update(seat);
+
+        return seatEntity.toModel();
     }
 }

@@ -2,10 +2,9 @@ package kr.hhplus.be.server.application.usecase;
 
 import kr.hhplus.be.server.application.dto.ReserveSeatCommand;
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.concert.model.entity.SeatEntity;
 import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
+import kr.hhplus.be.server.domain.concert.model.entity.SeatEntity;
 import kr.hhplus.be.server.domain.concert.model.service.SeatService;
-import kr.hhplus.be.server.domain.reservation.model.entity.ReservationEntity;
 import kr.hhplus.be.server.domain.reservation.model.repository.ReservationRepository;
 import kr.hhplus.be.server.domain.user.model.entity.UserEntity;
 import kr.hhplus.be.server.domain.user.model.service.UserService;

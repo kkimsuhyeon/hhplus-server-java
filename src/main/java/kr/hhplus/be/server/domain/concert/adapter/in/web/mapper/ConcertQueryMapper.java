@@ -1,13 +1,11 @@
-package kr.hhplus.be.server.domain.concert.adapter.in.web.factory;
+package kr.hhplus.be.server.domain.concert.adapter.in.web.mapper;
 
 import kr.hhplus.be.server.domain.concert.adapter.in.web.request.FindConcertRequest;
 import kr.hhplus.be.server.domain.concert.application.dto.query.FindConcertQuery;
-import org.springframework.stereotype.Component;
 
-@Component
-public class ConcertQueryFactory {
+public class ConcertQueryMapper {
 
-    public FindConcertQuery toFindQuery(FindConcertRequest request) {
+    public static FindConcertQuery toFindQuery(FindConcertRequest request) {
         return FindConcertQuery.builder()
                 .title(request.getTitle())
                 .build();

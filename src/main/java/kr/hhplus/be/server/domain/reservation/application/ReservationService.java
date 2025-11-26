@@ -23,4 +23,9 @@ public class ReservationService {
     public Reservation save(Reservation reservation) {
         return repository.save(reservation);
     }
+
+    @Transactional
+    public Reservation update(Reservation reservation) {
+        return repository.update(reservation);
+    }
 }

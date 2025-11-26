@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.concert.application.service;
 
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.concert.application.repository.SeatRepository;
+import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.concert.model.Seat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,12 +18,8 @@ public class SeatService {
 
     @Transactional(readOnly = true)
     public Seat getSeat(String seatId) {
-        return repository.findById(seatId);
-    }
-
-    @Transactional(readOnly = true)
-    public Seat getSeatForUpdate(String seatId) {
-        return repository.findByIdForUpdate(seatId);
+        return repository.findById(seatId)
+                .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
@@ -30,7 +28,22 @@ public class SeatService {
     }
 
     @Transactional
-    public Seat updateSeat(Seat seat) {
+    public Seat reserve(String seatId) {
+        Seat seat = repository.findByIdForUpdate(seatId)
+                .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
+
+        seat.reserve();
+        return repository.update(seat);
+    }
+
+    @Transactional
+    public Seat create(Seat seat) {
         return repository.save(seat);
     }
+
+    @Transactional
+    public Seat update(Seat seat) {
+        return repository.update(seat);
+    }
+
 }

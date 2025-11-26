@@ -7,18 +7,21 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kr.hhplus.be.server.domain.concert.adapter.in.web.factory.ConcertCommandFactory;
-import kr.hhplus.be.server.domain.concert.adapter.in.web.factory.ConcertQueryFactory;
+import kr.hhplus.be.server.domain.concert.adapter.in.web.mapper.ConcertCommandMapper;
+import kr.hhplus.be.server.domain.concert.adapter.in.web.mapper.ConcertQueryMapper;
 import kr.hhplus.be.server.domain.concert.adapter.in.web.request.CreateConcertRequest;
 import kr.hhplus.be.server.domain.concert.adapter.in.web.request.FindConcertRequest;
 import kr.hhplus.be.server.domain.concert.adapter.in.web.response.ConcertResponse;
 import kr.hhplus.be.server.domain.concert.adapter.in.web.response.ScheduleResponse;
+import kr.hhplus.be.server.domain.concert.application.dto.command.CreateConcertCommand;
 import kr.hhplus.be.server.domain.concert.application.dto.query.FindConcertQuery;
 import kr.hhplus.be.server.domain.concert.application.service.ConcertService;
 import kr.hhplus.be.server.domain.concert.model.Concert;
 import kr.hhplus.be.server.shared.dto.BaseResponse;
+import kr.hhplus.be.server.shared.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,23 +42,18 @@ import java.util.List;
 public class ConcertController {
 
     private final ConcertService concertService;
-    private final ConcertQueryFactory queryFactory;
-    private final ConcertCommandFactory commandFactory;
 
     @GetMapping
     @Operation(summary = "콘서트 조회", description = "콘서트 조회 API")
-    public ResponseEntity<BaseResponse<List<ConcertResponse>>> getConcerts(
+    public ResponseEntity<BaseResponse<PageResponse<ConcertResponse>>> getConcerts(
             @ParameterObject @ModelAttribute FindConcertRequest request,
             @ParameterObject Pageable pageable) {
 
-        FindConcertQuery query = queryFactory.toFindQuery(request);
-        List<Concert> concerts = concertService.getConcerts();
+        FindConcertQuery query = ConcertQueryMapper.toFindQuery(request);
+        Page<ConcertResponse> concerts = concertService.getConcerts(query, pageable).map(ConcertResponse::fromModel);
+        PageResponse<ConcertResponse> concertResponse = PageResponse.of(concerts);
 
-        List<ConcertResponse> responses = concerts.stream()
-                .map(ConcertResponse::fromModel)
-                .collect(java.util.stream.Collectors.toList());
-
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.success(responses));
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.success(concertResponse));
     }
 
     @GetMapping("/{concertId}/schedules")
@@ -70,13 +68,10 @@ public class ConcertController {
 
     @PostMapping
     @Operation(summary = "콘서트 생성", description = "콘서트 생성 API [DEV]")
-    public ResponseEntity<BaseResponse<Void>> createConcert(@RequestBody CreateConcertRequest request) {
-        Concert concert = Concert.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .build();
-        concertService.createConcert(concert);
+    public ResponseEntity<BaseResponse<Concert>> createConcert(@RequestBody CreateConcertRequest request) {
+        CreateConcertCommand command = ConcertCommandMapper.toCreateCommand(request);
+        Concert response = concertService.create(command);
 
-        return ResponseEntity.ok().body(BaseResponse.success());
+        return ResponseEntity.ok().body(BaseResponse.success(response));
     }
 }

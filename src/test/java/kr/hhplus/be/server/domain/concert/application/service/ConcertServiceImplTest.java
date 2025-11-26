@@ -118,11 +118,11 @@ class ConcertServiceImplTest {
 
     @Test
     @DisplayName("콘서트 생성 - 성공")
-    void createConcert_Success() {
+    void save_Success() {
         given(mapper.toEntity(any(CreateConcertCommand.class))).willReturn(any(ConcertEntity.class));
         given(concertRepository.save(any(ConcertEntity.class))).willReturn(any(ConcertEntity.class));
 
-        concertService.createConcert(any(CreateConcertCommand.class));
+        concertService.save(any(CreateConcertCommand.class));
 
         verify(mapper, times(1)).toEntity(any(CreateConcertCommand.class));
         verify(concertRepository, times(1)).save(any(ConcertEntity.class));
