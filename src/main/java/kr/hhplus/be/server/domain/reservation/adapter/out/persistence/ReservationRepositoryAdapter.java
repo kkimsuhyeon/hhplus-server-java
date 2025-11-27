@@ -26,7 +26,7 @@ public class ReservationRepositoryAdapter implements ReservationRepository {
     @Override
     public Optional<Reservation> findById(String id) {
         return jpaRepository.findById(id)
-                .map(ReservationJpaEntity::toModel);
+                .map(ReservationEntity::toModel);
     }
 
     @Override
@@ -34,15 +34,15 @@ public class ReservationRepositoryAdapter implements ReservationRepository {
         UserJpaEntity userEntity = userRepository.getReferenceById(reservation.getUserId());
         SeatEntity seatEntity = seatRepository.getReferenceById(reservation.getSeatId());
 
-        ReservationJpaEntity entity = ReservationJpaEntity.create(reservation, userEntity, seatEntity);
-        ReservationJpaEntity savedEntity = jpaRepository.save(entity);
+        ReservationEntity entity = ReservationEntity.create(reservation, userEntity, seatEntity);
+        ReservationEntity savedEntity = jpaRepository.save(entity);
 
         return savedEntity.toModel();
     }
 
     @Override
     public Reservation update(Reservation reservation) {
-        ReservationJpaEntity entity = jpaRepository.findById(reservation.getId())
+        ReservationEntity entity = jpaRepository.findById(reservation.getId())
                 .orElseThrow(() -> new BusinessException(ReservationErrorCode.NOT_FOUND));
 
         entity.update(reservation);

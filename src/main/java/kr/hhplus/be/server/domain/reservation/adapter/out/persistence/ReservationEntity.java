@@ -37,7 +37,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "reservations")
-public class ReservationJpaEntity {
+public class ReservationEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -76,8 +76,8 @@ public class ReservationJpaEntity {
     @Comment("수정 일시")
     private LocalDateTime updatedAt;
 
-    public static ReservationJpaEntity create(Reservation reservation, UserJpaEntity user, SeatEntity seat) {
-        return ReservationJpaEntity.builder()
+    public static ReservationEntity create(Reservation reservation, UserJpaEntity user, SeatEntity seat) {
+        return ReservationEntity.builder()
                 .status(reservation.getStatus())
                 .expiredAt(reservation.getExpiredAt())
                 .paymentAmount(reservation.getPaymentAmount())

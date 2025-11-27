@@ -4,6 +4,8 @@ import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.payment.application.PaymentRepository;
 import kr.hhplus.be.server.domain.payment.exception.PaymentErrorCode;
 import kr.hhplus.be.server.domain.payment.model.Payment;
+import kr.hhplus.be.server.domain.reservation.adapter.out.persistence.ReservationEntity;
+import kr.hhplus.be.server.domain.reservation.adapter.out.persistence.ReservationJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -15,33 +17,29 @@ public class PaymentRepositoryAdapter implements PaymentRepository {
 
     private final PaymentJpaRepository jpaRepository;
 
-    @Override
-    public Payment findById(String id) {
-        return jpaRepository.findById(id)
-                .map(PaymentJpaEntity::toModel)
-                .orElseThrow(() -> new BusinessException(PaymentErrorCode.NOT_FOUND));
-    }
+    private final ReservationJpaRepository reservationRepository;
 
     @Override
-    public Optional<Payment> findByReservationId(String reservationId) {
-        return jpaRepository.findByReservationId(reservationId)
-                .map(PaymentJpaEntity::toModel);
+    public Optional<Payment> findById(String id) {
+        return jpaRepository.findById(id)
+                .map(PaymentEntity::toModel);
     }
 
     @Override
     public Payment save(Payment payment) {
-        if (payment.getId() != null) {
-            PaymentJpaEntity entity = jpaRepository.findById(payment.getId())
-                    .orElseThrow(() -> new BusinessException(PaymentErrorCode.NOT_FOUND));
+        ReservationEntity reservationEntity = reservationRepository.getReferenceById(payment.getReservationId());
 
-            entity.update(payment);
+        PaymentEntity entity = PaymentEntity.create(payment, reservationEntity);
+        return jpaRepository.save(entity).toModel();
+    }
 
-            return entity.toModel();
-        } else {
-            PaymentJpaEntity entity = PaymentJpaEntity.create(payment);
-            PaymentJpaEntity savedEntity = jpaRepository.save(entity);
+    @Override
+    public Payment update(Payment payment) {
+        PaymentEntity paymentEntity = jpaRepository.findById(payment.getId())
+                .orElseThrow(() -> new BusinessException(PaymentErrorCode.NOT_FOUND));
 
-            return savedEntity.toModel();
-        }
+        paymentEntity.update(payment);
+
+        return paymentEntity.toModel();
     }
 }

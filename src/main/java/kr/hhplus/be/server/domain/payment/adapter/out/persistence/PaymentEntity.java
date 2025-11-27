@@ -3,10 +3,11 @@ package kr.hhplus.be.server.domain.payment.adapter.out.persistence;
 import jakarta.persistence.*;
 import kr.hhplus.be.server.domain.payment.model.Payment;
 import kr.hhplus.be.server.domain.payment.model.PaymentStatus;
+import kr.hhplus.be.server.domain.reservation.adapter.out.persistence.ReservationEntity;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 
 @Getter
 @Builder(access = AccessLevel.PACKAGE)
@@ -14,7 +15,7 @@ import java.math.BigInteger;
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Entity
 @Table(name = "payments")
-public class PaymentJpaEntity {
+public class PaymentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -29,17 +30,17 @@ public class PaymentJpaEntity {
 
     @Column(name = "amount", nullable = false)
     @Comment("가격")
-    private BigInteger amount;
+    private BigDecimal amount;
 
-    @Column(name = "reservation_id", nullable = false)
-    @Comment("예약 아이디")
-    private String reservationId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id", nullable = false)
+    private ReservationEntity reservation;
 
-    public static PaymentJpaEntity create(Payment payment) {
-        return PaymentJpaEntity.builder()
+    public static PaymentEntity create(Payment payment, ReservationEntity reservation) {
+        return PaymentEntity.builder()
                 .status(payment.getStatus())
                 .amount(payment.getAmount())
-                .reservationId(payment.getReservationId())
+                .reservation(reservation)
                 .build();
     }
 
@@ -48,7 +49,7 @@ public class PaymentJpaEntity {
                 .id(this.id)
                 .status(this.status)
                 .amount(this.amount)
-                .reservationId(this.reservationId)
+                .reservationId(this.reservation.getId())
                 .build();
     }
 
