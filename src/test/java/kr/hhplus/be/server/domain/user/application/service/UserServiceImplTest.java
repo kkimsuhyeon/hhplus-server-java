@@ -1,9 +1,11 @@
 package kr.hhplus.be.server.domain.user.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
 import kr.hhplus.be.server.domain.user.application.UserRepository;
 import kr.hhplus.be.server.domain.user.application.UserService;
 import kr.hhplus.be.server.domain.user.application.dto.command.CreateUserCommand;
+import kr.hhplus.be.server.domain.user.exception.UserErrorCode;
 import kr.hhplus.be.server.domain.user.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,8 +19,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,9 +57,9 @@ class UserServiceImplTest {
         when(repository.findById("123")).thenReturn(Optional.empty());
 
         // when, then
-        assertThrows(BusinessException.class, () -> {
-            userService.getUser("123");
-        });
+        assertThatThrownBy(() -> userService.getUser("123"))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(UserErrorCode.NOT_FOUND.getMessage());
     }
 
     @Test
@@ -75,18 +76,67 @@ class UserServiceImplTest {
         verify(repository, times(1)).save(userCaptor.capture());
 
         User actualUser = userCaptor.getValue();
-        assertThat(actualUser.getId()).isNotNull();
         assertThat(actualUser.getBalance()).isEqualTo(BigDecimal.ZERO);
     }
 
     @Test
     @DisplayName("포인트 추가")
-    void createUser() {
-        CreateUserCommand command = CreateUserCommand.builder().build();
-        userService.create(command);
+    void addBalance_Success() {
 
-        verify(repository, times(1)).save(any());
+        // given
+        String userId = "123";
+        BigDecimal amount = BigDecimal.valueOf(1000);
+        User expectedUser = User.builder().id(userId).balance(BigDecimal.ZERO).build();
 
+        when(repository.findById(userId)).thenReturn(Optional.of(expectedUser));
+
+        // when
+        userService.addBalance(userId, amount);
+
+        // then
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        verify(repository, times(1)).update(userCaptor.capture());
+
+        User actualUser = userCaptor.getValue();
+        assertThat(actualUser.getBalance()).isEqualTo(amount);
+    }
+
+    @Test
+    @DisplayName("포인트 추가 - 실패")
+    void addBalance_Fail() {
+        // given
+        User expectedUser = User.builder().id("123").balance(BigDecimal.ZERO).build();
+        when(repository.findById("123")).thenReturn(Optional.of(expectedUser));
+
+        // when, then
+        assertThatThrownBy(() -> userService.addBalance("123", BigDecimal.valueOf(-100)))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(CommonErrorCode.INVALID_INPUT.getMessage());
+
+        verify(repository, times(0)).update(expectedUser);
+    }
+
+    @Test
+    @DisplayName("포인트 차감 - 성공")
+    void deductBalance_Success() {
+        User expectedUser = User.builder().id("123").balance(BigDecimal.valueOf(1000)).build();
+        when(repository.findById("123")).thenReturn(Optional.of(expectedUser));
+
+        userService.deductBalance("123", BigDecimal.valueOf(100));
+
+        assertThat(expectedUser.getBalance()).isEqualTo(BigDecimal.valueOf(900));
+        verify(repository, times(1)).update(expectedUser);
+    }
+
+    @Test
+    @DisplayName("포인트 차감 - 실패")
+    void deductBalance_Fail() {
+        User expectedUser = User.builder().id("123").balance(BigDecimal.valueOf(100)).build();
+        when(repository.findById("123")).thenReturn(Optional.of(expectedUser));
+
+        assertThatThrownBy(() -> userService.deductBalance("123", BigDecimal.valueOf(500)))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(UserErrorCode.NOT_ENOUGH_POINT.getMessage());
     }
 
 }
