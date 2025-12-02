@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.concert.model;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
 import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +35,10 @@ public class Seat {
     }
 
     public void confirmReservation() {
+        if (this.status != SeatStatus.RESERVING) {
+            throw new BusinessException(CommonErrorCode.INVALID_INPUT);
+        }
+
         this.status = SeatStatus.RESERVED;
     }
 }
