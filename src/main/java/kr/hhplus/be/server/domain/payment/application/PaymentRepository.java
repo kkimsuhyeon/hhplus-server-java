@@ -2,7 +2,6 @@ package kr.hhplus.be.server.domain.payment.application;
 
 import kr.hhplus.be.server.domain.payment.model.Payment;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 public interface PaymentRepository {
