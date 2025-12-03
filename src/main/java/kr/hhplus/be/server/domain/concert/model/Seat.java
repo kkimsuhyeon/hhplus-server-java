@@ -33,12 +33,4 @@ public class Seat {
 
         this.status = SeatStatus.RESERVING;
     }
-
-    public void confirmReservation() {
-        if (this.status != SeatStatus.RESERVING) {
-            throw new BusinessException(CommonErrorCode.INVALID_INPUT);
-        }
-
-        this.status = SeatStatus.RESERVED;
-    }
 }
