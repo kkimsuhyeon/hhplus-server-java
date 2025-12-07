@@ -6,8 +6,6 @@ import kr.hhplus.be.server.domain.token.model.QueueToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class QueueTokenService {
@@ -22,5 +20,9 @@ public class QueueTokenService {
     public QueueToken getToken(String id) {
         return queueTokenRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(TokenErrorCode.NOT_FOUND));
+    }
+
+    public int getRank(String id) {
+        return queueTokenRepository.getRank(id);
     }
 }

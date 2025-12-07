@@ -35,7 +35,7 @@ public class QueueTokenMemoryRepositoryAdapter implements QueueTokenRepository {
 
     @Override
     public int getRank(String id) {
-        return 0;
+        return tokenRepository.getPositionInQueue(id);
     }
 
     @Override
@@ -51,6 +51,6 @@ public class QueueTokenMemoryRepositoryAdapter implements QueueTokenRepository {
 
     @Override
     public QueueToken save(QueueToken queueToken) {
-        return null;
+        return tokenRepository.save(queueToken.getId(), queueToken);
     }
 }

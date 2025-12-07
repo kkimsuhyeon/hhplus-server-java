@@ -18,10 +18,10 @@ class QueueTokenLocalRepositoryTest {
 
     @Test
     void save_Success() {
-        QueueToken token = QueueToken.builder().build();
+        QueueToken token = QueueToken.create("userId");
         queueTokenLocalRepository.save("key1", token);
 
-        assertThat(queueTokenLocalRepository.getSize()).isEqualTo(1);
+        assertThat(queueTokenLocalRepository.getLastpositionInQueue()).isEqualTo(1);
     }
 
     @Test

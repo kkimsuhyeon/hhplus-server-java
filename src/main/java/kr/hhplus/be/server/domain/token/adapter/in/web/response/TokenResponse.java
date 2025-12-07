@@ -31,11 +31,12 @@ public class TokenResponse {
     @JsonProperty("status")
     private TokenStatus status;
 
-    public static TokenResponse fromModel(QueueToken token) {
+    public static TokenResponse of(QueueToken token, int rank) {
         return TokenResponse.builder()
                 .token(token.getId())
                 .expiredAt(token.getExpiredAt())
                 .status(token.getStatus())
+                .rank(rank)
                 .build();
     }
 }
