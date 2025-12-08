@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.token.adapter.out.memory;
 
 import kr.hhplus.be.server.domain.token.model.QueueToken;
+import kr.hhplus.be.server.domain.token.model.TokenStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +22,7 @@ class QueueTokenLocalRepositoryTest {
         QueueToken token = QueueToken.create("userId");
         queueTokenLocalRepository.save("key1", token);
 
-        assertThat(queueTokenLocalRepository.getLastPositionInQueue()).isEqualTo(1);
+        assertThat(queueTokenLocalRepository.countByStatus(TokenStatus.WAITING)).isEqualTo(1);
     }
 
     @Test
@@ -31,7 +32,7 @@ class QueueTokenLocalRepositoryTest {
         queueTokenLocalRepository.save("key1", token1);
         queueTokenLocalRepository.save("key1", token2);
 
-        assertThat(queueTokenLocalRepository.getLastPositionInQueue()).isEqualTo(1);
+        assertThat(queueTokenLocalRepository.countByStatus(TokenStatus.WAITING)).isEqualTo(1);
         assertThat(queueTokenLocalRepository.findById("key1"))
                 .isNotNull()
                 .hasValueSatisfying(token -> {
@@ -47,7 +48,7 @@ class QueueTokenLocalRepositoryTest {
         queueTokenLocalRepository.save("key1", token1);
         queueTokenLocalRepository.save("key2", token2);
 
-        assertThat(queueTokenLocalRepository.getLastPositionInQueue()).isEqualTo(2);
+        assertThat(queueTokenLocalRepository.countByStatus(TokenStatus.WAITING)).isEqualTo(2);
     }
 
     @Test

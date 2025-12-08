@@ -2,6 +2,7 @@ package kr.hhplus.be.server.domain.token.adapter.out.memory;
 
 import kr.hhplus.be.server.domain.token.application.QueueTokenRepository;
 import kr.hhplus.be.server.domain.token.model.QueueToken;
+import kr.hhplus.be.server.domain.token.model.TokenStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,11 @@ public class QueueTokenMemoryRepositoryAdapter implements QueueTokenRepository {
     private final QueueTokenMemoryRepository tokenRepository;
 
     @Override
+    public List<QueueToken> findAll() {
+        return tokenRepository.findAll();
+    }
+
+    @Override
     public Optional<QueueToken> findById(String id) {
         return tokenRepository.findById(id);
     }
@@ -27,27 +33,19 @@ public class QueueTokenMemoryRepositoryAdapter implements QueueTokenRepository {
     }
 
     @Override
-    public List<QueueToken> findWaitingTokens(int limit) {
-        return tokenRepository.findAll().stream()
-                .filter(QueueToken::isWaiting)
-                .toList();
+    public List<QueueToken> findByStatus(TokenStatus status, int limit) {
+        return tokenRepository.findByStatus(status, limit);
+    }
+
+    @Override
+    public int countByStatus(TokenStatus status) {
+        return tokenRepository.countByStatus(status);
     }
 
     @Override
     public int getRank(String id) {
-        return tokenRepository.getPositionInQueue(id);
+        return tokenRepository.getRank(id);
     }
-
-    @Override
-    public int countWaitingTokens() {
-        return tokenRepository.getLastPositionInQueue();
-    }
-
-    @Override
-    public void deleteExpiredTokens() {
-
-    }
-
 
     @Override
     public QueueToken save(QueueToken queueToken) {

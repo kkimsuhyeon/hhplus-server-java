@@ -11,13 +11,14 @@ public class TokenScheduler {
 
     private final QueueTokenService queueTokenService;
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 100000)
     public void activeToken() {
-
+        queueTokenService.activateTokens(1);
     }
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 100000)
     public void deleteExpiredToken() {
+        queueTokenService.deleteExpiredTokens();
     }
 
 }

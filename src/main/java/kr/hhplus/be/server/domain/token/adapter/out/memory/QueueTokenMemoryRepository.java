@@ -4,7 +4,6 @@ import kr.hhplus.be.server.domain.token.model.QueueToken;
 import kr.hhplus.be.server.domain.token.model.TokenStatus;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,13 +22,6 @@ public class QueueTokenMemoryRepository {
     // 순서 유지 Queue
     private final ConcurrentLinkedQueue<String> waitingQueue = new ConcurrentLinkedQueue<>();
 
-    public QueueToken save(String key, QueueToken value) {
-        userIdToTokenId.put(value.getUserId(), key);
-        waitingQueue.offer(key);
-        queueTokens.put(key, value);
-        return value;
-    }
-
     public List<QueueToken> findAll() {
         return List.copyOf(queueTokens.values());
     }
@@ -37,14 +29,7 @@ public class QueueTokenMemoryRepository {
     public Optional<QueueToken> findById(String id) {
         if (id == null) return Optional.empty();
 
-        QueueToken token = queueTokens.get(id);
-
-        if (token != null && isExpired(token)) {
-            delete(id);
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(token);
+        return Optional.ofNullable(queueTokens.get(id));
     }
 
     public Optional<QueueToken> findByUserId(String userId) {
@@ -53,35 +38,32 @@ public class QueueTokenMemoryRepository {
         return findById(userIdToTokenId.get(userId));
     }
 
-    public int getPositionInQueue(String id) {
-        int position = 0;
-        for (String tokenId : waitingQueue) {
-            if (tokenId.equals(id)) return position;
-
-            QueueToken token = queueTokens.get(id);
-            if (token != null && token.getStatus() == TokenStatus.WAITING) {
-                position++;
-            }
-        }
-
-        return -1;
+    public List<QueueToken> findByStatus(TokenStatus status, int limit) {
+        return queueTokens.values().stream()
+                .filter(token -> token.getStatus() == status)
+                .limit(limit)
+                .toList();
     }
 
-    public void activateTokens(int count) {
-        for (int i = 1; i <= count; i++) {
-            String tokenId = waitingQueue.poll();
-            if (tokenId == null) break;
+    public int countByStatus(TokenStatus status) {
+        return (int) queueTokens.values().stream()
+                .filter(token -> token.getStatus() == status)
+                .count();
+    }
+
+    public int getRank(String id) {
+        int rank = 1;
+        for (String tokenId : waitingQueue) {
+            if (tokenId.equals(id)) return rank;
 
             QueueToken token = queueTokens.get(tokenId);
             if (token != null && token.getStatus() == TokenStatus.WAITING) {
-                token.activate();
+                rank++;
             }
         }
+        return -1;
     }
 
-    public int getLastPositionInQueue() {
-        return waitingQueue.size();
-    }
 
     public void delete(String id) {
         QueueToken token = queueTokens.remove(id);
@@ -92,8 +74,10 @@ public class QueueTokenMemoryRepository {
         }
     }
 
-    private boolean isExpired(QueueToken token) {
-        return token.isExpired() || token.getExpiredAt().isBefore(LocalDateTime.now());
+    public QueueToken save(String key, QueueToken value) {
+        userIdToTokenId.put(value.getUserId(), key);
+        waitingQueue.offer(key);
+        queueTokens.put(key, value);
+        return value;
     }
-
 }

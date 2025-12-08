@@ -3,9 +3,12 @@ package kr.hhplus.be.server.domain.token.application;
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.token.exception.TokenErrorCode;
 import kr.hhplus.be.server.domain.token.model.QueueToken;
+import kr.hhplus.be.server.domain.token.model.TokenStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +48,18 @@ public class QueueTokenService {
         return queueTokenRepository.getRank(id);
     }
 
+    @Transactional
     public void deleteExpiredTokens() {
-        queueTokenRepository.deleteExpiredTokens();
+        List<QueueToken> allTokens = queueTokenRepository.findAll();
+
+        allTokens.stream()
+                .filter(QueueToken::isExpired)
+                .forEach(token -> queueTokenRepository.delete(token.getId()));
+    }
+
+    @Transactional
+    public void activateTokens(int count) {
+        List<QueueToken> waitingTokens = queueTokenRepository.findByStatus(TokenStatus.WAITING, count);
+        waitingTokens.forEach(QueueToken::activate);
     }
 }

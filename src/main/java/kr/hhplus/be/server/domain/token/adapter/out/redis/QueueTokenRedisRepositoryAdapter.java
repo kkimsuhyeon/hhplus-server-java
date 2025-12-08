@@ -2,6 +2,7 @@ package kr.hhplus.be.server.domain.token.adapter.out.redis;
 
 import kr.hhplus.be.server.domain.token.application.QueueTokenRepository;
 import kr.hhplus.be.server.domain.token.model.QueueToken;
+import kr.hhplus.be.server.domain.token.model.TokenStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,18 +22,18 @@ public class QueueTokenRedisRepositoryAdapter implements QueueTokenRepository {
     }
 
     @Override
-    public List<QueueToken> findWaitingTokens(int limit) {
+    public List<QueueToken> findByStatus(TokenStatus status, int limit) {
         return List.of();
     }
 
     @Override
-    public int countWaitingTokens() {
-        return 0;
+    public List<QueueToken> findAll() {
+        return List.of();
     }
 
     @Override
-    public void deleteExpiredTokens() {
-
+    public int countByStatus(TokenStatus status) {
+        return 0;
     }
 
     @Override

@@ -2,6 +2,8 @@ package kr.hhplus.be.server.domain.token.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,16 +38,15 @@ class QueueTokenTest {
 
     @Test
     void expire_Test() {
-        QueueToken token = QueueToken.builder().status(TokenStatus.WAITING).build();
-        token.expire();
+        QueueToken token = QueueToken.builder().expiredAt(LocalDateTime.now().minusMinutes(1)).build();
 
-        assertThat(token.getStatus()).isEqualTo(TokenStatus.EXPIRED);
+        assertThat(token.isExpired()).isTrue();
     }
 
     @Test
     void isExpired_Test() {
-        QueueToken expiredToken = QueueToken.builder().status(TokenStatus.EXPIRED).build();
-        QueueToken normalToken = QueueToken.builder().status(TokenStatus.WAITING).build();
+        QueueToken expiredToken = QueueToken.builder().expiredAt(LocalDateTime.now().minusMinutes(1)).build();
+        QueueToken normalToken = QueueToken.builder().expiredAt(LocalDateTime.now().plusMinutes(1)).build();
 
         assertThat(expiredToken.isExpired()).isTrue();
         assertThat(normalToken.isExpired()).isFalse();

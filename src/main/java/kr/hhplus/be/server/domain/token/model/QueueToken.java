@@ -1,7 +1,5 @@
 package kr.hhplus.be.server.domain.token.model;
 
-import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.token.exception.TokenErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,14 +28,11 @@ public class QueueToken {
 
     public void activate() {
         this.status = TokenStatus.ACTIVE;
-    }
-
-    public void expire() {
-        this.status = TokenStatus.EXPIRED;
+        this.expiredAt = LocalDateTime.now().plusMinutes(20);
     }
 
     public boolean isExpired() {
-        return this.status == TokenStatus.EXPIRED;
+        return this.expiredAt.isBefore(LocalDateTime.now());
     }
 
     public boolean isWaiting() {
@@ -45,13 +40,12 @@ public class QueueToken {
     }
 
     public static QueueToken create(String userId) {
-
         return QueueToken.builder()
                 .id(UUID.randomUUID().toString())
                 .userId(userId)
                 .status(TokenStatus.WAITING)
                 .createdAt(LocalDateTime.now())
-                .expiredAt(LocalDateTime.now().plusSeconds(30))
+                .expiredAt(LocalDateTime.now().plusMinutes(60))
                 .build();
     }
 

@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,7 +58,7 @@ class QueueTokenServiceTest {
 
     @Test
     void getToken_Success() {
-        QueueToken token = QueueToken.builder().id("1234").build();
+        QueueToken token = QueueToken.builder().id("1234").expiredAt(LocalDateTime.now().plusMinutes(1)).build();
         when(queueTokenRepository.findById("1234")).thenReturn(Optional.of(token));
 
         QueueToken actual = queueTokenService.getToken("1234");
@@ -74,13 +76,32 @@ class QueueTokenServiceTest {
     }
 
     @Test
-    void getToken_Expired(){
-        QueueToken expiredToken = QueueToken.builder().id("1234").status(TokenStatus.EXPIRED).build();
+    void getToken_Expired() {
+        QueueToken expiredToken = QueueToken.builder().id("1234").expiredAt(LocalDateTime.now().minusMinutes(1)).build();
         when(queueTokenRepository.findById("1234")).thenReturn(Optional.of(expiredToken));
 
         assertThatThrownBy(() -> queueTokenService.getToken("1234"))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(TokenErrorCode.ALREADY_EXPIRED.getMessage());
+    }
+
+    @Test
+    void deleteExpiredTokens_Success() {
+        QueueToken expired1 = QueueToken.builder().id("1").expiredAt(LocalDateTime.now().minusMinutes(1)).build();
+        QueueToken expired2 = QueueToken.builder().id("2").expiredAt(LocalDateTime.now().minusMinutes(1)).build();
+        QueueToken waiting1 = QueueToken.builder().id("3").expiredAt(LocalDateTime.now().plusMinutes(1)).build();
+        when(queueTokenRepository.findAll()).thenReturn(List.of(expired1, expired2, waiting1));
+
+        queueTokenService.deleteExpiredTokens();
+
+        verify(queueTokenRepository, times(1)).delete("1");
+        verify(queueTokenRepository, times(1)).delete("2");
+        verify(queueTokenRepository, times(0)).delete("3");
+    }
+
+    @Test
+    void activateTokens_Success() {
+
     }
 
 
