@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.domain.token.model;
 
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.domain.token.exception.TokenErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

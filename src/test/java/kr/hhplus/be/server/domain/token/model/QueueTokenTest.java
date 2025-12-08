@@ -8,6 +8,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class QueueTokenTest {
 
     @Test
+    void create_Test() {
+        QueueToken actual = QueueToken.create("1234");
+
+        assertThat(actual.getUserId()).isEqualTo("1234");
+        assertThat(actual.getStatus()).isEqualTo(TokenStatus.WAITING);
+        assertThat(actual.getId()).isNotNull();
+    }
+
+    @Test
     void isActive_Test() {
         QueueToken activeToken = QueueToken.builder().status(TokenStatus.ACTIVE).build();
         QueueToken inActiveToken = QueueToken.builder().status(TokenStatus.WAITING).build();
