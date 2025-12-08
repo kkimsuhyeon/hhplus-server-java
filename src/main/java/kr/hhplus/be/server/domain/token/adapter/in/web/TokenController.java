@@ -11,7 +11,10 @@ import kr.hhplus.be.server.domain.token.application.QueueTokenService;
 import kr.hhplus.be.server.domain.token.model.QueueToken;
 import kr.hhplus.be.server.shared.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.server.Cookie;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +38,8 @@ public class TokenController {
         int rank = queueTokenService.getRank(token.getId());
         TokenResponse tokenResponse = TokenResponse.of(token, rank);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponse.success(tokenResponse));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(BaseResponse.success(tokenResponse));
     }
 
     @GetMapping("/{id}")
@@ -45,7 +49,7 @@ public class TokenController {
         QueueToken token = queueTokenService.getToken(id);
         int rank = queueTokenService.getRank(token.getId());
         TokenResponse tokenResponse = TokenResponse.of(token, rank);
-        
+
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.success(tokenResponse));
     }
 

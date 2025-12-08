@@ -40,7 +40,7 @@ public class QueueTokenMemoryRepositoryAdapter implements QueueTokenRepository {
 
     @Override
     public int countWaitingTokens() {
-        return tokenRepository.getLastpositionInQueue();
+        return tokenRepository.getLastPositionInQueue();
     }
 
     @Override
@@ -52,5 +52,10 @@ public class QueueTokenMemoryRepositoryAdapter implements QueueTokenRepository {
     @Override
     public QueueToken save(QueueToken queueToken) {
         return tokenRepository.save(queueToken.getId(), queueToken);
+    }
+
+    @Override
+    public void delete(String id) {
+        tokenRepository.delete(id);
     }
 }

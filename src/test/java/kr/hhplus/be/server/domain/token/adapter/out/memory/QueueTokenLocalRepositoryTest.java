@@ -21,7 +21,7 @@ class QueueTokenLocalRepositoryTest {
         QueueToken token = QueueToken.create("userId");
         queueTokenLocalRepository.save("key1", token);
 
-        assertThat(queueTokenLocalRepository.getLastpositionInQueue()).isEqualTo(1);
+        assertThat(queueTokenLocalRepository.getLastPositionInQueue()).isEqualTo(1);
     }
 
     @Test
@@ -31,7 +31,7 @@ class QueueTokenLocalRepositoryTest {
         queueTokenLocalRepository.save("key1", token1);
         queueTokenLocalRepository.save("key1", token2);
 
-        assertThat(queueTokenLocalRepository.getLastpositionInQueue()).isEqualTo(1);
+        assertThat(queueTokenLocalRepository.getLastPositionInQueue()).isEqualTo(1);
         assertThat(queueTokenLocalRepository.findById("key1"))
                 .isNotNull()
                 .hasValueSatisfying(token -> {
@@ -47,7 +47,7 @@ class QueueTokenLocalRepositoryTest {
         queueTokenLocalRepository.save("key1", token1);
         queueTokenLocalRepository.save("key2", token2);
 
-        assertThat(queueTokenLocalRepository.getLastpositionInQueue()).isEqualTo(2);
+        assertThat(queueTokenLocalRepository.getLastPositionInQueue()).isEqualTo(2);
     }
 
     @Test

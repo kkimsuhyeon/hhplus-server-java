@@ -44,4 +44,9 @@ public class QueueTokenRedisRepositoryAdapter implements QueueTokenRepository {
     public QueueToken save(QueueToken queueToken) {
         return null;
     }
+
+    @Override
+    public void delete(String id) {
+
+    }
 }

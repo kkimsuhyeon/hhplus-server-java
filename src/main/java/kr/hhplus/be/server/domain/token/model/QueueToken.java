@@ -51,7 +51,7 @@ public class QueueToken {
                 .userId(userId)
                 .status(TokenStatus.WAITING)
                 .createdAt(LocalDateTime.now())
-                .expiredAt(LocalDateTime.now().plusMinutes(10))
+                .expiredAt(LocalDateTime.now().plusSeconds(30))
                 .build();
     }
 

@@ -15,10 +15,18 @@ public class QueueTokenService {
 
     @Transactional
     public QueueToken issueToken(String userId) {
-        return queueTokenRepository.findByUserId(userId).orElseGet(() -> {
+        QueueToken result = queueTokenRepository.findByUserId(userId).orElseGet(() -> {
             QueueToken token = QueueToken.create(userId);
             return queueTokenRepository.save(token);
         });
+
+        if (result.isExpired()) {
+            QueueToken token = QueueToken.create(userId);
+            queueTokenRepository.delete(result.getId());
+            return queueTokenRepository.save(token);
+        }
+
+        return result;
     }
 
     @Transactional(readOnly = true)
@@ -35,5 +43,9 @@ public class QueueTokenService {
 
     public int getRank(String id) {
         return queueTokenRepository.getRank(id);
+    }
+
+    public void deleteExpiredTokens() {
+        queueTokenRepository.deleteExpiredTokens();
     }
 }

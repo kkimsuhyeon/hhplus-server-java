@@ -26,7 +26,8 @@ public class QueueTokenMemoryRepository {
     public QueueToken save(String key, QueueToken value) {
         userIdToTokenId.put(value.getUserId(), key);
         waitingQueue.offer(key);
-        return queueTokens.put(key, value);
+        queueTokens.put(key, value);
+        return value;
     }
 
     public List<QueueToken> findAll() {
@@ -78,7 +79,7 @@ public class QueueTokenMemoryRepository {
         }
     }
 
-    public int getLastpositionInQueue() {
+    public int getLastPositionInQueue() {
         return waitingQueue.size();
     }
 
@@ -87,6 +88,7 @@ public class QueueTokenMemoryRepository {
 
         if (token != null) {
             userIdToTokenId.remove(token.getUserId());
+            waitingQueue.remove(id);
         }
     }
 

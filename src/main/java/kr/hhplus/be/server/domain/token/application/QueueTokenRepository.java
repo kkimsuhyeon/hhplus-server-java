@@ -21,5 +21,5 @@ public interface QueueTokenRepository {
 
     QueueToken save(QueueToken queueToken);
 
-
+    void delete(String id);
 }
