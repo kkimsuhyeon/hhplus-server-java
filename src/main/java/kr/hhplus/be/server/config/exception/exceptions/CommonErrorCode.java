@@ -13,6 +13,7 @@ public enum CommonErrorCode implements ErrorCode {
     UNAUTHORIZED_ERROR(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED_ERROR", "토큰 인증 실패"),
     FORBIDDEN_ERROR(HttpStatus.FORBIDDEN, "FORBIDDEN_ERROR", "접근 거부"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "리소스를 찾을 수 없습니다"),
+    UPDATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER_ERROR", "서버 에러"),
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER_ERROR", "서버 에러"),
     ;
 

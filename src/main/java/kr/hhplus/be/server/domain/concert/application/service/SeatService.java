@@ -36,6 +36,14 @@ public class SeatService {
         return repository.update(seat);
     }
 
+    public Seat confirm(String seatId) {
+        Seat seat = repository.findByIdForUpdate(seatId)
+                .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
+
+        seat.confirm();
+        return repository.update(seat);
+    }
+
     @Transactional
     public Seat create(Seat seat) {
         return repository.save(seat);

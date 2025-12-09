@@ -97,12 +97,27 @@ class QueueTokenServiceTest {
         verify(queueTokenRepository, times(1)).delete("1");
         verify(queueTokenRepository, times(1)).delete("2");
         verify(queueTokenRepository, times(0)).delete("3");
+
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(queueTokenRepository, times(2)).delete(captor.capture());
+
+        List<String> deletedId = captor.getAllValues();
+        assertThat(deletedId).containsExactlyInAnyOrder("1", "2");
     }
 
     @Test
     void activateTokens_Success() {
+        QueueToken token1 = QueueToken.builder().id("1").status(TokenStatus.WAITING).build();
+        QueueToken token2 = QueueToken.builder().id("2").status(TokenStatus.WAITING).build();
+        QueueToken token3 = QueueToken.builder().id("3").status(TokenStatus.WAITING).build();
 
+        when(queueTokenRepository.findByStatus(TokenStatus.WAITING, 2)).thenReturn(List.of(token1, token2));
+
+        queueTokenService.activateTokens(2);
+
+        assertThat(token1.getStatus()).isEqualTo(TokenStatus.ACTIVE);
+        assertThat(token2.getStatus()).isEqualTo(TokenStatus.ACTIVE);
+        assertThat(token3.getStatus()).isEqualTo(TokenStatus.WAITING);
     }
-
 
 }

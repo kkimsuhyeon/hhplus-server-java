@@ -35,11 +35,9 @@ public class PaymentRepositoryAdapter implements PaymentRepository {
 
     @Override
     public Payment update(Payment payment) {
-        PaymentEntity paymentEntity = jpaRepository.findById(payment.getId())
-                .orElseThrow(() -> new BusinessException(PaymentErrorCode.NOT_FOUND));
+        PaymentEntity paymentEntity = jpaRepository.getReferenceById(payment.getId());
 
         paymentEntity.update(payment);
-
         return paymentEntity.toModel();
     }
 }
