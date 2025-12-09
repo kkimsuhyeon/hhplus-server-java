@@ -8,6 +8,7 @@ import lombok.Getter;
 @Builder
 public class UserCriteria {
 
+    private String id;
     private String name;
     private String email;
 
@@ -15,6 +16,7 @@ public class UserCriteria {
         if (query == null) return UserCriteria.empty();
 
         return UserCriteria.builder()
+                .id(query.getId())
                 .name(query.getName())
                 .email(query.getEmail())
                 .build();

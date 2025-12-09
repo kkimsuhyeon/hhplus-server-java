@@ -31,10 +31,7 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
 
         QueueToken token = queueTokenService.getToken(tokenId);
 
-        if (!token.isActive()) {
-            if (token.isWaiting()) throw new BusinessException(TokenErrorCode.NOT_ACTIVE);
-            if (token.isExpired()) throw new BusinessException(TokenErrorCode.ALREADY_EXPIRED);
-        }
+        if (!token.isActive()) throw new BusinessException(TokenErrorCode.NOT_ACTIVE);
 
         request.setAttribute("userId", token.getUserId());
         request.setAttribute("tokenId", token.getId());

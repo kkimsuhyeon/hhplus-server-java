@@ -7,6 +7,7 @@ import kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity.SeatEnt
 import kr.hhplus.be.server.domain.concert.adapter.out.persistence.repository.ConcertScheduleJpaRepository;
 import kr.hhplus.be.server.domain.concert.adapter.out.persistence.repository.SeatJpaRepository;
 import kr.hhplus.be.server.domain.concert.application.repository.SeatRepository;
+import kr.hhplus.be.server.domain.concert.exception.ConcertScheduleErrorCode;
 import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.concert.model.Seat;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +55,7 @@ public class SeatRepositoryAdapter implements SeatRepository {
             return jpaRepository.save(entity).toModel();
         } catch (EntityNotFoundException e) {
             log.error("좌석 저장 실패: seatId={}", seat.getId(), e);
-            throw new BusinessException(SeatErrorCode.NOT_FOUND);
+            throw new BusinessException(ConcertScheduleErrorCode.NOT_FOUND);
         }
 
     }

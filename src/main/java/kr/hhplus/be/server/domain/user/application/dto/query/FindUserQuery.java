@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 public class FindUserQuery {
 
+    private String id;
     private String name;
     private String email;
 }

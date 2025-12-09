@@ -1,18 +1,17 @@
 package kr.hhplus.be.server.domain.user.adapter.out.persistence;
 
-import java.util.Optional;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Repository;
-
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.user.application.UserRepository;
 import kr.hhplus.be.server.domain.user.application.dto.UserCriteria;
 import kr.hhplus.be.server.domain.user.exception.UserErrorCode;
 import kr.hhplus.be.server.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public Page<User> findAllByCriteria(UserCriteria criteria, Pageable pageable) {
-        Specification<UserJpaEntity> userJpaEntitySpecification = UserSpecification.likeId("");
+        Specification<UserJpaEntity> userJpaEntitySpecification = UserSpecification.likeId(criteria.getId());
         return jpaRepository.findAll(userJpaEntitySpecification, pageable)
                 .map(UserJpaEntity::toModel);
     }
@@ -47,7 +46,7 @@ public class UserRepositoryAdapter implements UserRepository {
                 .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
 
         entity.update(user);
-        
+
         return entity.toModel();
     }
 

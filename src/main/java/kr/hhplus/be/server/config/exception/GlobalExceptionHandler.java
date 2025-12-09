@@ -48,6 +48,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<BaseResponse<?>> handleException(Exception exception) {
         log.error("UNKNOWN ERROR: ", exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(BaseResponse.fail(CommonErrorCode.SERVER_ERROR, "서버 에러"));
+                .body(BaseResponse.fail(CommonErrorCode.SERVER_ERROR));
     }
 }

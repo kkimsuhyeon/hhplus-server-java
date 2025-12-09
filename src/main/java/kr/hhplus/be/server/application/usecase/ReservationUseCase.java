@@ -24,7 +24,7 @@ public class ReservationUseCase {
         User user = userService.getUser(command.getUserId());
         Seat seat = seatService.reserve(command.getSeatId());
 
-        Reservation reservation = Reservation.create(seat.getId(), user.getId(), seat.getPrice());
+        Reservation reservation = Reservation.create(user.getId(), seat.getId(), seat.getPrice());
 
         return reservationService.save(reservation);
     }
