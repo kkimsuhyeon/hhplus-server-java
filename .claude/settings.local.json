@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:claude.ai)",
+      "Bash(./gradlew compileJava:*)",
+      "Bash(dir:*)",
+      "Bash(git rm:*)",
+      "Bash(git add:*)",
+      "Bash(git mv:*)",
+      "mcp__jetbrains__list_directory_tree",
+      "mcp__jetbrains__get_file_problems",
+      "Bash(tree:*)",
+      "Bash(./gradlew build:*)",
+      "Bash(./gradlew test:*)",
+      "Bash(gh pr list:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

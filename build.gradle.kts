@@ -35,9 +35,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
+    testImplementation("org.projectlombok:lombok")
+    testAnnotationProcessor("org.projectlombok:lombok")
 
     // DB
     runtimeOnly("com.mysql:mysql-connector-j")
+    runtimeOnly("com.h2database:h2")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -47,10 +51,18 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // swagger
-    implementation(group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version = "2.8.9")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
     systemProperty("user.timezone", "UTC")
+    
+    // Mockito를 Java Agent로 명시적으로 로드 (정석 방법)
+    val mockitoAgent = classpath.elements.map { files ->
+        files.single { it.asFile.name.startsWith("mockito-core-") }
+    }
+    jvmArgumentProviders.add(CommandLineArgumentProvider {
+        listOf("-javaagent:${mockitoAgent.get().asFile}")
+    })
 }

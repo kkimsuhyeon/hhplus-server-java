@@ -7,38 +7,71 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kr.hhplus.be.server.domain.concert.adapter.in.web.mapper.ConcertCommandMapper;
+import kr.hhplus.be.server.domain.concert.adapter.in.web.mapper.ConcertQueryMapper;
+import kr.hhplus.be.server.domain.concert.adapter.in.web.request.CreateConcertRequest;
+import kr.hhplus.be.server.domain.concert.adapter.in.web.request.FindConcertRequest;
+import kr.hhplus.be.server.domain.concert.adapter.in.web.response.ConcertResponse;
 import kr.hhplus.be.server.domain.concert.adapter.in.web.response.ScheduleResponse;
+import kr.hhplus.be.server.domain.concert.application.dto.command.CreateConcertCommand;
+import kr.hhplus.be.server.domain.concert.application.dto.query.FindConcertQuery;
+import kr.hhplus.be.server.domain.concert.application.service.ConcertService;
+import kr.hhplus.be.server.domain.concert.model.Concert;
+import kr.hhplus.be.server.shared.dto.BaseResponse;
+import kr.hhplus.be.server.shared.dto.PageResponse;
+import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Tag(name = "콘서트 관리[concert-controller]", description = "콘서트 관리 API")
 @RestController
 @RequestMapping("/api/v1/concerts")
 public class ConcertController {
 
+    private final ConcertService concertService;
+
+    @GetMapping
+    @Operation(summary = "콘서트 조회", description = "콘서트 조회 API")
+    public ResponseEntity<BaseResponse<PageResponse<ConcertResponse>>> getConcerts(
+            @ParameterObject @ModelAttribute FindConcertRequest request,
+            @ParameterObject Pageable pageable) {
+
+        FindConcertQuery query = ConcertQueryMapper.toFindQuery(request);
+        Page<ConcertResponse> concerts = concertService.getConcerts(query, pageable).map(ConcertResponse::fromModel);
+        PageResponse<ConcertResponse> concertResponse = PageResponse.of(concerts);
+
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.success(concertResponse));
+    }
+
     @GetMapping("/{concertId}/schedules")
     @Operation(summary = "콘서트 예약 가능 날짜 조회", description = "콘서트 예약 가능 날짜 조회 API")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "콘서트 예약 가능 날짜 정상 조회",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    array = @io.swagger.v3.oas.annotations.media.ArraySchema(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ScheduleResponse.class))
-                            )
-                    }
-            )
-    })
-    public ResponseEntity<List<ScheduleResponse>> getConcertAvailableDate(
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "콘서트 예약 가능 날짜 정상 조회", content = {@Content(mediaType = "application/json", array = @io.swagger.v3.oas.annotations.media.ArraySchema(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ScheduleResponse.class)))})})
+    public ResponseEntity<BaseResponse<List<ScheduleResponse>>> getConcertAvailableDate(
             @Parameter(description = "콘서트 ID", in = ParameterIn.PATH)
-            @PathVariable(name = "concertId", required = true) Long concertId
+            @PathVariable(name = "concertId", required = true) String concertId
     ) {
-        return ResponseEntity.ok().body(List.of());
+        return ResponseEntity.ok().body(BaseResponse.success(List.of()));
+    }
+
+    @PostMapping
+    @Operation(summary = "콘서트 생성", description = "콘서트 생성 API [DEV]")
+    public ResponseEntity<BaseResponse<Concert>> createConcert(@RequestBody CreateConcertRequest request) {
+        CreateConcertCommand command = ConcertCommandMapper.toCreateCommand(request);
+        Concert response = concertService.create(command);
+
+        return ResponseEntity.ok().body(BaseResponse.success(response));
     }
 }
