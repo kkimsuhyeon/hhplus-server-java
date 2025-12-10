@@ -17,6 +17,11 @@ public class TokenScheduler {
     }
 
     @Scheduled(fixedDelay = 100000)
+    public void expireToken() {
+        queueTokenService.expireTokens();
+    }
+
+    @Scheduled(fixedDelay = 100000)
     public void deleteExpiredToken() {
         queueTokenService.deleteExpiredTokens();
     }

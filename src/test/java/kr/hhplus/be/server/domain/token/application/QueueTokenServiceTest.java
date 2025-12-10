@@ -77,7 +77,7 @@ class QueueTokenServiceTest {
 
     @Test
     void getToken_Expired() {
-        QueueToken expiredToken = QueueToken.builder().id("1234").expiredAt(LocalDateTime.now().minusMinutes(1)).build();
+        QueueToken expiredToken = QueueToken.builder().id("1234").status(TokenStatus.EXPIRED).build();
         when(queueTokenRepository.findById("1234")).thenReturn(Optional.of(expiredToken));
 
         assertThatThrownBy(() -> queueTokenService.getToken("1234"))
@@ -87,22 +87,34 @@ class QueueTokenServiceTest {
 
     @Test
     void deleteExpiredTokens_Success() {
-        QueueToken expired1 = QueueToken.builder().id("1").expiredAt(LocalDateTime.now().minusMinutes(1)).build();
-        QueueToken expired2 = QueueToken.builder().id("2").expiredAt(LocalDateTime.now().minusMinutes(1)).build();
-        QueueToken waiting1 = QueueToken.builder().id("3").expiredAt(LocalDateTime.now().plusMinutes(1)).build();
-        when(queueTokenRepository.findAll()).thenReturn(List.of(expired1, expired2, waiting1));
+        QueueToken expired1 = QueueToken.builder().id("1").status(TokenStatus.EXPIRED).build();
+        QueueToken expired2 = QueueToken.builder().id("2").status(TokenStatus.EXPIRED).build();
+        when(queueTokenRepository.findByStatus(TokenStatus.EXPIRED, Integer.MAX_VALUE)).thenReturn(List.of(expired1, expired2));
 
         queueTokenService.deleteExpiredTokens();
 
         verify(queueTokenRepository, times(1)).delete("1");
         verify(queueTokenRepository, times(1)).delete("2");
-        verify(queueTokenRepository, times(0)).delete("3");
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(queueTokenRepository, times(2)).delete(captor.capture());
 
         List<String> deletedId = captor.getAllValues();
         assertThat(deletedId).containsExactlyInAnyOrder("1", "2");
+    }
+
+    @Test
+    void expireTokens_Success() {
+        QueueToken expired1 = QueueToken.builder().id("1").expiredAt(LocalDateTime.now().minusMinutes(1)).build();
+        QueueToken expired2 = QueueToken.builder().id("2").expiredAt(LocalDateTime.now().minusMinutes(1)).build();
+        QueueToken waiting1 = QueueToken.builder().id("3").expiredAt(LocalDateTime.now().plusMinutes(1)).build();
+        when(queueTokenRepository.findAll()).thenReturn(List.of(expired1, expired2, waiting1));
+
+        queueTokenService.expireTokens();
+
+        assertThat(expired1.getStatus()).isEqualTo(TokenStatus.EXPIRED);
+        assertThat(expired2.getStatus()).isEqualTo(TokenStatus.EXPIRED);
+        assertThat(waiting1.getStatus()).isNotEqualTo(TokenStatus.EXPIRED);
     }
 
     @Test
