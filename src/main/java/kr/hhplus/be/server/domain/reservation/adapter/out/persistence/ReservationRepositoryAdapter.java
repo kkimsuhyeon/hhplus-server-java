@@ -10,7 +10,7 @@ import kr.hhplus.be.server.domain.concert.adapter.out.persistence.repository.Sea
 import kr.hhplus.be.server.domain.reservation.application.ReservationRepository;
 import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
-import kr.hhplus.be.server.domain.user.adapter.out.persistence.UserJpaEntity;
+import kr.hhplus.be.server.domain.user.adapter.out.persistence.UserEntity;
 import kr.hhplus.be.server.domain.user.adapter.out.persistence.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +31,7 @@ public class ReservationRepositoryAdapter implements ReservationRepository {
 
     @Override
     public Reservation save(Reservation reservation) {
-        UserJpaEntity userEntity = userRepository.getReferenceById(reservation.getUserId());
+        UserEntity userEntity = userRepository.getReferenceById(reservation.getUserId());
         SeatEntity seatEntity = seatRepository.getReferenceById(reservation.getSeatId());
 
         ReservationEntity entity = ReservationEntity.create(reservation, userEntity, seatEntity);

@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
-public class UserJpaEntity {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -37,8 +37,8 @@ public class UserJpaEntity {
     @Comment("잔액")
     private BigDecimal balance = BigDecimal.ZERO;
 
-    public static UserJpaEntity create(User user) {
-        return UserJpaEntity.builder()
+    public static UserEntity create(User user) {
+        return UserEntity.builder()
                 .balance(user.getBalance())
                 .build();
     }

@@ -23,7 +23,7 @@ import jakarta.persistence.Table;
 import kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity.SeatEntity;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
 import kr.hhplus.be.server.domain.reservation.model.ReservationStatus;
-import kr.hhplus.be.server.domain.user.adapter.out.persistence.UserJpaEntity;
+import kr.hhplus.be.server.domain.user.adapter.out.persistence.UserEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,7 +60,7 @@ public class ReservationEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private UserJpaEntity user;
+    private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seat_id", nullable = false)
@@ -76,7 +76,7 @@ public class ReservationEntity {
     @Comment("수정 일시")
     private LocalDateTime updatedAt;
 
-    public static ReservationEntity create(Reservation reservation, UserJpaEntity user, SeatEntity seat) {
+    public static ReservationEntity create(Reservation reservation, UserEntity user, SeatEntity seat) {
         return ReservationEntity.builder()
                 .status(reservation.getStatus())
                 .expiredAt(reservation.getExpiredAt())

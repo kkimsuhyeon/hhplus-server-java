@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserSpecification {
 
-    public static Specification<UserJpaEntity> likeId(String id) {
+    public static Specification<UserEntity> likeId(String id) {
         return SpecificationUtils.likeIgnoreCase("id", id);
     }
 

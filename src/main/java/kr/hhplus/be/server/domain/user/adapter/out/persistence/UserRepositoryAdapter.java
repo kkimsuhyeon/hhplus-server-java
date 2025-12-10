@@ -21,28 +21,28 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public Page<User> findAllByCriteria(UserCriteria criteria, Pageable pageable) {
-        Specification<UserJpaEntity> userJpaEntitySpecification = UserSpecification.likeId(criteria.getId());
+        Specification<UserEntity> userJpaEntitySpecification = UserSpecification.likeId(criteria.getId());
         return jpaRepository.findAll(userJpaEntitySpecification, pageable)
-                .map(UserJpaEntity::toModel);
+                .map(UserEntity::toModel);
     }
 
     @Override
     public Optional<User> findById(String id) {
         return jpaRepository.findById(id)
-                .map(UserJpaEntity::toModel);
+                .map(UserEntity::toModel);
     }
 
     @Override
     public User save(User user) {
-        UserJpaEntity entity = UserJpaEntity.create(user);
-        UserJpaEntity savedEntity = jpaRepository.save(entity);
+        UserEntity entity = UserEntity.create(user);
+        UserEntity savedEntity = jpaRepository.save(entity);
 
         return savedEntity.toModel();
     }
 
     @Override
     public User update(User user) {
-        UserJpaEntity entity = jpaRepository.findById(user.getId())
+        UserEntity entity = jpaRepository.findById(user.getId())
                 .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
 
         entity.update(user);
