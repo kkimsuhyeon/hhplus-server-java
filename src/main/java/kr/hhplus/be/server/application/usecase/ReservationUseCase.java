@@ -27,6 +27,7 @@ public class ReservationUseCase {
         Reservation reservation = Reservation.create(user.getId(), seat.getId(), seat.getPrice());
         seat.reserve(user.getId());
 
+        seatService.update(seat);
         return reservationService.save(reservation);
     }
 }

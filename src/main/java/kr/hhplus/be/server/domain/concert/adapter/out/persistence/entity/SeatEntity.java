@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder(access = AccessLevel.PACKAGE)
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Entity

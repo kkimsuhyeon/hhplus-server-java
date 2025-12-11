@@ -21,7 +21,7 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public Page<User> findAllByCriteria(UserCriteria criteria, Pageable pageable) {
-        Specification<UserEntity> userJpaEntitySpecification = UserSpecification.likeId(criteria.getId());
+        Specification<UserEntity> userJpaEntitySpecification = UserSpecification.withCriteria(criteria);
         return jpaRepository.findAll(userJpaEntitySpecification, pageable)
                 .map(UserEntity::toModel);
     }
