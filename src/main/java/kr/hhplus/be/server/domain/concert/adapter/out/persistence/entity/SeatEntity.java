@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder(access = AccessLevel.PACKAGE)
@@ -49,6 +50,14 @@ public class SeatEntity {
     @JoinColumn(name = "schedule_id")
     private ConcertScheduleEntity schedule;
 
+    @Column(name = "user_id")
+    @Comment("좌석 소유자 아이디")
+    private String userId;
+
+    @Column(name = "hold_expires_at", nullable = true)
+    @Comment("임시 예약 만료 일자")
+    private LocalDateTime holdExpiresAt;
+
     public static SeatEntity create(Seat seat, ConcertScheduleEntity schedule) {
         return SeatEntity.builder()
                 .status(seat.getStatus())
@@ -68,6 +77,7 @@ public class SeatEntity {
 
     public void update(Seat seat) {
         this.status = seat.getStatus();
-        this.price = seat.getPrice();
+        this.userId = seat.getUserId();
+        this.holdExpiresAt = seat.getHoldExpiresAt();
     }
 }

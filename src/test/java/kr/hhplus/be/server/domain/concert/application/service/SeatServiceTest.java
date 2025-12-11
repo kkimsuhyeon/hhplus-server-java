@@ -76,20 +76,21 @@ class SeatServiceTest {
         Seat expect = Seat.builder().status(SeatStatus.AVAILABLE).build();
         when(seatRepository.findByIdForUpdate("123")).thenReturn(Optional.of(expect));
 
-        seatService.reserve("123");
+        seatService.reserve("123", "user1");
 
         ArgumentCaptor<Seat> seatArgumentCaptor = ArgumentCaptor.forClass(Seat.class);
         verify(seatRepository, times(1)).update(seatArgumentCaptor.capture());
 
         Seat actual = seatArgumentCaptor.getValue();
         assertThat(actual.getStatus()).isEqualTo(SeatStatus.RESERVING);
+        assertThat(actual.getUserId()).isEqualTo("user1");
     }
 
     @Test
     void reserve_Fail() {
         when(seatRepository.findByIdForUpdate("123")).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> seatService.reserve("123"))
+        assertThatThrownBy(() -> seatService.reserve("123", "user1"))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(SeatErrorCode.NOT_FOUND.getMessage());
 

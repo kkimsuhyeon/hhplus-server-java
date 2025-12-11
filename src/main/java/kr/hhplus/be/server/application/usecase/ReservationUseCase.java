@@ -20,11 +20,12 @@ public class ReservationUseCase {
     private final UserService userService;
     private final ReservationService reservationService;
 
-    public Reservation execute(ReserveSeatCommand command) {
+    public Reservation reserve(ReserveSeatCommand command) {
         User user = userService.getUser(command.getUserId());
-        Seat seat = seatService.reserve(command.getSeatId());
+        Seat seat = seatService.reserve(command.getSeatId(), user.getId());
 
         Reservation reservation = Reservation.create(user.getId(), seat.getId(), seat.getPrice());
+        seat.reserve(user.getId());
 
         return reservationService.save(reservation);
     }

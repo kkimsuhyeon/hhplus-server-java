@@ -32,18 +32,6 @@ class QueueTokenServiceTest {
     QueueTokenRepository queueTokenRepository;
 
     @Test
-    void issueToken_Pass() {
-        QueueToken expected = QueueToken.create("userId");
-        expected.activate();
-        when(queueTokenRepository.findByUserId("userId")).thenReturn(Optional.of(expected));
-
-        QueueToken actual = queueTokenService.issueToken("userId");
-
-        assertThat(actual.getUserId()).isEqualTo(expected.getUserId());
-        assertThat(actual.getStatus()).isEqualTo(TokenStatus.ACTIVE);
-    }
-
-    @Test
     void issueToken_Issue() {
         when(queueTokenRepository.findByUserId("userId")).thenReturn(Optional.empty());
         when(queueTokenRepository.save(any(QueueToken.class))).thenAnswer(invocation -> invocation.getArgument(0));

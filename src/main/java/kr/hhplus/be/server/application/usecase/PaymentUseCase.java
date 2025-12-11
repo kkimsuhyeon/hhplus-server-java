@@ -33,6 +33,6 @@ public class PaymentUseCase {
         reservation.completePayment();
         reservationService.update(reservation);
 
-        seatService.confirm(reservation.getSeatId());
+        seatService.confirm(reservation.getSeatId(), command.getUserId());
     }
 }

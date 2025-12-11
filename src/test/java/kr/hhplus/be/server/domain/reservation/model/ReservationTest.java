@@ -13,8 +13,8 @@ class ReservationTest {
 
     @Test
     void isExpired_Test() {
-        Reservation expiredReservation = Reservation.builder().expiredAt(LocalDateTime.now().minusMinutes(1)).build();
-        Reservation validReservation = Reservation.builder().expiredAt(LocalDateTime.now().plusMinutes(1)).build();
+        Reservation expiredReservation = Reservation.builder().expireAt(LocalDateTime.now().minusMinutes(1)).build();
+        Reservation validReservation = Reservation.builder().expireAt(LocalDateTime.now().plusMinutes(1)).build();
 
         assertThat(expiredReservation.isExpired()).isTrue();
         assertThat(validReservation.isExpired()).isFalse();

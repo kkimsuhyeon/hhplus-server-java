@@ -23,7 +23,7 @@ public class Reservation {
 
     private BigDecimal paymentAmount;
 
-    private LocalDateTime expiredAt;
+    private LocalDateTime expireAt;
 
     private LocalDateTime createdAt;
 
@@ -64,7 +64,7 @@ public class Reservation {
     }
 
     public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expiredAt);
+        return LocalDateTime.now().isAfter(expireAt);
     }
 
     public boolean isPayable() {
@@ -79,7 +79,7 @@ public class Reservation {
         return Reservation.builder()
                 .status(ReservationStatus.PENDING_PAYMENT)
                 .paymentAmount(paymentAmount)
-                .expiredAt(LocalDateTime.now().plusMinutes(5))
+                .expireAt(LocalDateTime.now().plusMinutes(5))
                 .userId(userId)
                 .seatId(seatId)
                 .build();

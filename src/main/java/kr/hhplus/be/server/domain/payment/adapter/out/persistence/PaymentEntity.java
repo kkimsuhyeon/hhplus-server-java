@@ -1,10 +1,20 @@
 package kr.hhplus.be.server.domain.payment.adapter.out.persistence;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import kr.hhplus.be.server.domain.payment.model.Payment;
 import kr.hhplus.be.server.domain.payment.model.PaymentStatus;
-import kr.hhplus.be.server.domain.reservation.adapter.out.persistence.ReservationEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
 import java.math.BigDecimal;
@@ -32,15 +42,15 @@ public class PaymentEntity {
     @Comment("가격")
     private BigDecimal amount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reservation_id", nullable = false)
-    private ReservationEntity reservation;
+    @Column(name = "reservation_id", nullable = false)
+    @Comment("예약 아이디")
+    private String reservationId;
 
-    public static PaymentEntity create(Payment payment, ReservationEntity reservation) {
+    public static PaymentEntity create(Payment payment) {
         return PaymentEntity.builder()
                 .status(payment.getStatus())
                 .amount(payment.getAmount())
-                .reservation(reservation)
+                .reservationId(payment.getReservationId())
                 .build();
     }
 
@@ -49,12 +59,11 @@ public class PaymentEntity {
                 .id(this.id)
                 .status(this.status)
                 .amount(this.amount)
-                .reservationId(this.reservation.getId())
+                .reservationId(this.reservationId)
                 .build();
     }
 
     public void update(Payment payment) {
         this.status = payment.getStatus();
-        this.amount = payment.getAmount();
     }
 }

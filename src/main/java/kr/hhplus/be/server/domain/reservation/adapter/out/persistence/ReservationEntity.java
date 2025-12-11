@@ -1,34 +1,28 @@
 package kr.hhplus.be.server.domain.reservation.adapter.out.persistence;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-import org.hibernate.annotations.Comment;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity.SeatEntity;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
 import kr.hhplus.be.server.domain.reservation.model.ReservationStatus;
-import kr.hhplus.be.server.domain.user.adapter.out.persistence.UserEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder(access = AccessLevel.PACKAGE)
@@ -54,17 +48,17 @@ public class ReservationEntity {
     @Comment("결제 금액")
     private BigDecimal paymentAmount;
 
-    @Column(name = "expired_at")
+    @Column(name = "expire_at")
     @Comment("예약 만료 시간")
-    private LocalDateTime expiredAt;
+    private LocalDateTime expireAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    @Column(name = "user_id", nullable = false)
+    @Comment("유저 아이디")
+    private String userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seat_id", nullable = false)
-    private SeatEntity seat;
+    @Column(name = "seat_id", nullable = false)
+    @Comment("좌석 아이디")
+    private String seatId;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -76,13 +70,13 @@ public class ReservationEntity {
     @Comment("수정 일시")
     private LocalDateTime updatedAt;
 
-    public static ReservationEntity create(Reservation reservation, UserEntity user, SeatEntity seat) {
+    public static ReservationEntity create(Reservation reservation) {
         return ReservationEntity.builder()
                 .status(reservation.getStatus())
-                .expiredAt(reservation.getExpiredAt())
+                .expireAt(reservation.getExpireAt())
                 .paymentAmount(reservation.getPaymentAmount())
-                .user(user)
-                .seat(seat)
+                .userId(reservation.getUserId())
+                .seatId(reservation.getSeatId())
                 .build();
     }
 
@@ -90,17 +84,19 @@ public class ReservationEntity {
         return Reservation.builder()
                 .id(this.id)
                 .status(this.status)
-                .expiredAt(this.expiredAt)
+                .expireAt(this.expireAt)
                 .createdAt(this.createdAt)
                 .updatedAt(this.updatedAt)
                 .paymentAmount(this.paymentAmount)
-                .userId(this.user.getId())
-                .seatId(this.seat.getId())
+                .userId(this.userId)
+                .seatId(this.seatId)
                 .build();
     }
 
     public void update(Reservation reservation) {
         this.status = reservation.getStatus();
-        this.expiredAt = reservation.getExpiredAt();
+        this.expireAt = reservation.getExpireAt();
+        this.userId = reservation.getUserId();
+        this.seatId = reservation.getSeatId();
     }
 }

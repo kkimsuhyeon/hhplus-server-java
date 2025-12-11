@@ -8,6 +8,8 @@ public interface ReservationRepository {
 
     Optional<Reservation> findById(String id);
 
+    Optional<Reservation> findByIdForUpdate(String id);
+
     Reservation save(Reservation reservation);
 
     Reservation update(Reservation reservation);

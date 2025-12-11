@@ -43,7 +43,7 @@ public class ReservationController {
             @RequestBody @Valid ReserveSeatRequest request
     ) {
         ReserveSeatCommand command = commandFactory.toReserveSeatCommand(request);
-        reservationUseCase.execute(command);
+        reservationUseCase.reserve(command);
         return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponse.success());
     }
 }
