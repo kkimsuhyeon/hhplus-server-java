@@ -1,14 +1,19 @@
 package kr.hhplus.be.server.application.usecase;
 
+import jakarta.persistence.EntityManager;
+import kr.hhplus.be.server.application.dto.ReserveSeatCommand;
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.concert.application.service.ConcertScheduleService;
 import kr.hhplus.be.server.domain.concert.application.service.ConcertService;
 import kr.hhplus.be.server.domain.concert.application.service.SeatService;
+import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.concert.model.Concert;
 import kr.hhplus.be.server.domain.concert.model.ConcertSchedule;
 import kr.hhplus.be.server.domain.concert.model.Seat;
-import kr.hhplus.be.server.domain.user.adapter.out.persistence.UserJpaRepository;
+import kr.hhplus.be.server.domain.concert.model.SeatStatus;
+import kr.hhplus.be.server.domain.reservation.model.Reservation;
+import kr.hhplus.be.server.domain.reservation.model.ReservationStatus;
 import kr.hhplus.be.server.domain.user.application.UserRepository;
-import kr.hhplus.be.server.domain.user.application.UserService;
 import kr.hhplus.be.server.domain.user.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,17 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
-class ReservationUseCaseTest {
+class ReservationUseCaseIntegrationTest {
 
     @Autowired
     private ReservationUseCase reservationUseCase;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private UserRepository userRepository;
@@ -48,6 +50,8 @@ class ReservationUseCaseTest {
     @Autowired
     private SeatService seatService;
 
+    @Autowired
+    private EntityManager entityManager;
 
     private List<User> users = new ArrayList<>();
     private Concert concert;
@@ -78,10 +82,13 @@ class ReservationUseCaseTest {
 
         concert = concertService.save(Concert.builder().title("title").build());
         schedule = concertScheduleService.create(ConcertSchedule.builder().concertId(concert.getId()).concertDate(LocalDateTime.now()).build());
-        seat = seatService.create(Seat.builder().scheduleId(schedule.getId()).price(BigDecimal.valueOf(1000)).build());
+        seat = seatService.save(Seat.builder().status(SeatStatus.AVAILABLE).scheduleId(schedule.getId()).price(BigDecimal.valueOf(1000)).build());
 
         Page<User> allByCriteria = userRepository.findAllByCriteria(null, PageRequest.of(0, 10));
         users.addAll(allByCriteria.getContent());
+
+        entityManager.flush();
+        entityManager.clear();
     }
 
     @Test
@@ -94,25 +101,41 @@ class ReservationUseCaseTest {
 
     @Test
     void 예약_정상처리() {
+        User user = users.getFirst();
+        ReserveSeatCommand command = ReserveSeatCommand.builder()
+                .userId(user.getId())
+                .seatId(seat.getId())
+                .build();
+
+        Reservation reservation = reservationUseCase.reserve(command);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        assertThat(reservation).isNotNull();
+        assertThat(reservation.getUserId()).isEqualTo(user.getId());
+        assertThat(reservation.getSeatId()).isEqualTo(seat.getId());
+        assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.PENDING_PAYMENT);
+
+        Seat updatedSeat = seatService.getSeat(reservation.getSeatId());
+        assertThat(updatedSeat.getStatus()).isEqualTo(SeatStatus.RESERVING);
     }
 
     @Test
-    void 테스트123() {
+    void 이미_예약된_좌석_예약시_에러발생() {
+        User user = users.getFirst();
+        ReserveSeatCommand command = ReserveSeatCommand.builder()
+                .userId(user.getId())
+                .seatId(seat.getId())
+                .build();
 
-//        ExecutorService executor = Executors.newFixedThreadPool(10);
-//        CountDownLatch latch = new CountDownLatch(10);
-//        AtomicInteger successCount = new AtomicInteger(0);
-//
-//        for (int i = 0; i < 10; i++) {
-//            executor.submit(() -> {
-//                ReserveSeatCommand command = ReserveSeatCommand.builder()
-//                        .userId("user1")
-//                        .seatId("seat1")
-//                        .build();
-//
-//                reservationUseCase.reserve(command);
-//            })
-//        }
+        reservationUseCase.reserve(command);
+
+        assertThatThrownBy(() -> reservationUseCase.reserve(command))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(SeatErrorCode.ALREADY_RESERVED.getMessage());
+        ;
+
 
     }
 

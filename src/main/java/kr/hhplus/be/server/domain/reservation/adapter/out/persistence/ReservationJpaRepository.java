@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.reservation.adapter.out.persistence;
 
 import jakarta.persistence.LockModeType;
+import kr.hhplus.be.server.domain.reservation.model.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Lock;
@@ -15,4 +16,6 @@ public interface ReservationJpaRepository extends JpaRepository<ReservationEntit
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT r FROM ReservationEntity r WHERE r.id = :id")
     Optional<ReservationEntity> findByIdForUpdate(String id);
+
+    Optional<ReservationEntity> findByUserIdAndSeatId(String userId, String seatId);
 }

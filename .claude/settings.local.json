@@ -13,7 +13,9 @@
       "Bash(./gradlew build:*)",
       "Bash(./gradlew test:*)",
       "Bash(gh pr list:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(git worktree:*)",
+      "Bash(git branch:*)"
     ],
     "deny": [],
     "ask": []

@@ -36,6 +36,12 @@ public class ReservationRepositoryAdapter implements ReservationRepository {
     }
 
     @Override
+    public Optional<Reservation> findByUserIdAndSeatId(String userId, String seatId) {
+        return jpaRepository.findByUserIdAndSeatId(userId, seatId)
+                .map(ReservationEntity::toModel);
+    }
+
+    @Override
     public Reservation save(Reservation reservation) {
         ReservationEntity entity = ReservationEntity.create(reservation);
         ReservationEntity savedEntity = jpaRepository.save(entity);

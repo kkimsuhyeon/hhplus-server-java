@@ -50,7 +50,7 @@ public class SeatService {
     }
 
     @Transactional
-    public Seat create(Seat seat) {
+    public Seat save(Seat seat) {
         return repository.save(seat);
     }
 
