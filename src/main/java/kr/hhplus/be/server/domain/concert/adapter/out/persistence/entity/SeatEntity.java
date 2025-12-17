@@ -61,6 +61,8 @@ public class SeatEntity {
     public static SeatEntity create(Seat seat, ConcertScheduleEntity schedule) {
         return SeatEntity.builder()
                 .status(seat.getStatus())
+                .userId(seat.getUserId())
+                .holdExpiresAt(seat.getHoldExpiresAt())
                 .price(seat.getPrice())
                 .schedule(schedule)
                 .build();
@@ -71,6 +73,8 @@ public class SeatEntity {
                 .id(this.id)
                 .status(this.status)
                 .price(this.price)
+                .userId(this.userId)
+                .holdExpiresAt(this.holdExpiresAt)
                 .scheduleId(this.schedule.getId())
                 .build();
     }

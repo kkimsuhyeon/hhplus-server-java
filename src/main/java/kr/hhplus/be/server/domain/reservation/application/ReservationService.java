@@ -21,14 +21,21 @@ public class ReservationService {
                 .orElseThrow(() -> new BusinessException(ReservationErrorCode.NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
+    public Reservation getReservationForUpdate(String reservationId){
+        return repository.findByIdForUpdate(reservationId)
+                .orElseThrow(() -> new BusinessException(ReservationErrorCode.NOT_FOUND));
+    }
+
     @Transactional
-    public Reservation create(Reservation reservation) {
-        repository.findByUserIdAndSeatId(reservation.getUserId(), reservation.getSeatId())
+    public Reservation create(CreateReservationCommand command) {
+        repository.findByUserIdAndSeatId(command.getUserId(), command.getSeatId())
                 .ifPresent(result -> {
                     log.error("이미 존재하는 예약 reservationId={}, seatId={}, userId={}", result.getId(), result.getSeatId(), result.getUserId());
                     throw new BusinessException(ReservationErrorCode.ALREADY_RESERVED);
                 });
 
+        Reservation reservation = ReservationMapper.toModel(command);
         return save(reservation);
     }
 

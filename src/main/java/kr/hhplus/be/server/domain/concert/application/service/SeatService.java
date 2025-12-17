@@ -2,6 +2,8 @@ package kr.hhplus.be.server.domain.concert.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
+import kr.hhplus.be.server.domain.concert.application.dto.command.CreateSeatCommand;
+import kr.hhplus.be.server.domain.concert.application.dto.mapper.SeatMapper;
 import kr.hhplus.be.server.domain.concert.application.repository.SeatRepository;
 import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.concert.model.Seat;
@@ -37,6 +39,7 @@ public class SeatService {
         return repository.update(seat);
     }
 
+    @Transactional
     public Seat confirm(String seatId, String userId) {
         Seat seat = repository.findByIdForUpdate(seatId)
                 .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
@@ -47,6 +50,12 @@ public class SeatService {
 
         seat.confirm();
         return repository.update(seat);
+    }
+
+    @Transactional
+    public Seat create(CreateSeatCommand command) {
+        Seat seat = SeatMapper.toModel(command);
+        return this.save(seat);
     }
 
     @Transactional

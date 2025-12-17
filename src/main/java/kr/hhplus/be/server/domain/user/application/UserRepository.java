@@ -13,6 +13,8 @@ public interface UserRepository {
 
     Optional<User> findById(String id);
 
+    Optional<User> findByIdForUpdate(String id);
+
     User save(User user);
 
     User update(User user);

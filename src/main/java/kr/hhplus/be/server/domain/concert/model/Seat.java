@@ -63,4 +63,12 @@ public class Seat {
         return holdExpiresAt != null && LocalDateTime.now().isAfter(holdExpiresAt);
     }
 
+    public static Seat create(BigDecimal price, String scheduleId){
+        return Seat.builder()
+                .status(SeatStatus.AVAILABLE)
+                .price(price)
+                .scheduleId(scheduleId)
+                .build();
+    }
+
 }

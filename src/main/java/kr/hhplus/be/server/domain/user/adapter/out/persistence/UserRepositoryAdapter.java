@@ -33,6 +33,12 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByIdForUpdate(String id) {
+        return jpaRepository.findByIdForUpdate(id)
+                .map(UserEntity::toModel);
+    }
+
+    @Override
     public User save(User user) {
         UserEntity entity = UserEntity.create(user);
         UserEntity savedEntity = jpaRepository.save(entity);

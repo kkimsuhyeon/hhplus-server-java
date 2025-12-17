@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
@@ -36,6 +37,9 @@ public class UserEntity {
     @Column(name = "balance", nullable = false)
     @Comment("잔액")
     private BigDecimal balance = BigDecimal.ZERO;
+
+    @Version
+    private Long version;
 
     public static UserEntity create(User user) {
         return UserEntity.builder()

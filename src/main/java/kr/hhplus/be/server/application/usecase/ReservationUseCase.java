@@ -3,6 +3,7 @@ package kr.hhplus.be.server.application.usecase;
 import kr.hhplus.be.server.application.dto.ReserveSeatCommand;
 import kr.hhplus.be.server.domain.concert.application.service.SeatService;
 import kr.hhplus.be.server.domain.concert.model.Seat;
+import kr.hhplus.be.server.domain.reservation.application.CreateReservationCommand;
 import kr.hhplus.be.server.domain.reservation.application.ReservationService;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
 import kr.hhplus.be.server.domain.user.application.UserService;
@@ -24,7 +25,12 @@ public class ReservationUseCase {
         User user = userService.getUser(command.getUserId());
         Seat seat = seatService.reserve(command.getSeatId(), user.getId());
 
-        Reservation reservation = Reservation.create(user.getId(), seat.getId(), seat.getPrice());
-        return reservationService.create(reservation);
+        CreateReservationCommand createReservationCommand = CreateReservationCommand.builder()
+                .userId(user.getId())
+                .seatId(seat.getId())
+                .price(seat.getPrice())
+                .build();
+
+        return reservationService.create(createReservationCommand);
     }
 }
