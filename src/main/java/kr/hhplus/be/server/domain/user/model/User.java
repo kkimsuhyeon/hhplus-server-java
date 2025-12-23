@@ -13,10 +13,12 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class User {
-    
+
     private String id;
+    private String email;
     private BigDecimal balance;
-    
+    private UserRole role;
+
     public void addBalance(BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new BusinessException(CommonErrorCode.INVALID_INPUT);
@@ -30,7 +32,7 @@ public class User {
         }
         this.balance = this.balance.subtract(amount);
     }
-    
+
 
     public static User create() {
         return User.builder()

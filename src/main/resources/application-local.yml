@@ -25,6 +25,11 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.hibernate.orm.jdbc.bind: TRACE
 
+  jwt:
+    secret: your-256-bit-secret-key-here-must-be-at-least-32-characters-long
+    access-token-validity: 3600000    # 1시간 (밀리초)
+    refresh-token-validity: 604800000 # 7일 (밀리초)
+
 springdoc:
   api-docs:
     enabled: true
