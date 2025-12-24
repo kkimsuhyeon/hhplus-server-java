@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor(staticName = "of")
@@ -22,7 +21,11 @@ public class AuthUser implements UserDetails {
     private UserRole role;
 
     public static AuthUser from(User user) {
-        return AuthUser.of(user.getId(), user.getEmail(), user.getRole());
+        return AuthUser.of(
+                user.getId(),
+                user.getEmail(),
+                user.getRole()
+        );
     }
 
     public static AuthUser from(JwtTokenPayload payload) {
@@ -45,7 +48,7 @@ public class AuthUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return id;
+        return email;
     }
 
     @Override

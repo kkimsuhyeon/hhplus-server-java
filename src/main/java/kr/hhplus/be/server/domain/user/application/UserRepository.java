@@ -15,6 +15,10 @@ public interface UserRepository {
 
     Optional<User> findByIdForUpdate(String id);
 
+    Optional<User> findByEmail(String email);
+
+    boolean existsByEmail(String email);
+
     User save(User user);
 
     User update(User user);

@@ -29,12 +29,14 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/health-check",
             "/resource/**",
-            "/user-service/swagger-ui/**",
-            "/user-service/v3/api-docs/**",
-            "/actuator/**"
+            "/actuator/**",
+            "/swagger-ui.html",
+            "/api-docs/**",
+            "/h2-console/**"
     );
 
     public static final List<String> ALLOWED_BUSINESS_URI = List.of(
+            "/api/v1/auth/**"
     );
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;

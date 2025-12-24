@@ -16,6 +16,7 @@ public class User {
 
     private String id;
     private String email;
+    private String password;
     private BigDecimal balance;
     private UserRole role;
 
@@ -34,9 +35,12 @@ public class User {
     }
 
 
-    public static User create() {
+    public static User create(String email, String password) {
         return User.builder()
+                .email(email)
+                .password(password)
                 .balance(BigDecimal.ZERO)
+                .role(UserRole.USER)
                 .build();
     }
 }

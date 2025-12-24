@@ -3,11 +3,14 @@ package kr.hhplus.be.server.domain.user.adapter.out.persistence;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import kr.hhplus.be.server.domain.user.model.User;
+import kr.hhplus.be.server.domain.user.model.UserRole;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,10 +36,23 @@ public class UserEntity {
     @Column(name = "user_id")
     private String id;
 
+    @Column(name = "email", unique = true)
+    @Comment("이메일")
+    private String email;
+
+    @Column(name = "password", nullable = false)
+    @Comment("패스워드")
+    private String password;
+
     @Builder.Default
     @Column(name = "balance", nullable = false)
     @Comment("잔액")
     private BigDecimal balance = BigDecimal.ZERO;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    @Comment("권한")
+    private UserRole role;
 
     @Version
     private Long version;

@@ -7,9 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import kr.hhplus.be.server.config.security.AuthUser;
 import kr.hhplus.be.server.config.security.jwt.JwtTokenPayload;
 import kr.hhplus.be.server.config.security.jwt.JwtTokenProvider;
-import kr.hhplus.be.server.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 
 @Slf4j
 @Component
@@ -35,6 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
             JwtTokenPayload payload = jwtTokenProvider.getPayload(token);
+            Authentication authentication = createAuthentication(payload);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("Security Context에 '{}' 인증 정보를 저장했습니다.", authentication.getName());
         }
@@ -53,6 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Authentication createAuthentication(JwtTokenPayload payload) {
-        return AuthUser.from(payload);
+        AuthUser authUser = AuthUser.from(payload);
+        return new UsernamePasswordAuthenticationToken(authUser, "", authUser.getAuthorities());
     }
 }
