@@ -8,10 +8,6 @@ import lombok.Data;
 @Data
 public class ReserveSeatRequest {
 
-    @Schema(description = "유저 ID")
-    @NotNull
-    private String userId;
-
     @Schema(description = "좌석 ID")
     @NotNull
     private String seatId;

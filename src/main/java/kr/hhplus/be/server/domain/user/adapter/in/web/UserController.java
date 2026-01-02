@@ -1,9 +1,11 @@
 package kr.hhplus.be.server.domain.user.adapter.in.web;
 
+import kr.hhplus.be.server.config.security.AuthUser;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -42,22 +44,22 @@ public class UserController {
 
     private final UserService userService;
 
-    @PatchMapping("/{userId}/balance")
+    @PatchMapping("/balance")
     @Operation(summary = "잔액 충전", description = "잔액 충전 API")
     public ResponseEntity<BaseResponse<Void>> charge(
-            @PathVariable(value = "userId") String userId,
-            @RequestBody @Valid BalanceChargeRequest request) {
+            @RequestBody @Valid BalanceChargeRequest request,
+            @AuthenticationPrincipal AuthUser authUser) {
 
-        userService.addBalance(userId, request.getAmount());
+        userService.addBalance(authUser.getId(), request.getAmount());
         return ResponseEntity.ok().body(BaseResponse.success());
     }
 
-    @GetMapping("/{userId}/balance")
+    @GetMapping("/balance")
     @Operation(summary = "잔액 조회", description = "잔액 조회 API")
     public ResponseEntity<BaseResponse<BalanceResponse>> getBalanceInfo(
-            @PathVariable(value = "userId") String userId
+            @AuthenticationPrincipal AuthUser authUser
     ) {
-        User user = userService.getUser(userId);
+        User user = userService.getUser(authUser.getId());
 
         BalanceResponse response = BalanceResponse.builder()
                 .amount(user.getBalance())

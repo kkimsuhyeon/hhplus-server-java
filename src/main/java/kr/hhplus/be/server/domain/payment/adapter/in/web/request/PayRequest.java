@@ -14,6 +14,4 @@ public class PayRequest {
     @NotNull
     private String reservationId;
 
-    private String userId;
-
 }

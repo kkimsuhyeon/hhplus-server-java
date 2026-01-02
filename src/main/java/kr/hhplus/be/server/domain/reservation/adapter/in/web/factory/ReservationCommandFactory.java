@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ReservationCommandFactory {
 
-    public ReserveSeatCommand toReserveSeatCommand(ReserveSeatRequest request) {
+    public ReserveSeatCommand toReserveSeatCommand(ReserveSeatRequest request, String userId) {
         return ReserveSeatCommand.builder()
-                .userId(request.getUserId())
+                .userId(userId)
                 .seatId(request.getSeatId())
                 .build();
     }
