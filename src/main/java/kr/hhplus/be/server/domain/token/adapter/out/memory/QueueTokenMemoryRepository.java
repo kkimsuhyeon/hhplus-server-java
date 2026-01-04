@@ -4,6 +4,7 @@ import kr.hhplus.be.server.domain.token.model.QueueToken;
 import kr.hhplus.be.server.domain.token.model.TokenStatus;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,6 +43,12 @@ public class QueueTokenMemoryRepository {
         return queueTokens.values().stream()
                 .filter(token -> token.getStatus() == status)
                 .limit(limit)
+                .toList();
+    }
+
+    public List<QueueToken> findByExpiredAtBefore(LocalDateTime referenceTime) {
+        return queueTokens.values().stream()
+                .filter(token -> token.getExpiredAt().isBefore(referenceTime))
                 .toList();
     }
 

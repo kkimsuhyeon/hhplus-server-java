@@ -50,12 +50,8 @@ public class QueueTokenService {
 
     @Transactional
     public void expireTokens() {
-        List<QueueToken> allTokens = queueTokenRepository.findAll();
-
-        allTokens.stream()
-                .filter(token -> token.getExpiredAt().isBefore(LocalDateTime.now()))
-                .forEach(QueueToken::expire)
-        ;
+        queueTokenRepository.findByExpiredAtBefore(LocalDateTime.now())
+                .forEach(QueueToken::expire);
     }
 
     @Transactional

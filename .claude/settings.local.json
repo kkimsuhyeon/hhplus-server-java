@@ -18,7 +18,9 @@
       "Bash(git branch:*)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(git branch:*)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [],
     "ask": []

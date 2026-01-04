@@ -41,7 +41,7 @@ public class UserService {
 
     @Transactional
     public void addBalance(String userId, BigDecimal amount) {
-        User user = repository.findById(userId)
+        User user = repository.findByIdForUpdate(userId)
                 .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
 
         user.addBalance(amount);
@@ -50,7 +50,7 @@ public class UserService {
 
     @Transactional
     public void deductBalance(String userId, BigDecimal amount) {
-        User user = repository.findById(userId)
+        User user = repository.findByIdForUpdate(userId)
                 .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
 
         user.deductBalance(amount);

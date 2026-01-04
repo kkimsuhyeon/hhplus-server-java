@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.config.security;
 
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
 import kr.hhplus.be.server.config.security.jwt.JwtTokenPayload;
 import kr.hhplus.be.server.domain.user.model.User;
 import kr.hhplus.be.server.domain.user.model.UserRole;
@@ -29,6 +31,10 @@ public class AuthUser implements UserDetails {
     }
 
     public static AuthUser from(JwtTokenPayload payload) {
+        if (payload.getAuthorities() == null || payload.getAuthorities().isEmpty()) {
+            throw new BusinessException(CommonErrorCode.TOKEN_ERROR);
+        }
+
         return AuthUser.of(
                 payload.getId(),
                 payload.getEmail(),

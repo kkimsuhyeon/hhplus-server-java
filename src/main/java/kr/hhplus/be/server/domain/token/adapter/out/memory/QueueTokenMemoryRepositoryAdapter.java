@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +36,11 @@ public class QueueTokenMemoryRepositoryAdapter implements QueueTokenRepository {
     @Override
     public List<QueueToken> findByStatus(TokenStatus status, int limit) {
         return tokenRepository.findByStatus(status, limit);
+    }
+
+    @Override
+    public List<QueueToken> findByExpiredAtBefore(LocalDateTime referenceTime) {
+        return tokenRepository.findByExpiredAtBefore(referenceTime);
     }
 
     @Override
