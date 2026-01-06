@@ -14,7 +14,7 @@ class UserTest {
 
     @Test
     void create_Success() {
-        User user = User.create();
+        User user = User.create("", "");
 
         assertThat(user.getBalance()).isEqualTo(BigDecimal.ZERO);
     }

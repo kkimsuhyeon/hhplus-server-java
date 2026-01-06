@@ -38,6 +38,8 @@ dependencies {
     implementation("org.springframework.retry:spring-retry:2.0.12")
     implementation("org.springframework.boot:spring-boot-starter-security")
     testImplementation("org.springframework.security:spring-security-test")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.apache.commons:commons-pool2")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.projectlombok:lombok")
     testAnnotationProcessor("org.projectlombok:lombok")

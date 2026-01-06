@@ -1,12 +1,8 @@
 spring:
   application:
     name: hhplus
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    hikari:
-      maximum-pool-size: 3
-      connection-timeout: 10000
-      max-lifetime: 60000
+  profiles:
+    active: local
   jpa:
     open-in-view: false
     properties:
