@@ -42,6 +42,10 @@ public class PaymentEntity {
     @Comment("가격")
     private BigDecimal amount;
 
+    @Column(name = "rmk")
+    @Comment("비고")
+    private String rmk;
+
     @Column(name = "reservation_id", nullable = false)
     @Comment("예약 아이디")
     private String reservationId;
@@ -50,6 +54,7 @@ public class PaymentEntity {
         return PaymentEntity.builder()
                 .status(payment.getStatus())
                 .amount(payment.getAmount())
+                .rmk(payment.getRmk())
                 .reservationId(payment.getReservationId())
                 .build();
     }
@@ -59,6 +64,7 @@ public class PaymentEntity {
                 .id(this.id)
                 .status(this.status)
                 .amount(this.amount)
+                .rmk(this.rmk)
                 .reservationId(this.reservationId)
                 .build();
     }

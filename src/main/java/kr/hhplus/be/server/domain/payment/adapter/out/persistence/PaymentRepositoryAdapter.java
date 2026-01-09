@@ -1,12 +1,9 @@
 package kr.hhplus.be.server.domain.payment.adapter.out.persistence;
 
-import jakarta.persistence.EntityNotFoundException;
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.payment.application.PaymentRepository;
 import kr.hhplus.be.server.domain.payment.exception.PaymentErrorCode;
 import kr.hhplus.be.server.domain.payment.model.Payment;
-import kr.hhplus.be.server.domain.reservation.adapter.out.persistence.ReservationEntity;
-import kr.hhplus.be.server.domain.reservation.adapter.out.persistence.ReservationJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -40,15 +37,10 @@ public class PaymentRepositoryAdapter implements PaymentRepository {
 
     @Override
     public Payment update(Payment payment) {
-        PaymentEntity paymentEntity = jpaRepository.getReferenceById(payment.getId());
-        
-        try {
-            paymentEntity.update(payment);
-            return paymentEntity.toModel();
-        } catch (EntityNotFoundException e) {
-            log.error("결제 업데이트 실패: paymentId={}", payment.getId(), e);
-            throw new BusinessException(PaymentErrorCode.NOT_FOUND);
-        }
+        PaymentEntity paymentEntity = jpaRepository.findByIdForUpdate(payment.getId())
+                .orElseThrow(() -> new BusinessException(PaymentErrorCode.NOT_FOUND));
 
+        paymentEntity.update(payment);
+        return paymentEntity.toModel();
     }
 }

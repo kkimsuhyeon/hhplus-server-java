@@ -1,8 +1,9 @@
 package kr.hhplus.be.server.domain.reservation.application;
 
-import java.util.Optional;
-
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface ReservationRepository {
 
@@ -11,6 +12,8 @@ public interface ReservationRepository {
     Optional<Reservation> findByIdForUpdate(String id);
 
     Optional<Reservation> findByUserIdAndSeatId(String userId, String seatId);
+
+    List<Reservation> findByUserId(String userId);
 
     Reservation save(Reservation reservation);
 

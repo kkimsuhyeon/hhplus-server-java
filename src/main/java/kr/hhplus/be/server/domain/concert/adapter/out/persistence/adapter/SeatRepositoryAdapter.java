@@ -57,19 +57,15 @@ public class SeatRepositoryAdapter implements SeatRepository {
             log.error("좌석 저장 실패: seatId={}", seat.getId(), e);
             throw new BusinessException(ConcertScheduleErrorCode.NOT_FOUND);
         }
-
     }
 
     @Override
     public Seat update(Seat seat) {
-        SeatEntity seatEntity = jpaRepository.getReferenceById(seat.getId());
+        SeatEntity seatEntity = jpaRepository.findByIdForUpdate(seat.getId())
+                .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
 
-        try {
-            seatEntity.update(seat);
-            return seatEntity.toModel();
-        } catch (EntityNotFoundException e) {
-            log.error("좌석 업데이트 실패: seatId={}", seat.getId(), e);
-            throw new BusinessException(SeatErrorCode.NOT_FOUND);
-        }
+        seatEntity.update(seat);
+        return seatEntity.toModel();
+
     }
 }

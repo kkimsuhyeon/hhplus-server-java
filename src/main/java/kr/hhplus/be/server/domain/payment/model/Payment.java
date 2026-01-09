@@ -19,6 +19,8 @@ public class Payment {
 
     private String reservationId;
 
+    private String rmk;
+
     public static Payment createSuccess(String reservationId, BigDecimal amount) {
         return Payment.builder()
                 .reservationId(reservationId)
@@ -27,11 +29,12 @@ public class Payment {
                 .build();
     }
 
-    public static Payment createFail(String reservationId, BigDecimal amount) {
+    public static Payment createFail(String reservationId, BigDecimal amount, String rmk) {
         return Payment.builder()
                 .reservationId(reservationId)
                 .status(PaymentStatus.FAIL)
                 .amount(amount)
+                .rmk(rmk)
                 .build();
     }
 

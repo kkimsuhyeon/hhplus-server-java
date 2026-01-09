@@ -14,6 +14,8 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentUseCase {
@@ -42,7 +44,8 @@ public class PaymentUseCase {
             Payment payment = Payment.createSuccess(reservation.getId(), reservation.getPaymentAmount());
             return paymentService.create(payment);
         } catch (Exception e) {
-//            Payment.createFail()
+            Payment fail = Payment.createFail(command.getReservationId(), BigDecimal.ZERO, e.getMessage());
+            paymentService.create(fail);
             throw e;
         }
     }

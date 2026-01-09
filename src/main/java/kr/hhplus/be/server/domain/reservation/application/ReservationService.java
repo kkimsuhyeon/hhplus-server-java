@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,6 +27,11 @@ public class ReservationService {
     public Reservation getReservationForUpdate(String reservationId){
         return repository.findByIdForUpdate(reservationId)
                 .orElseThrow(() -> new BusinessException(ReservationErrorCode.NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Reservation> getReservationsByUserId(String userId){
+        return repository.findByUserId(userId);
     }
 
     @Transactional

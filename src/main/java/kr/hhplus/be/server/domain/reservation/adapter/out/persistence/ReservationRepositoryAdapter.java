@@ -1,20 +1,15 @@
 package kr.hhplus.be.server.domain.reservation.adapter.out.persistence;
 
-import java.util.Optional;
-
-import jakarta.persistence.EntityNotFoundException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
-
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity.SeatEntity;
-import kr.hhplus.be.server.domain.concert.adapter.out.persistence.repository.SeatJpaRepository;
 import kr.hhplus.be.server.domain.reservation.application.ReservationRepository;
 import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
-import kr.hhplus.be.server.domain.user.adapter.out.persistence.UserEntity;
-import kr.hhplus.be.server.domain.user.adapter.out.persistence.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -42,6 +37,13 @@ public class ReservationRepositoryAdapter implements ReservationRepository {
     }
 
     @Override
+    public List<Reservation> findByUserId(String userId) {
+        return jpaRepository.findByUserId(userId).stream()
+                .map(ReservationEntity::toModel)
+                .toList();
+    }
+
+    @Override
     public Reservation save(Reservation reservation) {
         ReservationEntity entity = ReservationEntity.create(reservation);
         ReservationEntity savedEntity = jpaRepository.save(entity);
@@ -51,14 +53,11 @@ public class ReservationRepositoryAdapter implements ReservationRepository {
 
     @Override
     public Reservation update(Reservation reservation) {
-        ReservationEntity reservationEntity = jpaRepository.getReferenceById(reservation.getId());
+        ReservationEntity reservationEntity = jpaRepository.findByIdForUpdate(reservation.getId())
+                .orElseThrow(() -> new BusinessException(ReservationErrorCode.NOT_FOUND));
 
-        try {
-            reservationEntity.update(reservation);
-            return reservationEntity.toModel();
-        } catch (EntityNotFoundException e) {
-            log.error("예약 업데이트 실패: reservationId={}", reservation.getId(), e);
-            throw new BusinessException(ReservationErrorCode.NOT_FOUND);
-        }
+        reservationEntity.update(reservation);
+        return reservationEntity.toModel();
+
     }
 }
