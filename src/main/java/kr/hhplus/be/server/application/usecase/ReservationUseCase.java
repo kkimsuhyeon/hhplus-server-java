@@ -27,10 +27,10 @@ public class ReservationUseCase {
     public Reservation reserve(ReserveSeatCommand command) {
         User user = userService.getUser(command.getUserId());
 
-        if(reservationService.getReservationsByUserId(user.getId()).stream()
+        if (reservationService.getReservationsByUserId(user.getId()).stream()
                 .anyMatch(reservation -> reservation.getStatus() == ReservationStatus.PENDING_PAYMENT)) {
             throw new BusinessException(ReservationErrorCode.ALREADY_HAVE_RESERVATION);
-        };
+        }
 
         Seat seat = seatService.reserve(command.getSeatId(), user.getId());
 

@@ -48,9 +48,9 @@ public class ReservationEntity {
     @Comment("결제 금액")
     private BigDecimal paymentAmount;
 
-    @Column(name = "expire_at")
+    @Column(name = "expires_at")
     @Comment("예약 만료 시간")
-    private LocalDateTime expireAt;
+    private LocalDateTime expiresAt;
 
     @Column(name = "user_id", nullable = false)
     @Comment("유저 아이디")
@@ -73,7 +73,7 @@ public class ReservationEntity {
     public static ReservationEntity create(Reservation reservation) {
         return ReservationEntity.builder()
                 .status(reservation.getStatus())
-                .expireAt(reservation.getExpireAt())
+                .expiresAt(reservation.getExpiresAt())
                 .paymentAmount(reservation.getPaymentAmount())
                 .userId(reservation.getUserId())
                 .seatId(reservation.getSeatId())
@@ -84,7 +84,7 @@ public class ReservationEntity {
         return Reservation.builder()
                 .id(this.id)
                 .status(this.status)
-                .expireAt(this.expireAt)
+                .expiresAt(this.expiresAt)
                 .createdAt(this.createdAt)
                 .updatedAt(this.updatedAt)
                 .paymentAmount(this.paymentAmount)
@@ -95,7 +95,7 @@ public class ReservationEntity {
 
     public void update(Reservation reservation) {
         this.status = reservation.getStatus();
-        this.expireAt = reservation.getExpireAt();
+        this.expiresAt = reservation.getExpiresAt();
         this.userId = reservation.getUserId();
         this.seatId = reservation.getSeatId();
     }

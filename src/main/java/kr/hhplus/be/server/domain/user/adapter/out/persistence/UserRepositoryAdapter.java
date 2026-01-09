@@ -63,7 +63,6 @@ public class UserRepositoryAdapter implements UserRepository {
                 .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
 
         entity.update(user);
-
         return entity.toModel();
     }
 
