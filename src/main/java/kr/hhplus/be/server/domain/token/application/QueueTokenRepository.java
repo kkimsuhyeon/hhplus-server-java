@@ -3,6 +3,7 @@ package kr.hhplus.be.server.domain.token.application;
 import kr.hhplus.be.server.domain.token.model.QueueToken;
 import kr.hhplus.be.server.domain.token.model.TokenStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,8 @@ public interface QueueTokenRepository {
     Optional<QueueToken> findByUserId(String userId);
 
     List<QueueToken> findByStatus(TokenStatus status, int limit);
+
+    List<QueueToken> findByExpiredAtBefore(LocalDateTime referenceTime);
 
     List<QueueToken> findAll();
 

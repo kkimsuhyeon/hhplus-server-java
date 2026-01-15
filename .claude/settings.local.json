@@ -12,7 +12,15 @@
       "Bash(tree:*)",
       "Bash(./gradlew build:*)",
       "Bash(./gradlew test:*)",
-      "Bash(gh pr list:*)"
+      "Bash(gh pr list:*)",
+      "Bash(xargs:*)",
+      "Bash(git worktree:*)",
+      "Bash(git branch:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(cat:*)",
+      "Bash(git branch:*)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [],
     "ask": []

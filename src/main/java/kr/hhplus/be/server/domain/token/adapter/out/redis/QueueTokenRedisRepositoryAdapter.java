@@ -5,6 +5,7 @@ import kr.hhplus.be.server.domain.token.model.QueueToken;
 import kr.hhplus.be.server.domain.token.model.TokenStatus;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,11 @@ public class QueueTokenRedisRepositoryAdapter implements QueueTokenRepository {
 
     @Override
     public List<QueueToken> findByStatus(TokenStatus status, int limit) {
+        return List.of();
+    }
+
+    @Override
+    public List<QueueToken> findByExpiredAtBefore(LocalDateTime referenceTime) {
         return List.of();
     }
 

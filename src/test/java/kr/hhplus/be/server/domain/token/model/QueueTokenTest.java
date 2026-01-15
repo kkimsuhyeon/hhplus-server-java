@@ -37,16 +37,9 @@ class QueueTokenTest {
     }
 
     @Test
-    void expire_Test() {
-        QueueToken token = QueueToken.builder().expiredAt(LocalDateTime.now().minusMinutes(1)).build();
-
-        assertThat(token.isExpired()).isTrue();
-    }
-
-    @Test
     void isExpired_Test() {
-        QueueToken expiredToken = QueueToken.builder().expiredAt(LocalDateTime.now().minusMinutes(1)).build();
-        QueueToken normalToken = QueueToken.builder().expiredAt(LocalDateTime.now().plusMinutes(1)).build();
+        QueueToken expiredToken = QueueToken.builder().status(TokenStatus.EXPIRED).build();
+        QueueToken normalToken = QueueToken.builder().status(TokenStatus.WAITING).build();
 
         assertThat(expiredToken.isExpired()).isTrue();
         assertThat(normalToken.isExpired()).isFalse();

@@ -21,32 +21,48 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public Page<User> findAllByCriteria(UserCriteria criteria, Pageable pageable) {
-        Specification<UserJpaEntity> userJpaEntitySpecification = UserSpecification.likeId(criteria.getId());
+        Specification<UserEntity> userJpaEntitySpecification = UserSpecification.withCriteria(criteria);
         return jpaRepository.findAll(userJpaEntitySpecification, pageable)
-                .map(UserJpaEntity::toModel);
+                .map(UserEntity::toModel);
     }
 
     @Override
     public Optional<User> findById(String id) {
         return jpaRepository.findById(id)
-                .map(UserJpaEntity::toModel);
+                .map(UserEntity::toModel);
+    }
+
+    @Override
+    public Optional<User> findByIdForUpdate(String id) {
+        return jpaRepository.findByIdForUpdate(id)
+                .map(UserEntity::toModel);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return jpaRepository.findByEmail(email)
+                .map(UserEntity::toModel);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return jpaRepository.existsByEmail(email);
     }
 
     @Override
     public User save(User user) {
-        UserJpaEntity entity = UserJpaEntity.create(user);
-        UserJpaEntity savedEntity = jpaRepository.save(entity);
+        UserEntity entity = UserEntity.create(user);
+        UserEntity savedEntity = jpaRepository.save(entity);
 
         return savedEntity.toModel();
     }
 
     @Override
     public User update(User user) {
-        UserJpaEntity entity = jpaRepository.findById(user.getId())
+        UserEntity entity = jpaRepository.findById(user.getId())
                 .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
 
         entity.update(user);
-
         return entity.toModel();
     }
 

@@ -29,29 +29,31 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User getUser(String userId) {
-        return findUserById(userId);
+        return repository.findById(userId)
+                .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
     }
 
     @Transactional
-    public void create(CreateUserCommand command) {
+    public User create(CreateUserCommand command) {
         User user = UserMapper.toModel(command);
-
-        repository.save(user);
+        return repository.save(user);
     }
 
     @Transactional
     public void addBalance(String userId, BigDecimal amount) {
-        User user = findUserById(userId);
-        user.addBalance(amount);
+        User user = repository.findByIdForUpdate(userId)
+                .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
 
+        user.addBalance(amount);
         repository.update(user);
     }
 
     @Transactional
     public void deductBalance(String userId, BigDecimal amount) {
-        User user = findUserById(userId);
-        user.deductBalance(amount);
+        User user = repository.findByIdForUpdate(userId)
+                .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
 
+        user.deductBalance(amount);
         repository.update(user);
     }
 
@@ -63,11 +65,6 @@ public class UserService {
     @Transactional
     public User update(User user) {
         return repository.update(user);
-    }
-
-    private User findUserById(String userId) {
-        return repository.findById(userId)
-                .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
     }
 
 }

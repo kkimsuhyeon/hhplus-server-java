@@ -25,6 +25,11 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.hibernate.orm.jdbc.bind: TRACE
 
+jwt:
+  secret: YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxMjM0NTY3ODkrLw==
+  access-token-validity: 3600000    # 1시간 (밀리초)
+  refresh-token-validity: 604800000 # 7일 (밀리초)
+
 springdoc:
   api-docs:
     enabled: true

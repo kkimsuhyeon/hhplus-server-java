@@ -1,6 +1,9 @@
 package kr.hhplus.be.server.domain.concert.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
+import kr.hhplus.be.server.domain.concert.application.dto.command.CreateSeatCommand;
+import kr.hhplus.be.server.domain.concert.application.dto.mapper.SeatMapper;
 import kr.hhplus.be.server.domain.concert.application.repository.SeatRepository;
 import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.concert.model.Seat;
@@ -28,24 +31,35 @@ public class SeatService {
     }
 
     @Transactional
-    public Seat reserve(String seatId) {
+    public Seat reserve(String seatId, String userId) {
         Seat seat = repository.findByIdForUpdate(seatId)
                 .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
 
-        seat.reserve();
+        seat.reserve(userId);
         return repository.update(seat);
     }
 
-    public Seat confirm(String seatId) {
+    @Transactional
+    public Seat confirm(String seatId, String userId) {
         Seat seat = repository.findByIdForUpdate(seatId)
                 .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
+
+        if (!seat.isOwnerBy(userId)) {
+            throw new BusinessException(CommonErrorCode.FORBIDDEN_ERROR);
+        }
 
         seat.confirm();
         return repository.update(seat);
     }
 
     @Transactional
-    public Seat create(Seat seat) {
+    public Seat create(CreateSeatCommand command) {
+        Seat seat = SeatMapper.toModel(command);
+        return this.save(seat);
+    }
+
+    @Transactional
+    public Seat save(Seat seat) {
         return repository.save(seat);
     }
 

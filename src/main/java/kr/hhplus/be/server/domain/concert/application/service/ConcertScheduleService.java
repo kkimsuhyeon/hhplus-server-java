@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.concert.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.domain.concert.application.dto.command.CreateScheduleCommand;
+import kr.hhplus.be.server.domain.concert.application.dto.mapper.ScheduleMapper;
 import kr.hhplus.be.server.domain.concert.application.repository.ConcertScheduleRepository;
 import kr.hhplus.be.server.domain.concert.exception.ConcertScheduleErrorCode;
 import kr.hhplus.be.server.domain.concert.model.ConcertSchedule;
@@ -28,7 +30,13 @@ public class ConcertScheduleService {
     }
 
     @Transactional
-    public ConcertSchedule create(ConcertSchedule schedule) {
+    public ConcertSchedule create(CreateScheduleCommand command) {
+        ConcertSchedule schedule = ScheduleMapper.toModel(command);
+        return this.save(schedule);
+    }
+
+    @Transactional
+    public ConcertSchedule save(ConcertSchedule schedule) {
         return repository.save(schedule);
     }
 

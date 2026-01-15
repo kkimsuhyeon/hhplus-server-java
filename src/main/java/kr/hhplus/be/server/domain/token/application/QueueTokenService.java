@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,18 +19,11 @@ public class QueueTokenService {
 
     @Transactional
     public QueueToken issueToken(String userId) {
-        QueueToken result = queueTokenRepository.findByUserId(userId).orElseGet(() -> {
-            QueueToken token = QueueToken.create(userId);
-            return queueTokenRepository.save(token);
-        });
+        queueTokenRepository.findByUserId(userId)
+                .ifPresent(token -> queueTokenRepository.delete(token.getId()));
 
-        if (result.isExpired()) {
-            QueueToken token = QueueToken.create(userId);
-            queueTokenRepository.delete(result.getId());
-            return queueTokenRepository.save(token);
-        }
-
-        return result;
+        QueueToken token = QueueToken.create(userId);
+        return queueTokenRepository.save(token);
     }
 
     @Transactional(readOnly = true)
@@ -50,11 +44,14 @@ public class QueueTokenService {
 
     @Transactional
     public void deleteExpiredTokens() {
-        List<QueueToken> allTokens = queueTokenRepository.findAll();
+        List<QueueToken> expiredToken = queueTokenRepository.findByStatus(TokenStatus.EXPIRED, Integer.MAX_VALUE);
+        expiredToken.forEach(token -> queueTokenRepository.delete(token.getId()));
+    }
 
-        allTokens.stream()
-                .filter(QueueToken::isExpired)
-                .forEach(token -> queueTokenRepository.delete(token.getId()));
+    @Transactional
+    public void expireTokens() {
+        queueTokenRepository.findByExpiredAtBefore(LocalDateTime.now())
+                .forEach(QueueToken::expire);
     }
 
     @Transactional

@@ -7,12 +7,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.hhplus.be.server.application.dto.ReserveSeatCommand;
 import kr.hhplus.be.server.application.usecase.ReservationUseCase;
+import kr.hhplus.be.server.config.security.AuthUser;
 import kr.hhplus.be.server.domain.reservation.adapter.in.web.factory.ReservationCommandFactory;
 import kr.hhplus.be.server.domain.reservation.adapter.in.web.request.ReserveSeatRequest;
 import kr.hhplus.be.server.shared.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,10 +42,11 @@ public class ReservationController {
             )
     })
     public ResponseEntity<BaseResponse<Void>> reserveSeat(
-            @RequestBody @Valid ReserveSeatRequest request
+            @RequestBody @Valid ReserveSeatRequest request,
+            @AuthenticationPrincipal AuthUser authUser
     ) {
-        ReserveSeatCommand command = commandFactory.toReserveSeatCommand(request);
-        reservationUseCase.execute(command);
+        ReserveSeatCommand command = commandFactory.toReserveSeatCommand(request, authUser.getId());
+        reservationUseCase.reserve(command);
         return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponse.success());
     }
 }

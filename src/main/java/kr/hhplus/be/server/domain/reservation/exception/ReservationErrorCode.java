@@ -14,7 +14,8 @@ public enum ReservationErrorCode implements ErrorCode {
     ALREADY_PAID(HttpStatus.BAD_REQUEST, "RSV003", "이미 결제된 예약입니다"),
     CANCELED(HttpStatus.BAD_REQUEST, "RSV004", "취소된 예약입니다"),
     NOT_PAYABLE(HttpStatus.BAD_REQUEST, "RSV005", "결제 가능한 상태가 아닙니다"),
-    ;
+    ALREADY_RESERVED(HttpStatus.BAD_REQUEST, "RSV006", "이미 예약이 존재합니다"),
+    ALREADY_HAVE_RESERVATION(HttpStatus.BAD_REQUEST, "RSV007", "이전 예약을 완료한 이후에 시도해주세요");
 
     private final HttpStatus status;
     private final String code;

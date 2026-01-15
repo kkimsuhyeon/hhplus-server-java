@@ -22,6 +22,16 @@ public class QueueToken {
 
     private LocalDateTime expiredAt;
 
+    public static QueueToken create(String userId) {
+        return QueueToken.builder()
+                .id(UUID.randomUUID().toString())
+                .userId(userId)
+                .status(TokenStatus.WAITING)
+                .createdAt(LocalDateTime.now())
+                .expiredAt(LocalDateTime.now().plusMinutes(60))
+                .build();
+    }
+
     public boolean isActive() {
         return this.status == TokenStatus.ACTIVE;
     }
@@ -32,21 +42,15 @@ public class QueueToken {
     }
 
     public boolean isExpired() {
-        return this.expiredAt.isBefore(LocalDateTime.now());
+        return this.status == TokenStatus.EXPIRED;
+    }
+
+    public void expire() {
+        this.status = TokenStatus.EXPIRED;
     }
 
     public boolean isWaiting() {
         return this.status == TokenStatus.WAITING;
-    }
-
-    public static QueueToken create(String userId) {
-        return QueueToken.builder()
-                .id(UUID.randomUUID().toString())
-                .userId(userId)
-                .status(TokenStatus.WAITING)
-                .createdAt(LocalDateTime.now())
-                .expiredAt(LocalDateTime.now().plusMinutes(60))
-                .build();
     }
 
 }

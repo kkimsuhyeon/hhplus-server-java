@@ -6,11 +6,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.hhplus.be.server.application.dto.PayCommand;
 import kr.hhplus.be.server.application.usecase.PaymentUseCase;
+import kr.hhplus.be.server.config.security.AuthUser;
 import kr.hhplus.be.server.domain.payment.adapter.in.web.factory.PaymentCommandFactory;
 import kr.hhplus.be.server.domain.payment.adapter.in.web.request.PayRequest;
 import kr.hhplus.be.server.shared.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,9 +38,10 @@ public class PaymentController {
             content = {@io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json")}
     )
     public ResponseEntity<BaseResponse<Void>> pay(
-            @RequestBody @Valid PayRequest request
+            @RequestBody @Valid PayRequest request,
+            @AuthenticationPrincipal AuthUser authUser
     ) {
-        PayCommand command = commandFactory.toPayCommand(request);
+        PayCommand command = commandFactory.toPayCommand(request, authUser.getId());
         paymentUseCase.pay(command);
         return ResponseEntity.ok().body(BaseResponse.success());
     }

@@ -4,14 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import kr.hhplus.be.server.config.exception.ErrorCode;
 import kr.hhplus.be.server.config.exception.exceptions.ValidationError;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
 @Getter
 @Setter
-@RequiredArgsConstructor(staticName = "of")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseResponse<T> {
 
@@ -25,6 +23,15 @@ public class BaseResponse<T> {
 
     private String description;
     private List<ValidationError> fields;
+
+    private BaseResponse(String code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    private static <T> BaseResponse<T> of(String code, String message) {
+        return new BaseResponse<>(code, message);
+    }
 
     public static BaseResponse<Void> success() {
         return BaseResponse.of(DEFAULT_SUCCESS_CODE, DEFAULT_SUCCESS_MESSAGE);

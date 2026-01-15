@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentCommandFactory {
 
-    public PayCommand toPayCommand(PayRequest request) {
+    public PayCommand toPayCommand(PayRequest request, String userId) {
         return PayCommand.builder()
                 .reservationId(request.getReservationId())
-                .userId(request.getUserId())
+                .userId(userId)
                 .build();
     }
 }

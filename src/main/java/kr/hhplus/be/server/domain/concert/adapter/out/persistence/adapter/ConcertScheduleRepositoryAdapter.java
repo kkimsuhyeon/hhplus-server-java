@@ -6,6 +6,7 @@ import kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity.Concert
 import kr.hhplus.be.server.domain.concert.adapter.out.persistence.repository.ConcertJpaRepository;
 import kr.hhplus.be.server.domain.concert.adapter.out.persistence.repository.ConcertScheduleJpaRepository;
 import kr.hhplus.be.server.domain.concert.application.repository.ConcertScheduleRepository;
+import kr.hhplus.be.server.domain.concert.exception.ConcertErrorCode;
 import kr.hhplus.be.server.domain.concert.exception.ConcertScheduleErrorCode;
 import kr.hhplus.be.server.domain.concert.model.ConcertSchedule;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,8 @@ public class ConcertScheduleRepositoryAdapter implements ConcertScheduleReposito
 
     @Override
     public ConcertSchedule save(ConcertSchedule schedule) {
-        ConcertEntity concertEntity = concertRepository.getReferenceById(schedule.getConcertId());
+        ConcertEntity concertEntity = concertRepository.findById(schedule.getConcertId())
+                .orElseThrow(() -> new BusinessException(ConcertErrorCode.NOT_FOUND));
         ConcertScheduleEntity entity = ConcertScheduleEntity.create(schedule, concertEntity);
 
         return jpaRepository.save(entity).toModel();
