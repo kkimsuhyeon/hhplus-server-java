@@ -66,7 +66,10 @@ class UserServiceImplTest {
     @DisplayName("유저 생성")
     void create_Success() {
         // given
-        CreateUserCommand command = CreateUserCommand.builder().build();
+        CreateUserCommand command = CreateUserCommand.builder()
+                .email("test@test.com")
+                .password("password123")
+                .build();
 
         // when
         userService.create(command);
@@ -77,6 +80,7 @@ class UserServiceImplTest {
 
         User actualUser = userCaptor.getValue();
         assertThat(actualUser.getBalance()).isEqualTo(BigDecimal.ZERO);
+        assertThat(actualUser.getEmail()).isEqualTo("test@test.com");
     }
 
     @Test
@@ -88,7 +92,7 @@ class UserServiceImplTest {
         BigDecimal amount = BigDecimal.valueOf(1000);
         User expectedUser = User.builder().id(userId).balance(BigDecimal.ZERO).build();
 
-        when(repository.findById(userId)).thenReturn(Optional.of(expectedUser));
+        when(repository.findByIdWithLock(userId)).thenReturn(Optional.of(expectedUser));
 
         // when
         userService.addBalance(userId, amount);
@@ -106,7 +110,7 @@ class UserServiceImplTest {
     void addBalance_Fail() {
         // given
         User expectedUser = User.builder().id("123").balance(BigDecimal.ZERO).build();
-        when(repository.findById("123")).thenReturn(Optional.of(expectedUser));
+        when(repository.findByIdWithLock("123")).thenReturn(Optional.of(expectedUser));
 
         // when, then
         assertThatThrownBy(() -> userService.addBalance("123", BigDecimal.valueOf(-100)))
@@ -120,7 +124,7 @@ class UserServiceImplTest {
     @DisplayName("포인트 차감 - 성공")
     void deductBalance_Success() {
         User expectedUser = User.builder().id("123").balance(BigDecimal.valueOf(1000)).build();
-        when(repository.findById("123")).thenReturn(Optional.of(expectedUser));
+        when(repository.findByIdWithLock("123")).thenReturn(Optional.of(expectedUser));
 
         userService.deductBalance("123", BigDecimal.valueOf(100));
 
@@ -132,7 +136,7 @@ class UserServiceImplTest {
     @DisplayName("포인트 차감 - 실패")
     void deductBalance_Fail() {
         User expectedUser = User.builder().id("123").balance(BigDecimal.valueOf(100)).build();
-        when(repository.findById("123")).thenReturn(Optional.of(expectedUser));
+        when(repository.findByIdWithLock("123")).thenReturn(Optional.of(expectedUser));
 
         assertThatThrownBy(() -> userService.deductBalance("123", BigDecimal.valueOf(500)))
                 .isInstanceOf(BusinessException.class)

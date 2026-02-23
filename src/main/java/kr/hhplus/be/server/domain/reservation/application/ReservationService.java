@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -24,8 +25,8 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public Reservation getReservationForUpdate(String reservationId){
-        return repository.findByIdForUpdate(reservationId)
+    public Reservation getReservationWithLock(String reservationId){
+        return repository.findByIdWithLock(reservationId)
                 .orElseThrow(() -> new BusinessException(ReservationErrorCode.NOT_FOUND));
     }
 
@@ -49,6 +50,11 @@ public class ReservationService {
     @Transactional
     public Reservation save(Reservation reservation) {
         return repository.save(reservation);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Reservation> findExpiredPendingReservations() {
+        return repository.findExpiredPendingReservations(LocalDateTime.now());
     }
 
     @Transactional

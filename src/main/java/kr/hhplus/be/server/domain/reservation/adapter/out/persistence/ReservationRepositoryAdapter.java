@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +26,8 @@ public class ReservationRepositoryAdapter implements ReservationRepository {
     }
 
     @Override
-    public Optional<Reservation> findByIdForUpdate(String id) {
-        return jpaRepository.findByIdForUpdate(id)
+    public Optional<Reservation> findByIdWithLock(String id) {
+        return jpaRepository.findByIdWithLock(id)
                 .map(ReservationEntity::toModel);
     }
 
@@ -44,6 +45,13 @@ public class ReservationRepositoryAdapter implements ReservationRepository {
     }
 
     @Override
+    public List<Reservation> findExpiredPendingReservations(LocalDateTime now) {
+        return jpaRepository.findExpiredPendingReservations(now).stream()
+                .map(ReservationEntity::toModel)
+                .toList();
+    }
+
+    @Override
     public Reservation save(Reservation reservation) {
         ReservationEntity entity = ReservationEntity.create(reservation);
         ReservationEntity savedEntity = jpaRepository.save(entity);
@@ -53,7 +61,7 @@ public class ReservationRepositoryAdapter implements ReservationRepository {
 
     @Override
     public Reservation update(Reservation reservation) {
-        ReservationEntity reservationEntity = jpaRepository.findByIdForUpdate(reservation.getId())
+        ReservationEntity reservationEntity = jpaRepository.findById(reservation.getId())
                 .orElseThrow(() -> new BusinessException(ReservationErrorCode.NOT_FOUND));
 
         reservationEntity.update(reservation);

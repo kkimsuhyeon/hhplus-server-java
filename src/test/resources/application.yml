@@ -18,3 +18,8 @@ spring:
   h2:
     console:
       enabled: true
+
+jwt:
+  secret: dGVzdC1zZWNyZXQta2V5LWZvci11bml0LXRlc3RpbmctcHVycG9zZXMtb25seS1kb25vdC11c2UtaW4tcHJvZHVjdGlvbg==
+  access-token-validity: 3600000
+  refresh-token-validity: 604800000

@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.application.usecase;
 
-import jakarta.persistence.OptimisticLockException;
 import kr.hhplus.be.server.application.dto.PayCommand;
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.concert.application.service.SeatService;
@@ -11,8 +10,6 @@ import kr.hhplus.be.server.domain.reservation.model.Reservation;
 import kr.hhplus.be.server.domain.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +28,7 @@ public class PaymentUseCase {
     @Transactional
     public Payment pay(PayCommand command) {
         try {
-            Reservation reservation = reservationService.getReservationForUpdate(command.getReservationId());
+            Reservation reservation = reservationService.getReservationWithLock(command.getReservationId());
             reservation.validateForPayment(command.getUserId());
 
             userService.deductBalance(command.getUserId(), reservation.getPaymentAmount());

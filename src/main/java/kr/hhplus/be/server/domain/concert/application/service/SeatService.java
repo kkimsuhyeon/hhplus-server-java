@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -32,7 +33,7 @@ public class SeatService {
 
     @Transactional
     public Seat reserve(String seatId, String userId) {
-        Seat seat = repository.findByIdForUpdate(seatId)
+        Seat seat = repository.findByIdWithLock(seatId)
                 .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
 
         seat.reserve(userId);
@@ -41,7 +42,7 @@ public class SeatService {
 
     @Transactional
     public Seat confirm(String seatId, String userId) {
-        Seat seat = repository.findByIdForUpdate(seatId)
+        Seat seat = repository.findByIdWithLock(seatId)
                 .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
 
         if (!seat.isOwnerBy(userId)) {
@@ -61,6 +62,15 @@ public class SeatService {
     @Transactional
     public Seat save(Seat seat) {
         return repository.save(seat);
+    }
+
+    @Transactional
+    public void releaseExpiredHolds() {
+        List<Seat> expiredSeats = repository.findExpiredHolds(LocalDateTime.now());
+        expiredSeats.forEach(seat -> {
+            seat.release();
+            repository.update(seat);
+        });
     }
 
     @Transactional

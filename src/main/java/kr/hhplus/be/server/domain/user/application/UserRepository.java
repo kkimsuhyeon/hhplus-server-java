@@ -13,7 +13,7 @@ public interface UserRepository {
 
     Optional<User> findById(String id);
 
-    Optional<User> findByIdForUpdate(String id);
+    Optional<User> findByIdWithLock(String id);
 
     Optional<User> findByEmail(String email);
 

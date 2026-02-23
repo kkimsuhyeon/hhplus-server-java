@@ -26,9 +26,9 @@ logging:
     org.hibernate.orm.jdbc.bind: TRACE
 
 jwt:
-  secret: YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxMjM0NTY3ODkrLw==
-  access-token-validity: 3600000    # 1시간 (밀리초)
-  refresh-token-validity: 604800000 # 7일 (밀리초)
+  secret: ${JWT_SECRET:YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxMjM0NTY3ODkrLw==}
+  access-token-validity: ${JWT_ACCESS_TOKEN_VALIDITY:3600000}    # 1시간 (밀리초)
+  refresh-token-validity: ${JWT_REFRESH_TOKEN_VALIDITY:604800000} # 7일 (밀리초)
 
 springdoc:
   api-docs:

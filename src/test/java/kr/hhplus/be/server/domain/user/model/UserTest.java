@@ -14,9 +14,11 @@ class UserTest {
 
     @Test
     void create_Success() {
-        User user = User.create();
+        User user = User.create("test@test.com", "password123");
 
         assertThat(user.getBalance()).isEqualTo(BigDecimal.ZERO);
+        assertThat(user.getEmail()).isEqualTo("test@test.com");
+        assertThat(user.getRole()).isEqualTo(UserRole.USER);
     }
 
     @Test
