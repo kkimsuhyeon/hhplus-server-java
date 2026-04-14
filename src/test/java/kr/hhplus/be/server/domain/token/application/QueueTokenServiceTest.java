@@ -95,14 +95,14 @@ class QueueTokenServiceTest {
     void expireTokens_Success() {
         QueueToken expired1 = QueueToken.builder().id("1").expiredAt(LocalDateTime.now().minusMinutes(1)).build();
         QueueToken expired2 = QueueToken.builder().id("2").expiredAt(LocalDateTime.now().minusMinutes(1)).build();
-        QueueToken waiting1 = QueueToken.builder().id("3").expiredAt(LocalDateTime.now().plusMinutes(1)).build();
-        when(queueTokenRepository.findAll()).thenReturn(List.of(expired1, expired2, waiting1));
+        when(queueTokenRepository.findByExpiredAtBefore(any(LocalDateTime.class))).thenReturn(List.of(expired1, expired2));
+        when(queueTokenRepository.save(any(QueueToken.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         queueTokenService.expireTokens();
 
         assertThat(expired1.getStatus()).isEqualTo(TokenStatus.EXPIRED);
         assertThat(expired2.getStatus()).isEqualTo(TokenStatus.EXPIRED);
-        assertThat(waiting1.getStatus()).isNotEqualTo(TokenStatus.EXPIRED);
+        verify(queueTokenRepository, times(2)).save(any(QueueToken.class));
     }
 
     @Test
@@ -112,12 +112,14 @@ class QueueTokenServiceTest {
         QueueToken token3 = QueueToken.builder().id("3").status(TokenStatus.WAITING).build();
 
         when(queueTokenRepository.findByStatus(TokenStatus.WAITING, 2)).thenReturn(List.of(token1, token2));
+        when(queueTokenRepository.save(any(QueueToken.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         queueTokenService.activateTokens(2);
 
         assertThat(token1.getStatus()).isEqualTo(TokenStatus.ACTIVE);
         assertThat(token2.getStatus()).isEqualTo(TokenStatus.ACTIVE);
         assertThat(token3.getStatus()).isEqualTo(TokenStatus.WAITING);
+        verify(queueTokenRepository, times(2)).save(any(QueueToken.class));
     }
 
 }

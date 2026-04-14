@@ -8,7 +8,7 @@ import kr.hhplus.be.server.domain.concert.application.dto.command.CreateSeatComm
 import kr.hhplus.be.server.domain.concert.application.service.ConcertScheduleService;
 import kr.hhplus.be.server.domain.concert.application.service.ConcertService;
 import kr.hhplus.be.server.domain.concert.application.service.SeatService;
-import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
+import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import kr.hhplus.be.server.domain.concert.model.Concert;
 import kr.hhplus.be.server.domain.concert.model.ConcertSchedule;
 import kr.hhplus.be.server.domain.concert.model.Seat;
@@ -83,11 +83,14 @@ class ReservationUseCaseIntegrationTest {
         reservationUseCase.reserve(command);
         assertThatThrownBy(() -> reservationUseCase.reserve(command))
                 .isInstanceOf(BusinessException.class)
-                .hasMessage(SeatErrorCode.ALREADY_RESERVED.getMessage());
+                .hasMessage(ReservationErrorCode.ALREADY_HAVE_RESERVATION.getMessage());
     }
 
     private User createUser() {
-        CreateUserCommand command = CreateUserCommand.builder().build();
+        CreateUserCommand command = CreateUserCommand.builder()
+                .email("test" + System.nanoTime() + "@test.com")
+                .password("password123")
+                .build();
         return userService.create(command);
     }
 

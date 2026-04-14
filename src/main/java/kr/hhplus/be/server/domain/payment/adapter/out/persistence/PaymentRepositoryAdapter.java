@@ -24,8 +24,8 @@ public class PaymentRepositoryAdapter implements PaymentRepository {
     }
 
     @Override
-    public Optional<Payment> findByIdForUpdate(String id) {
-        return jpaRepository.findByIdForUpdate(id)
+    public Optional<Payment> findByIdWithLock(String id) {
+        return jpaRepository.findByIdWithLock(id)
                 .map(PaymentEntity::toModel);
     }
 
@@ -37,7 +37,7 @@ public class PaymentRepositoryAdapter implements PaymentRepository {
 
     @Override
     public Payment update(Payment payment) {
-        PaymentEntity paymentEntity = jpaRepository.findByIdForUpdate(payment.getId())
+        PaymentEntity paymentEntity = jpaRepository.findById(payment.getId())
                 .orElseThrow(() -> new BusinessException(PaymentErrorCode.NOT_FOUND));
 
         paymentEntity.update(payment);

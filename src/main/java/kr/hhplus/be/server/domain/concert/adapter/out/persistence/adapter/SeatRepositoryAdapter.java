@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,8 +34,8 @@ public class SeatRepositoryAdapter implements SeatRepository {
     }
 
     @Override
-    public Optional<Seat> findByIdForUpdate(String id) {
-        return jpaRepository.findByIdForUpdate(id)
+    public Optional<Seat> findByIdWithLock(String id) {
+        return jpaRepository.findByIdWithLock(id)
                 .map(SeatEntity::toModel);
     }
 
@@ -60,8 +61,16 @@ public class SeatRepositoryAdapter implements SeatRepository {
     }
 
     @Override
+    public List<Seat> findExpiredHolds(LocalDateTime now) {
+        return jpaRepository.findExpiredHolds(now)
+                .stream()
+                .map(SeatEntity::toModel)
+                .toList();
+    }
+
+    @Override
     public Seat update(Seat seat) {
-        SeatEntity seatEntity = jpaRepository.findByIdForUpdate(seat.getId())
+        SeatEntity seatEntity = jpaRepository.findById(seat.getId())
                 .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
 
         seatEntity.update(seat);

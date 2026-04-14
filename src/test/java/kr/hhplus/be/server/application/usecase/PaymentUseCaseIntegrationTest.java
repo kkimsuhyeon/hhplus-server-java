@@ -12,7 +12,6 @@ import kr.hhplus.be.server.domain.concert.model.Concert;
 import kr.hhplus.be.server.domain.concert.model.ConcertSchedule;
 import kr.hhplus.be.server.domain.concert.model.Seat;
 import kr.hhplus.be.server.domain.concert.model.SeatStatus;
-import kr.hhplus.be.server.domain.payment.exception.PaymentErrorCode;
 import kr.hhplus.be.server.domain.payment.model.Payment;
 import kr.hhplus.be.server.domain.payment.model.PaymentStatus;
 import kr.hhplus.be.server.domain.reservation.application.CreateReservationCommand;
@@ -23,6 +22,7 @@ import kr.hhplus.be.server.domain.reservation.model.ReservationStatus;
 import kr.hhplus.be.server.domain.user.application.UserRepository;
 import kr.hhplus.be.server.domain.user.application.UserService;
 import kr.hhplus.be.server.domain.user.model.User;
+import kr.hhplus.be.server.domain.user.model.UserRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -120,7 +120,10 @@ class PaymentUseCaseIntegrationTest {
 
     private User createUser(BigDecimal balance) {
         User user = User.builder()
+                .email("test" + System.nanoTime() + "@test.com")
+                .password("password123")
                 .balance(balance)
+                .role(UserRole.USER)
                 .build();
 
         return userRepository.save(user);

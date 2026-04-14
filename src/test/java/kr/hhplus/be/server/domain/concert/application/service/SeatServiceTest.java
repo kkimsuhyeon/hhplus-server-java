@@ -74,7 +74,7 @@ class SeatServiceTest {
     @Test
     void reserve_Success() {
         Seat expect = Seat.builder().status(SeatStatus.AVAILABLE).build();
-        when(seatRepository.findByIdForUpdate("123")).thenReturn(Optional.of(expect));
+        when(seatRepository.findByIdWithLock("123")).thenReturn(Optional.of(expect));
 
         seatService.reserve("123", "user1");
 
@@ -88,7 +88,7 @@ class SeatServiceTest {
 
     @Test
     void reserve_Fail() {
-        when(seatRepository.findByIdForUpdate("123")).thenReturn(Optional.empty());
+        when(seatRepository.findByIdWithLock("123")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> seatService.reserve("123", "user1"))
                 .isInstanceOf(BusinessException.class)

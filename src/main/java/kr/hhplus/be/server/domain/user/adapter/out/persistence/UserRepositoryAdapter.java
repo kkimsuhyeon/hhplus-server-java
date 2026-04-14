@@ -33,8 +33,8 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByIdForUpdate(String id) {
-        return jpaRepository.findByIdForUpdate(id)
+    public Optional<User> findByIdWithLock(String id) {
+        return jpaRepository.findByIdWithLock(id)
                 .map(UserEntity::toModel);
     }
 

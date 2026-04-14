@@ -51,12 +51,18 @@ public class QueueTokenService {
     @Transactional
     public void expireTokens() {
         queueTokenRepository.findByExpiredAtBefore(LocalDateTime.now())
-                .forEach(QueueToken::expire);
+                .forEach(token -> {
+                    token.expire();
+                    queueTokenRepository.save(token);
+                });
     }
 
     @Transactional
     public void activateTokens(int count) {
         List<QueueToken> waitingTokens = queueTokenRepository.findByStatus(TokenStatus.WAITING, count);
-        waitingTokens.forEach(QueueToken::activate);
+        waitingTokens.forEach(token -> {
+            token.activate();
+            queueTokenRepository.save(token);
+        });
     }
 }

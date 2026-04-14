@@ -59,19 +59,28 @@ public class UserEntity {
 
     public static UserEntity create(User user) {
         return UserEntity.builder()
+                .email(user.getEmail())
+                .password(user.getPassword())
                 .balance(user.getBalance())
+                .role(user.getRole())
                 .build();
     }
 
     public User toModel() {
         return User.builder()
                 .id(this.id)
+                .email(this.email)
+                .password(this.password)
                 .balance(this.balance)
+                .role(this.role)
                 .build();
     }
 
     public void update(User user) {
+        this.email = user.getEmail();
+        this.password = user.getPassword();
         this.balance = user.getBalance();
+        this.role = user.getRole();
     }
 
 }

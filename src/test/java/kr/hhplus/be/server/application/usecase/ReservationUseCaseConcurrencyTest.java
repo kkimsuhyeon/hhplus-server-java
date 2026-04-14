@@ -129,7 +129,10 @@ class ReservationUseCaseConcurrencyTest {
     }
 
     private User createUser() {
-        CreateUserCommand command = CreateUserCommand.builder().build();
+        CreateUserCommand command = CreateUserCommand.builder()
+                .email("test" + System.nanoTime() + "@test.com")
+                .password("password123")
+                .build();
         return userService.create(command);
     }
 

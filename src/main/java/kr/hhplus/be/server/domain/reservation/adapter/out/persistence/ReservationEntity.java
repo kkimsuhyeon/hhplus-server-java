@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
 import kr.hhplus.be.server.domain.reservation.model.ReservationStatus;
 import lombok.AccessLevel;
@@ -30,7 +31,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "reservations")
+@Table(name = "reservations", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_reservation_user_seat", columnNames = {"user_id", "seat_id"})
+})
 public class ReservationEntity {
 
     @Id

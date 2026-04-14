@@ -63,6 +63,10 @@ public class Reservation {
         }
     }
 
+    public void cancel() {
+        this.status = ReservationStatus.CANCELLED;
+    }
+
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(expiresAt);
     }

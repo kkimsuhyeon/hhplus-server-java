@@ -29,7 +29,7 @@ class SeatRepositoryTest {
     private SeatJpaRepository jpaRepository;
 
 //    @Test
-//    void findByIdForUpdate() {
+//    void findByIdWithLock() {
 //        SeatEntity.
 //    }
 
