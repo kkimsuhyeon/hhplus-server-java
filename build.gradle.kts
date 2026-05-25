@@ -37,6 +37,9 @@ dependencies {
     implementation("org.projectlombok:lombok")
     implementation("org.springframework.retry:spring-retry:2.0.12")
     implementation("org.springframework.boot:spring-boot-starter-security")
+
+    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-aop
+    implementation("org.springframework.boot:spring-boot-starter-aop:4.0.0-M2")
     testImplementation("org.springframework.security:spring-security-test")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.projectlombok:lombok")
