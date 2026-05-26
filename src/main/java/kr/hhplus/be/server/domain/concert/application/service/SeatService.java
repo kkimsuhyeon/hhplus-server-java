@@ -3,7 +3,7 @@ package kr.hhplus.be.server.domain.concert.application.service;
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
 import kr.hhplus.be.server.domain.concert.application.dto.command.CreateSeatCommand;
-import kr.hhplus.be.server.domain.concert.application.dto.mapper.SeatMapper;
+import kr.hhplus.be.server.domain.concert.application.assembler.SeatAssembler;
 import kr.hhplus.be.server.domain.concert.application.repository.SeatRepository;
 import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.concert.model.Seat;
@@ -55,7 +55,7 @@ public class SeatService {
 
     @Transactional
     public Seat create(CreateSeatCommand command) {
-        Seat seat = SeatMapper.toModel(command);
+        Seat seat = SeatAssembler.toModel(command);
         return this.save(seat);
     }
 

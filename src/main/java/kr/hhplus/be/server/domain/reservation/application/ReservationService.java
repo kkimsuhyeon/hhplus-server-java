@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.reservation.application;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.domain.reservation.application.assembler.ReservationAssembler;
 import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,7 @@ public class ReservationService {
                     throw new BusinessException(ReservationErrorCode.ALREADY_RESERVED);
                 });
 
-        Reservation reservation = ReservationMapper.toModel(command);
+        Reservation reservation = ReservationAssembler.toModel(command);
         return save(reservation);
     }
 

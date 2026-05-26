@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.user.application;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.domain.user.application.assembler.UserAssembler;
 import kr.hhplus.be.server.domain.user.application.dto.UserCriteria;
 import kr.hhplus.be.server.domain.user.application.dto.command.CreateUserCommand;
 import kr.hhplus.be.server.domain.user.application.dto.query.FindUserQuery;
@@ -35,7 +36,7 @@ public class UserService {
 
     @Transactional
     public User create(CreateUserCommand command) {
-        User user = UserMapper.toModel(command);
+        User user = UserAssembler.toModel(command);
         return repository.save(user);
     }
 

@@ -34,7 +34,6 @@ public class User {
         this.balance = this.balance.subtract(amount);
     }
 
-
     public static User create(String email, String password) {
         return User.builder()
                 .email(email)
