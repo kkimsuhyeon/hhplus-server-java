@@ -225,6 +225,9 @@ class CreateEntityTest {
 
 ## Code Style & Conventions
 
+> 변환 계층(Mapper/Assembler/Command/Query) 규칙, 테스트 전략, 네이밍 컨벤션은
+> [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md)에 정리되어 있다. 코드 작성 전 참조할 것.
+
 ### Entity Design
 - Domain Models: Immutable with `@Builder`, no setters
 - JPA Entities: Separate from domain models, in `adapter/out/persistence/entity/`
