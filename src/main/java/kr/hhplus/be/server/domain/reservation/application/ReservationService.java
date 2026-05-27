@@ -26,8 +26,8 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public Reservation getReservationWithLock(String reservationId){
-        return repository.findByIdWithLock(reservationId)
+    public Reservation getReservationForUpdate(String reservationId){
+        return repository.findByIdForUpdate(reservationId)
                 .orElseThrow(() -> new BusinessException(ReservationErrorCode.NOT_FOUND));
     }
 

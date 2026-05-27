@@ -24,8 +24,8 @@ public class PaymentRepositoryAdapter implements PaymentRepository {
     }
 
     @Override
-    public Optional<Payment> findByIdWithLock(String id) {
-        return jpaRepository.findByIdWithLock(id)
+    public Optional<Payment> findByIdForUpdate(String id) {
+        return jpaRepository.findByIdForUpdate(id)
                 .map(PaymentEntity::toModel);
     }
 

@@ -28,7 +28,7 @@ public class PaymentUseCase {
     @Transactional
     public Payment pay(PayCommand command) {
         try {
-            Reservation reservation = reservationService.getReservationWithLock(command.getReservationId());
+            Reservation reservation = reservationService.getReservationForUpdate(command.getReservationId());
             reservation.validateForPayment(command.getUserId());
 
             userCommandService.deductBalance(command.getUserId(), reservation.getPaymentAmount());

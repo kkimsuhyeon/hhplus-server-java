@@ -8,7 +8,7 @@ public interface PaymentRepository {
 
     Optional<Payment> findById(String id);
 
-    Optional<Payment> findByIdWithLock(String id);
+    Optional<Payment> findByIdForUpdate(String id);
 
     Payment save(Payment payment);
 

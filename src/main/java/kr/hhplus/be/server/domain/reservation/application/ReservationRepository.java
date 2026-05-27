@@ -10,7 +10,7 @@ public interface ReservationRepository {
 
     Optional<Reservation> findById(String id);
 
-    Optional<Reservation> findByIdWithLock(String id);
+    Optional<Reservation> findByIdForUpdate(String id);
 
     Optional<Reservation> findByUserIdAndSeatId(String userId, String seatId);
 

@@ -26,8 +26,8 @@ public class ReservationRepositoryAdapter implements ReservationRepository {
     }
 
     @Override
-    public Optional<Reservation> findByIdWithLock(String id) {
-        return jpaRepository.findByIdWithLock(id)
+    public Optional<Reservation> findByIdForUpdate(String id) {
+        return jpaRepository.findByIdForUpdate(id)
                 .map(ReservationEntity::toModel);
     }
 

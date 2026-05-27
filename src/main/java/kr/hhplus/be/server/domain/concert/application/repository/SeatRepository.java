@@ -10,7 +10,7 @@ public interface SeatRepository {
 
     Optional<Seat> findById(String id);
 
-    Optional<Seat> findByIdWithLock(String id);
+    Optional<Seat> findByIdForUpdate(String id);
 
     List<Seat> findByScheduleId(String scheduleId);
 

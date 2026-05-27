@@ -17,7 +17,7 @@ public interface ReservationJpaRepository extends JpaRepository<ReservationEntit
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT r FROM ReservationEntity r WHERE r.id = :id")
-    Optional<ReservationEntity> findByIdWithLock(String id);
+    Optional<ReservationEntity> findByIdForUpdate(String id);
 
     Optional<ReservationEntity> findByUserIdAndSeatId(String userId, String seatId);
 

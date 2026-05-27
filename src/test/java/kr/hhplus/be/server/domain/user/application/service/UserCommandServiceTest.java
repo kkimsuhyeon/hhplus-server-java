@@ -63,7 +63,7 @@ class UserCommandServiceTest {
         BigDecimal amount = BigDecimal.valueOf(1000);
         User expectedUser = User.builder().id(userId).balance(BigDecimal.ZERO).build();
 
-        when(repository.findByIdWithLock(userId)).thenReturn(Optional.of(expectedUser));
+        when(repository.findByIdForUpdate(userId)).thenReturn(Optional.of(expectedUser));
 
         // when
         userCommandService.addBalance(userId, amount);
@@ -81,7 +81,7 @@ class UserCommandServiceTest {
     void addBalance_Fail() {
         // given
         User expectedUser = User.builder().id("123").balance(BigDecimal.ZERO).build();
-        when(repository.findByIdWithLock("123")).thenReturn(Optional.of(expectedUser));
+        when(repository.findByIdForUpdate("123")).thenReturn(Optional.of(expectedUser));
 
         // when, then
         assertThatThrownBy(() -> userCommandService.addBalance("123", BigDecimal.valueOf(-100)))
@@ -95,7 +95,7 @@ class UserCommandServiceTest {
     @DisplayName("포인트 차감 - 성공")
     void deductBalance_Success() {
         User expectedUser = User.builder().id("123").balance(BigDecimal.valueOf(1000)).build();
-        when(repository.findByIdWithLock("123")).thenReturn(Optional.of(expectedUser));
+        when(repository.findByIdForUpdate("123")).thenReturn(Optional.of(expectedUser));
 
         userCommandService.deductBalance("123", BigDecimal.valueOf(100));
 
@@ -107,7 +107,7 @@ class UserCommandServiceTest {
     @DisplayName("포인트 차감 - 실패")
     void deductBalance_Fail() {
         User expectedUser = User.builder().id("123").balance(BigDecimal.valueOf(100)).build();
-        when(repository.findByIdWithLock("123")).thenReturn(Optional.of(expectedUser));
+        when(repository.findByIdForUpdate("123")).thenReturn(Optional.of(expectedUser));
 
         assertThatThrownBy(() -> userCommandService.deductBalance("123", BigDecimal.valueOf(500)))
                 .isInstanceOf(BusinessException.class)

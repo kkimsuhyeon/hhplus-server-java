@@ -33,7 +33,7 @@ public class SeatService {
 
     @Transactional
     public Seat reserve(String seatId, String userId) {
-        Seat seat = repository.findByIdWithLock(seatId)
+        Seat seat = repository.findByIdForUpdate(seatId)
                 .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
 
         seat.reserve(userId);
@@ -42,7 +42,7 @@ public class SeatService {
 
     @Transactional
     public Seat confirm(String seatId, String userId) {
-        Seat seat = repository.findByIdWithLock(seatId)
+        Seat seat = repository.findByIdForUpdate(seatId)
                 .orElseThrow(() -> new BusinessException(SeatErrorCode.NOT_FOUND));
 
         if (!seat.isOwnerBy(userId)) {

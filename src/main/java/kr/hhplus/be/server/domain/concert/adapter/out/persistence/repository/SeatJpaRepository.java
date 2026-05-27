@@ -17,7 +17,7 @@ public interface SeatJpaRepository extends JpaRepository<SeatEntity, String> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT s FROM SeatEntity s WHERE s.id = :id")
-    Optional<SeatEntity> findByIdWithLock(@Param("id") String id);
+    Optional<SeatEntity> findByIdForUpdate(@Param("id") String id);
 
     List<SeatEntity> findBySchedule_Id(String scheduleId);
 

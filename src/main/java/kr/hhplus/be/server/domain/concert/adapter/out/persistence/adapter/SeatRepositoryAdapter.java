@@ -34,8 +34,8 @@ public class SeatRepositoryAdapter implements SeatRepository {
     }
 
     @Override
-    public Optional<Seat> findByIdWithLock(String id) {
-        return jpaRepository.findByIdWithLock(id)
+    public Optional<Seat> findByIdForUpdate(String id) {
+        return jpaRepository.findByIdForUpdate(id)
                 .map(SeatEntity::toModel);
     }
 
