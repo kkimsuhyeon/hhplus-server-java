@@ -35,7 +35,7 @@ class UserCommandServiceTest {
 
     @Test
     @DisplayName("유저 생성")
-    void create_Success() {
+    void create_User_Success() {
         // given
         CreateUserCommand command = CreateUserCommand.builder()
                 .email("test@test.com")

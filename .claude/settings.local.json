@@ -23,7 +23,13 @@
       "WebFetch(domain:github.com)",
       "Bash(find:*)",
       "mcp__plugin_serena_serena__find_symbol",
-      "mcp__plugin_serena_serena__find_referencing_symbols"
+      "mcp__plugin_serena_serena__find_referencing_symbols",
+      "mcp__claude_ai_Notion__notion-fetch",
+      "mcp__claude_ai_Notion__notion-search",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_pages",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__evaluate_script",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_snapshot"
     ],
     "deny": [],
     "ask": []

@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class UserTest {
 
     @Test
-    void create_Success() {
-        User user = User.create("test@test.com", "password123");
+    void create_User_Success() {
+        User user = User.createUser("test@test.com", "password123");
 
         assertThat(user.getBalance()).isEqualTo(BigDecimal.ZERO);
         assertThat(user.getEmail()).isEqualTo("test@test.com");

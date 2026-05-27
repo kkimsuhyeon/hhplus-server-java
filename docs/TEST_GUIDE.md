@@ -1,411 +1,614 @@
-# Entity 테스트 코드 작성 가이드
+# 테스트 가이드
 
-## 📚 목차
-1. [테스트 종류와 차이점](#테스트-종류와-차이점)
-2. [단위 테스트 작성법](#단위-테스트-작성법)
-3. [JPA 통합 테스트 작성법](#jpa-통합-테스트-작성법)
-4. [테스트 작성 시 주의사항](#테스트-작성-시-주의사항)
-5. [자주 사용하는 Assertion](#자주-사용하는-assertion)
+**프로젝트**: 항해플러스 콘서트 예약 시스템
+**스택**: JUnit 5 · AssertJ · Mockito · Spring Boot Test · `@DataJpaTest` + Testcontainers
+**원칙**: Given-When-Then, `@Nested` 그룹화, `@DisplayName`로 의도 표현, 필요한 최소 범위만 부팅
 
 ---
 
-## 테스트 종류와 차이점
+## 목차
 
-### 1️⃣ 단위 테스트 (Unit Test)
-**파일**: `ConcertEntityTest.java`
-
-**특징**:
-- 🚀 **빠르다**: DB 연결 없이 메모리에서만 실행
-- 🎯 **범위가 작다**: Entity 객체의 메서드만 테스트
-- 🔧 **간단하다**: 외부 의존성 없음
-
-**언제 사용하나요?**
-```java
-✅ Entity의 생성자/빌더 테스트
-✅ Getter/Setter 테스트
-✅ 비즈니스 로직 메서드 테스트 (isReservable() 같은)
-✅ 계산 로직 테스트
-```
-
-**예시**:
-```java
-@Test
-void createConcertEntityWithBuilder() {
-    // DB 없이 순수 객체만 테스트
-    ConcertEntity concert = ConcertEntity.builder()
-            .title("아이유 콘서트")
-            .description("설명")
-            .build();
-    
-    assertThat(concert.getTitle()).isEqualTo("아이유 콘서트");
-}
-```
+1. [테스트 종류와 선택 기준](#1-테스트-종류와-선택-기준)
+2. [공통 컨벤션](#2-공통-컨벤션)
+3. [단위 테스트 (도메인 모델 / 엔티티)](#3-단위-테스트-도메인-모델--엔티티)
+4. [JPA 통합 테스트 (`@DataJpaTest`)](#4-jpa-통합-테스트-datajpatest)
+5. [서비스 / 유스케이스 테스트](#5-서비스--유스케이스-테스트)
+6. [AssertJ 레퍼런스](#6-assertj-레퍼런스)
+7. [Best Practices](#7-best-practices)
+8. [체크리스트](#8-체크리스트)
 
 ---
 
-### 2️⃣ JPA 통합 테스트 (Integration Test)
-**파일**: `ConcertEntityJpaTest.java`
+## 1. 테스트 종류와 선택 기준
 
-**특징**:
-- 🐢 **느리다**: 실제 DB(H2 인메모리)와 통신
-- 🌐 **범위가 크다**: JPA, 영속성 컨텍스트, 트랜잭션 등 포함
-- 🔍 **복잡하다**: Spring Context 로딩 필요
+| 종류 | 부팅 | 속도 | 언제 쓰나 |
+|---|---|---|---|
+| **단위 테스트** | 없음 | 매우 빠름 | 도메인 모델 비즈니스 로직(`Seat.reserve()`, `User.deductBalance()` 등), 순수 계산/검증, 정적 팩토리 |
+| **JPA 통합 테스트** (`@DataJpaTest`) | JPA 슬라이스 + H2 또는 Testcontainers | 보통 | 엔티티 매핑, JPA 쿼리(`@Query`), Auditing, 제약조건, 락(`PESSIMISTIC_WRITE`) 동작 |
+| **서비스 테스트** | 없음 (Mockito) | 빠름 | Repository 인터페이스를 mock해서 service의 분기/예외/트랜잭션 의도 검증 |
+| **유스케이스 통합 테스트** | `@SpringBootTest` | 느림 | 교차 도메인 흐름(예약→결제), 트랜잭션 전파, 동시성 검증 |
+| **동시성 테스트** | `@SpringBootTest` + Testcontainers (MySQL) | 가장 느림 | `ExecutorService` + `CountDownLatch` 기반 race condition 재현 |
 
-**언제 사용하나요?**
-```java
-✅ DB 저장/조회가 잘 되는지 확인
-✅ JPA 어노테이션이 제대로 동작하는지 확인
-✅ 연관관계 매핑 테스트
-✅ Auditing(@CreatedDate 등) 테스트
-✅ DB 제약조건(nullable, unique 등) 테스트
-```
-
-**예시**:
-```java
-@DataJpaTest  // JPA 관련 빈만 로드
-@Test
-void saveAndFindConcert() {
-    // 실제 DB에 저장하고 조회
-    ConcertEntity concert = ConcertEntity.builder()
-            .title("아이유 콘서트")
-            .description("설명")
-            .build();
-    
-    ConcertEntity saved = entityManager.persistAndFlush(concert);
-    
-    assertThat(saved.getId()).isNotNull(); // UUID 자동 생성 확인
-    assertThat(saved.getCreatedAt()).isNotNull(); // Auditing 확인
-}
-```
+> 단위 테스트로 충분한 것을 통합 테스트로 쓰지 말 것. 통합 테스트로만 검증 가능한 것을 단위 테스트로 흉내 내지도 말 것.
 
 ---
 
-## 단위 테스트 작성법
+## 2. 공통 컨벤션
 
-### 1. Given-When-Then 패턴 사용
+### 2.1 Given-When-Then
 
 ```java
 @Test
-void testMethod() {
-    // given: 테스트에 필요한 데이터 준비
-    String title = "콘서트 제목";
-    
-    // when: 테스트할 동작 실행
-    ConcertEntity concert = ConcertEntity.builder()
-            .title(title)
-            .build();
-    
-    // then: 결과 검증
-    assertThat(concert.getTitle()).isEqualTo(title);
+@DisplayName("AVAILABLE 좌석을 예약하면 RESERVING으로 바뀐다")
+void reserveAvailableSeat() {
+    // given
+    Seat seat = Seat.create(BigDecimal.valueOf(10_000), "schedule-1");
+
+    // when
+    seat.reserve("user-1");
+
+    // then
+    assertThat(seat.getStatus()).isEqualTo(SeatStatus.RESERVING);
+    assertThat(seat.getUserId()).isEqualTo("user-1");
+    assertThat(seat.getHoldExpiresAt()).isAfter(LocalDateTime.now());
 }
 ```
 
-### 2. @Nested로 테스트 그룹화
+### 2.2 `@Nested` + `@DisplayName`
 
 ```java
 @Nested
-@DisplayName("Entity 생성 테스트")
-class CreateEntityTest {
-    
+@DisplayName("reserve()는")
+class ReserveTest {
+
     @Test
-    @DisplayName("Builder로 생성할 수 있다")
-    void createWithBuilder() {
-        // 테스트 코드
-    }
-    
+    @DisplayName("AVAILABLE 상태에서만 예약 가능하다")
+    void reserveAvailable() { ... }
+
     @Test
-    @DisplayName("필수 필드를 포함해야 한다")
-    void createWithRequiredFields() {
-        // 테스트 코드
+    @DisplayName("이미 예약된 좌석이면 ALREADY_RESERVED 예외를 던진다")
+    void rejectAlreadyReserved() { ... }
+}
+```
+
+### 2.3 명명
+
+- 클래스: `{대상}Test` (예: `SeatTest`, `SeatServiceTest`, `SeatRepositoryAdapterTest`)
+- 메서드: `{기대 결과}When{조건}` 또는 자유 영어 + 한글 `@DisplayName`
+- 한 테스트 = 한 동작. assertion이 늘어나면 의도가 흐려진다.
+
+### 2.4 시간 처리
+
+`LocalDateTime.now()` 직접 사용을 피한다 (도메인 모델에 `LocalDateTime.now()` 박혀 있는 곳이 있는데 이건 리팩토링 대상 — `CODE_REVIEW_REPORT.md` M-OLD-14 참고). 가능하면 시간을 파라미터/`Clock`으로 주입받아 테스트에서 고정값 전달.
+
+### 2.5 테스트 프로파일
+
+- 단위/JPA 슬라이스: `@ActiveProfiles("test")` (H2 + `src/test/resources/application.yml`)
+- 통합/동시성: Testcontainers MySQL (실제 락/제약 검증 필요한 경우)
+
+---
+
+## 3. 단위 테스트 (도메인 모델 / 엔티티)
+
+스프링/JPA 부팅 없이 객체 그 자체만 검증.
+
+### 3.1 정적 팩토리 / 빌더
+
+```java
+@Test
+@DisplayName("Seat.create()는 AVAILABLE 상태로 시작한다")
+void createSeatStartsAsAvailable() {
+    Seat seat = Seat.create(BigDecimal.valueOf(10_000), "schedule-1");
+
+    assertThat(seat.getStatus()).isEqualTo(SeatStatus.AVAILABLE);
+    assertThat(seat.getUserId()).isNull();
+    assertThat(seat.getHoldExpiresAt()).isNull();
+}
+```
+
+### 3.2 비즈니스 메서드 (상태 전이)
+
+`@Nested`로 메서드별로 묶는다.
+
+```java
+@Nested
+@DisplayName("confirm()은")
+class ConfirmTest {
+
+    @Test
+    @DisplayName("RESERVING이 아닌 좌석은 INVALID_STATUS 예외를 던진다")
+    void rejectNonReservingSeat() {
+        Seat seat = Seat.create(BigDecimal.TEN, "schedule-1");
+        // status는 AVAILABLE
+
+        assertThatThrownBy(seat::confirm)
+            .isInstanceOf(BusinessException.class)
+            .extracting("errorCode")
+            .isEqualTo(SeatErrorCode.INVALID_STATUS);
     }
 }
 ```
 
-**장점**:
-- 📁 관련된 테스트끼리 묶어서 관리
-- 📖 테스트 리포트가 계층적으로 보기 좋음
-- 🔧 같은 설정을 그룹 내에서 공유 가능
+### 3.3 헬퍼
 
-### 3. 테스트 헬퍼 메서드 활용
+반복되는 객체 생성은 private static 메서드로 추출.
 
 ```java
-// 반복되는 객체 생성 로직을 메서드로 추출
-private ConcertEntity createConcertWithSchedules(boolean... reservableFlags) {
-    List<ConcertScheduleEntity> schedules = new ArrayList<>();
-    
-    for (boolean isReservable : reservableFlags) {
-        schedules.add(createMockSchedule(isReservable));
-    }
-    
-    return ConcertEntity.builder()
-            .title("테스트 콘서트")
-            .concertSchedules(schedules)
-            .build();
+private static Seat reservingSeat(String userId) {
+    Seat seat = Seat.create(BigDecimal.TEN, "schedule-1");
+    seat.reserve(userId);
+    return seat;
 }
 ```
 
 ---
 
-## JPA 통합 테스트 작성법
+## 4. JPA 통합 테스트 (`@DataJpaTest`)
 
-### 1. @DataJpaTest 사용
+JPA 슬라이스만 부팅. 각 테스트는 자동 롤백.
 
-```java
-@DataJpaTest  // JPA 관련 컴포넌트만 로드
-@ActiveProfiles("test")  // test 프로파일 사용
-class ConcertEntityJpaTest {
-    
-    @Autowired
-    private TestEntityManager entityManager;  // 테스트용 EntityManager
-}
-```
-
-**@DataJpaTest가 해주는 일**:
-- ✅ H2 인메모리 DB 자동 설정
-- ✅ JPA 관련 빈만 로드 (빠른 테스트)
-- ✅ 각 테스트마다 자동 롤백 (격리성 보장)
-- ✅ @Transactional 자동 적용
-
-### 2. TestEntityManager 활용
+### 4.1 기본 골격
 
 ```java
-@Test
-void saveAndFind() {
-    // 1. 엔티티 저장
-    ConcertEntity saved = entityManager.persistAndFlush(concert);
-    
-    // 2. 1차 캐시 초기화 (실제 DB 조회 강제)
-    entityManager.clear();
-    
-    // 3. DB에서 다시 조회
-    ConcertEntity found = entityManager.find(ConcertEntity.class, saved.getId());
-    
-    assertThat(found).isNotNull();
-}
-```
+@DataJpaTest
+@ActiveProfiles("test")
+@Import(SeatRepositoryAdapter.class)   // 어댑터를 같이 빈으로 등록
+class SeatRepositoryAdapterTest {
 
-**왜 clear()를 사용하나요?**
-```java
-// clear() 없이 테스트하면?
-ConcertEntity saved = entityManager.persist(concert);
-ConcertEntity found = entityManager.find(Concert.class, saved.getId());
-// 🚨 1차 캐시에서 가져오므로 실제 DB 조회가 안 됨!
+    @Autowired private TestEntityManager em;
+    @Autowired private SeatRepositoryAdapter adapter;
 
-// clear() 사용하면?
-entityManager.clear();  // 1차 캐시 비우기
-ConcertEntity found = entityManager.find(Concert.class, saved.getId());
-// ✅ DB에서 실제로 조회함!
-```
+    @Test
+    @DisplayName("findByIdWithLock은 PESSIMISTIC_WRITE 락을 잡는다")
+    void findByIdWithLock() {
+        ConcertScheduleEntity schedule = em.persistAndFlush(scheduleFixture());
+        Seat seat = Seat.create(BigDecimal.TEN, schedule.getId());
+        Seat saved = adapter.save(seat);
 
-### 3. DB 제약조건 테스트
+        em.clear();   // 1차 캐시 비워 실제 SELECT 강제
 
-```java
-@Test
-@DisplayName("title이 null이면 예외가 발생한다")
-void throwExceptionWhenTitleIsNull() {
-    // given
-    ConcertEntity concert = ConcertEntity.builder()
-            .title(null)  // @Column(nullable = false) 위반
-            .description("설명")
-            .build();
-    
-    // when & then
-    assertThrows(PersistenceException.class, () -> {
-        entityManager.persistAndFlush(concert);
-    });
-}
-```
+        Optional<Seat> locked = adapter.findByIdWithLock(saved.getId());
 
----
-
-## 테스트 작성 시 주의사항
-
-### ⚠️ 1. Lombok의 @Builder와 불변성
-
-ConcertEntity는 `@Builder`를 사용하므로 **수정이 불가능**합니다.
-
-```java
-// ❌ 이렇게 하면 안 됨 (setter가 없음)
-concert.setTitle("새 제목");
-
-// ✅ 새로운 객체를 만들어야 함
-ConcertEntity updated = ConcertEntity.builder()
-        .id(concert.getId())
-        .title("새 제목")
-        .description(concert.getDescription())
-        .build();
-```
-
-### ⚠️ 2. Mock 객체 vs 실제 객체
-
-**단위 테스트**: Mock 사용 가능
-```java
-// 단순히 isReservable() 동작만 확인하면 되므로
-ConcertScheduleEntity mockSchedule = new ConcertScheduleEntity() {
-    @Override
-    public boolean isReservable() {
-        return true;
+        assertThat(locked).isPresent();
     }
-};
-```
-
-**통합 테스트**: 실제 객체 사용
-```java
-// 실제로 DB에 저장 가능한 완전한 객체 필요
-ConcertScheduleEntity schedule = ConcertScheduleEntity.builder()
-        .concert(concert)
-        .concertDate(LocalDateTime.now())
-        .build();
-```
-
-### ⚠️ 3. Auditing 테스트 시 주의
-
-```java
-// ❌ 이렇게 하면 Auditing이 동작하지 않음
-@Test
-void testAuditing() {
-    ConcertEntity concert = ConcertEntity.builder()
-            .title("제목")
-            .build();
-    
-    // createdAt이 null! (영속화하지 않았기 때문)
-    assertThat(concert.getCreatedAt()).isNull();
 }
+```
 
-// ✅ 영속화해야 Auditing 동작
+### 4.2 `em.clear()`를 잊지 말 것
+
+1차 캐시에서 가져오면 실제 SQL이 안 나간다.
+
+```java
+em.persistAndFlush(entity);
+em.clear();   // ← 이거 없으면 DB 다녀온 게 아님
+
+Foo found = em.find(Foo.class, id);   // 이제 진짜 SELECT
+```
+
+### 4.3 제약조건 위반 검증
+
+```java
 @Test
-void testAuditing() {
-    ConcertEntity concert = ConcertEntity.builder()
-            .title("제목")
-            .build();
-    
-    ConcertEntity saved = entityManager.persistAndFlush(concert);
-    
-    // 이제 createdAt이 설정됨!
-    assertThat(saved.getCreatedAt()).isNotNull();
+@DisplayName("(user_id, seat_id) UNIQUE 위반 시 예외")
+void uniqueConstraintViolation() {
+    ReservationEntity first = ReservationEntity.create(reservationFixture("user-1", "seat-1"));
+    em.persistAndFlush(first);
+
+    ReservationEntity duplicate = ReservationEntity.create(reservationFixture("user-1", "seat-1"));
+
+    assertThatThrownBy(() -> em.persistAndFlush(duplicate))
+        .isInstanceOf(PersistenceException.class);
+}
+```
+
+### 4.4 Auditing 검증
+
+영속화 전에는 `@CreatedDate`가 null이다.
+
+```java
+ReservationEntity entity = ReservationEntity.create(model);
+assertThat(entity.getCreatedAt()).isNull();   // 아직 null
+
+ReservationEntity saved = em.persistAndFlush(entity);
+assertThat(saved.getCreatedAt()).isNotNull(); // 이제 채워짐
+```
+
+### 4.5 Testcontainers (실DB 필요할 때)
+
+H2로는 못 잡는 MySQL 특화 동작(예: `FOR UPDATE` 정확한 시맨틱, 인덱스 동작)이 필요하면 Testcontainers.
+
+```java
+@SpringBootTest
+@Testcontainers
+class ReservationUseCaseConcurrencyTest {
+
+    @Container
+    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0");
+
+    @DynamicPropertySource
+    static void props(DynamicPropertyRegistry r) {
+        r.add("spring.datasource.url", mysql::getJdbcUrl);
+        r.add("spring.datasource.username", mysql::getUsername);
+        r.add("spring.datasource.password", mysql::getPassword);
+    }
 }
 ```
 
 ---
 
-## 자주 사용하는 Assertion
+## 5. 서비스 / 유스케이스 테스트
 
-### AssertJ 라이브러리 (권장)
+### 5.1 서비스 (Mockito)
+
+도메인 Repository **인터페이스**를 mock해서 분기/예외만 본다. 어댑터 구현은 4번에서 따로.
 
 ```java
-import static org.assertj.core.api.Assertions.*;
+@ExtendWith(MockitoExtension.class)
+class SeatServiceTest {
 
-// 기본 검증
+    @Mock private SeatRepository repository;
+    @InjectMocks private SeatService service;
+
+    @Test
+    @DisplayName("getSeat: 좌석이 없으면 NOT_FOUND")
+    void notFound() {
+        given(repository.findById("x")).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.getSeat("x"))
+            .isInstanceOf(BusinessException.class)
+            .extracting("errorCode").isEqualTo(SeatErrorCode.NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("reserve: 락으로 가져온 좌석에 reserve()를 호출하고 저장한다")
+    void reserveDelegatesToDomain() {
+        Seat seat = Seat.create(BigDecimal.TEN, "schedule-1");
+        given(repository.findByIdWithLock("seat-1")).willReturn(Optional.of(seat));
+        given(repository.update(any())).willAnswer(inv -> inv.getArgument(0));
+
+        Seat result = service.reserve("seat-1", "user-1");
+
+        assertThat(result.getStatus()).isEqualTo(SeatStatus.RESERVING);
+        then(repository).should().findByIdWithLock("seat-1");
+        then(repository).should().update(any(Seat.class));
+    }
+}
+```
+
+### 5.2 유스케이스 통합 테스트
+
+도메인 간 흐름은 mocking보다 실 빈으로 검증한다 (mocking이 누락한 트랜잭션/예외 흐름이 자주 있음).
+
+```java
+@SpringBootTest
+@ActiveProfiles("test")
+class ReservationUseCaseIntegrationTest {
+
+    @Autowired private ReservationUseCase useCase;
+    @Autowired private TestEntityManager em;
+
+    @Test
+    @DisplayName("이미 PENDING_PAYMENT 예약이 있으면 ALREADY_HAVE_RESERVATION")
+    void rejectIfUserHasPendingReservation() {
+        // given: 유저 + 진행 중 예약
+        // ...
+
+        // when & then
+        assertThatThrownBy(() -> useCase.reserve(command))
+            .isInstanceOf(BusinessException.class)
+            .extracting("errorCode")
+            .isEqualTo(ReservationErrorCode.ALREADY_HAVE_RESERVATION);
+    }
+}
+```
+
+### 5.3 동시성 테스트
+
+`ExecutorService` + `CountDownLatch`로 race를 강제한다.
+
+```java
+@Test
+@DisplayName("같은 좌석을 N명이 동시에 예약 시도하면 1명만 성공한다")
+void concurrentReserve() throws InterruptedException {
+    int threads = 10;
+    CountDownLatch start = new CountDownLatch(1);
+    CountDownLatch done = new CountDownLatch(threads);
+    AtomicInteger success = new AtomicInteger();
+    AtomicInteger fail = new AtomicInteger();
+
+    try (ExecutorService es = Executors.newFixedThreadPool(threads)) {
+        for (int i = 0; i < threads; i++) {
+            String userId = "user-" + i;
+            es.submit(() -> {
+                try {
+                    start.await();
+                    useCase.reserve(new ReserveSeatCommand(userId, "seat-1"));
+                    success.incrementAndGet();
+                } catch (BusinessException e) {
+                    fail.incrementAndGet();
+                } catch (InterruptedException ignored) {
+                } finally {
+                    done.countDown();
+                }
+            });
+        }
+        start.countDown();
+        done.await(5, TimeUnit.SECONDS);
+    }
+
+    assertThat(success.get()).isEqualTo(1);
+    assertThat(fail.get()).isEqualTo(threads - 1);
+}
+```
+
+---
+
+## 6. AssertJ 레퍼런스
+
+`import static org.assertj.core.api.Assertions.*;`
+
+### 6.1 기본
+
+```java
 assertThat(actual).isEqualTo(expected);
 assertThat(actual).isNotNull();
 assertThat(actual).isNull();
-
-// 문자열 검증
-assertThat(title).isNotEmpty();
-assertThat(title).isNotBlank();
-assertThat(title).contains("콘서트");
-assertThat(title).startsWith("아이유");
-
-// 숫자 검증
-assertThat(count).isGreaterThan(0);
-assertThat(count).isLessThanOrEqualTo(100);
-assertThat(price).isBetween(10000, 50000);
-
-// 컬렉션 검증
-assertThat(list).hasSize(3);
-assertThat(list).isEmpty();
-assertThat(list).contains(item1, item2);
-assertThat(list).doesNotContain(item3);
-
-// Boolean 검증
-assertThat(result).isTrue();
-assertThat(result).isFalse();
-
-// 예외 검증
-assertThatThrownBy(() -> {
-    // 예외를 던질 코드
-}).isInstanceOf(IllegalArgumentException.class)
-  .hasMessage("에러 메시지");
-
-// 시간 검증
-assertThat(createdAt).isBeforeOrEqualTo(updatedAt);
-assertThat(date).isBefore(LocalDateTime.now());
-assertThat(date).isAfter(past);
+assertThat(actual).isSameAs(expected);          // 참조 동일
 ```
 
-### JUnit 5 Assertions
+### 6.2 문자열
 
 ```java
-import static org.junit.jupiter.api.Assertions.*;
+assertThat(text)
+    .isNotBlank()
+    .hasSize(11)
+    .startsWith("Hello").endsWith("World")
+    .contains("lo Wo")
+    .doesNotContain("Goodbye")
+    .matches("Hello.*")
+    .isEqualToIgnoringCase("hello world");
+```
 
-// 기본 검증
-assertEquals(expected, actual);
-assertNotNull(actual);
-assertTrue(condition);
+### 6.3 숫자 / 시간
 
-// 여러 검증을 한 번에
-assertAll(
-    () -> assertEquals("제목", concert.getTitle()),
-    () -> assertNotNull(concert.getId()),
-    () -> assertTrue(concert.isReservable())
-);
+```java
+assertThat(n).isPositive().isBetween(5, 15);
+assertThat(price).isCloseTo(150_000L, within(100L));
 
-// 예외 검증
-assertThrows(IllegalArgumentException.class, () -> {
-    // 예외를 던질 코드
+assertThat(future)
+    .isAfter(now)
+    .isBefore(now.plusMonths(1))
+    .isBetween(now, now.plusYears(1));
+```
+
+### 6.4 컬렉션
+
+```java
+assertThat(list)
+    .hasSize(3)
+    .contains("A", "B")                          // 포함 (순서 무관)
+    .containsOnly("A", "B", "C")                 // 정확히 이 요소들만
+    .containsExactly("A", "B", "C")              // 순서까지
+    .containsExactlyInAnyOrder("C", "B", "A")    // 순서 무관, 중복 허용 X
+    .doesNotContain("D")
+    .doesNotContainNull()
+    .allMatch(s -> s.length() == 1)
+    .anyMatch(s -> s.equals("A"))
+    .noneMatch(s -> s.equals("D"));
+```
+
+### 6.5 Enum
+
+```java
+assertThat(status)
+    .isEqualTo(SeatStatus.AVAILABLE)
+    .isIn(SeatStatus.AVAILABLE, SeatStatus.RESERVING)
+    .isNotIn(SeatStatus.RESERVED);
+```
+
+### 6.6 필드 추출 / 필터링
+
+```java
+assertThat(users)
+    .extracting(User::getName, User::getAge)
+    .containsExactly(
+        tuple("홍길동", 20),
+        tuple("김철수", 25)
+    );
+
+assertThat(seats)
+    .filteredOn(s -> s.getStatus() == SeatStatus.AVAILABLE)
+    .extracting(Seat::getId)
+    .containsExactly("seat-1", "seat-2");
+```
+
+### 6.7 객체 내부 다중 검증
+
+```java
+assertThat(concert).satisfies(c -> {
+    assertThat(c.getTitle()).isNotEmpty();
+    assertThat(c.getDescription()).isNotEmpty();
+    assertThat(c.getCreatedAt()).isNotNull();
 });
+
+assertThat(concerts).allSatisfy(c -> assertThat(c.getId()).isNotNull());
+assertThat(concerts).anySatisfy(c -> assertThat(c.getTitle()).contains("BTS"));
+assertThat(concerts).noneSatisfy(c -> assertThat(c.getTitle()).isEmpty());
 ```
 
----
+### 6.8 예외
 
-## 🎯 테스트 작성 체크리스트
-
-Entity 테스트를 작성할 때 다음을 확인하세요:
-
-### 단위 테스트
-- [ ] Builder로 객체 생성 가능한지
-- [ ] 모든 필수 필드가 설정되는지
-- [ ] Getter가 올바른 값을 반환하는지
-- [ ] 비즈니스 로직 메서드가 정상 동작하는지
-- [ ] 경계값 테스트 (null, 빈 리스트 등)
-
-### JPA 통합 테스트
-- [ ] DB 저장/조회가 정상 동작하는지
-- [ ] ID가 자동 생성되는지
-- [ ] Auditing이 동작하는지
-- [ ] 제약조건(nullable, unique 등) 검증
-- [ ] 연관관계 매핑이 정상 동작하는지
-
----
-
-## 📖 추가 학습 자료
-
-1. **JUnit 5 공식 문서**: https://junit.org/junit5/docs/current/user-guide/
-2. **AssertJ 공식 문서**: https://assertj.github.io/doc/
-3. **Spring Boot 테스트**: https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.testing
-
----
-
-## 💡 팁
-
-### 테스트 이름 작성법
 ```java
-// ❌ 나쁜 예
-@Test
-void test1() { ... }
+// 일반
+assertThatThrownBy(() -> service.getConcert(null))
+    .isInstanceOf(BusinessException.class)
+    .hasMessageContaining("필수");
 
-// ✅ 좋은 예
-@Test
-@DisplayName("예약 가능한 스케줄이 하나라도 있으면 true를 반환한다")
-void returnTrueWhenHasReservableSchedule() { ... }
+// 도메인 BusinessException + ErrorCode
+assertThatThrownBy(() -> seat.reserve("u1"))
+    .isInstanceOf(BusinessException.class)
+    .extracting("errorCode")
+    .isEqualTo(SeatErrorCode.ALREADY_RESERVED);
+
+// 예외 안 나는지
+assertThatCode(() -> service.getConcert("valid"))
+    .doesNotThrowAnyException();
 ```
 
-### 테스트 실행 순서
-1. 먼저 **단위 테스트**를 작성하고 실행
-2. 단위 테스트가 모두 통과하면 **JPA 통합 테스트** 작성
-3. 통합 테스트는 필요한 경우에만 작성 (모든 것을 테스트할 필요 없음)
+### 6.9 Soft Assertions (한 테스트에 검증 여러 개 묶기)
 
-### 테스트 커버리지
-- Entity의 핵심 로직은 **반드시** 테스트
-- 단순 Getter/Setter는 테스트 생략 가능
-- 복잡한 비즈니스 로직은 **여러 케이스** 테스트
+```java
+@Test
+void softly() {
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(concert.getId()).isNotNull();
+    softly.assertThat(concert.getTitle()).isEqualTo("BTS 콘서트");
+    softly.assertThat(concert.getDescription()).isNotEmpty();
+    softly.assertAll();
+}
+
+// 또는 JUnit 5 extension
+@ExtendWith(SoftAssertionsExtension.class)
+class MyTest {
+    @Test
+    void test(SoftAssertions softly) {
+        softly.assertThat(actual).isEqualTo(expected);  // assertAll() 자동
+    }
+}
+```
+
+### 6.10 Custom Assertion (도메인 특화)
+
+자주 검증하는 객체에는 전용 assertion을 만들면 가독성이 크게 향상.
+
+```java
+public class SeatAssert extends AbstractAssert<SeatAssert, Seat> {
+
+    public SeatAssert(Seat actual) { super(actual, SeatAssert.class); }
+
+    public static SeatAssert assertThat(Seat actual) { return new SeatAssert(actual); }
+
+    public SeatAssert isReservingBy(String userId) {
+        isNotNull();
+        if (actual.getStatus() != SeatStatus.RESERVING) {
+            failWithMessage("Expected RESERVING, but was <%s>", actual.getStatus());
+        }
+        if (!userId.equals(actual.getUserId())) {
+            failWithMessage("Expected owner <%s>, but was <%s>", userId, actual.getUserId());
+        }
+        return this;
+    }
+}
+
+// 사용
+SeatAssert.assertThat(seat).isReservingBy("user-1");
+```
+
+---
+
+## 7. Best Practices
+
+### 7.1 메서드 체이닝으로 의도를 한 줄에
+
+```java
+// Good
+assertThat(concert.getTitle())
+    .isNotBlank()
+    .startsWith("BTS")
+    .contains("콘서트");
+
+// Bad
+assertThat(concert.getTitle()).isNotBlank();
+assertThat(concert.getTitle()).startsWith("BTS");
+assertThat(concert.getTitle()).contains("콘서트");
+```
+
+### 7.2 `extracting`으로 컬렉션 검증 압축
+
+```java
+assertThat(concerts)
+    .extracting(Concert::getId, Concert::getTitle)
+    .containsExactly(
+        tuple("c-1", "BTS"),
+        tuple("c-2", "아이유")
+    );
+```
+
+### 7.3 `@DisplayName`은 행위가 아니라 결과를 적는다
+
+```java
+// Bad — 무엇을 호출하는지만 적힘
+@DisplayName("reserveSeat 호출")
+
+// Good — 무슨 결과를 기대하는지가 적힘
+@DisplayName("AVAILABLE 좌석을 예약하면 RESERVING으로 바뀌고 holdExpiresAt이 채워진다")
+```
+
+### 7.4 BusinessException은 errorCode까지 검증
+
+단순히 `isInstanceOf(BusinessException.class)`만 검증하면 잘못된 분기로 떨어져도 통과한다. 항상 `extracting("errorCode")`까지.
+
+```java
+assertThatThrownBy(...)
+    .isInstanceOf(BusinessException.class)
+    .extracting("errorCode")
+    .isEqualTo(SeatErrorCode.ALREADY_RESERVED);   // ← 이게 핵심
+```
+
+### 7.5 통합 테스트에서는 fixture 헬퍼를 적극 활용
+
+각 테스트마다 user/concert/schedule/seat을 만드는 코드가 반복되면 `Fixtures` 클래스로 분리.
+
+### 7.6 동시성 테스트는 반드시 timeout
+
+`done.await()`에 timeout 없으면 deadlock 시 영원히 기다린다. 항상 `await(5, TimeUnit.SECONDS)` 같은 상한선.
+
+---
+
+## 8. 체크리스트
+
+### 단위 테스트 (도메인 모델 / 엔티티)
+
+- [ ] 정적 팩토리 (`create`, `from`) 초기 상태 검증
+- [ ] 비즈니스 메서드 정상 흐름 + 예외 흐름 모두
+- [ ] 예외는 `BusinessException` + 정확한 `ErrorCode` 까지 검증
+- [ ] 경계값(null/empty/0/음수)
+- [ ] `@Nested`로 메서드별 그룹화
+
+### JPA 통합 테스트 (`@DataJpaTest`)
+
+- [ ] 저장 → `em.clear()` → 조회 흐름 (1차 캐시 우회)
+- [ ] ID 자동 생성 (`UUID`)
+- [ ] Auditing (`@CreatedDate`/`@LastModifiedDate`) — 영속화 후 검증
+- [ ] 제약조건(unique, nullable) 위반 시 `PersistenceException`
+- [ ] 커스텀 `@Query` (예: `findExpiredHolds`, `findByIdWithLock`)
+- [ ] 연관관계 매핑 (LAZY 페치 시 트랜잭션 내에서만 접근)
+
+### 서비스 테스트
+
+- [ ] Repository **인터페이스**를 mock (구현체 mock 금지)
+- [ ] readOnly vs write 트랜잭션 메서드 분리 검증
+- [ ] 예외 분기 (NOT_FOUND, FORBIDDEN 등) 모두 커버
+- [ ] mock 호출 횟수/인자 검증 (`then(repo).should().findByIdWithLock(...)`)
+
+### 유스케이스 통합 테스트
+
+- [ ] 교차 도메인 흐름 (예: 예약 → 결제 → 좌석 상태 변화)
+- [ ] 트랜잭션 롤백 시 모든 도메인이 일관되게 되돌려지는지
+- [ ] 중복 예약/결제 등 비즈니스 룰 종단 검증
+
+### 동시성 테스트
+
+- [ ] `ExecutorService` + `CountDownLatch`로 race 강제
+- [ ] `await` 항상 timeout 지정
+- [ ] 성공/실패 수 정확히 검증 (n명 중 1명만 성공 등)
+- [ ] Testcontainers MySQL로 실제 락 동작 확인 (H2 한계 회피)
+
+---
+
+## 참고
+
+- [JUnit 5 User Guide](https://junit.org/junit5/docs/current/user-guide/)
+- [AssertJ Core Features](https://assertj.github.io/doc/#assertj-core-features)
+- [Mockito Documentation](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html)
+- [Testcontainers for Java](https://java.testcontainers.org/)
