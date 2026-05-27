@@ -7,7 +7,7 @@ import kr.hhplus.be.server.domain.payment.application.PaymentService;
 import kr.hhplus.be.server.domain.payment.model.Payment;
 import kr.hhplus.be.server.domain.reservation.application.ReservationService;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
-import kr.hhplus.be.server.domain.user.application.UserService;
+import kr.hhplus.be.server.domain.user.application.service.UserCommandService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 public class PaymentUseCase {
 
     private final ReservationService reservationService;
-    private final UserService userService;
+    private final UserCommandService userCommandService;
     private final PaymentService paymentService;
     private final SeatService seatService;
 
@@ -31,7 +31,7 @@ public class PaymentUseCase {
             Reservation reservation = reservationService.getReservationWithLock(command.getReservationId());
             reservation.validateForPayment(command.getUserId());
 
-            userService.deductBalance(command.getUserId(), reservation.getPaymentAmount());
+            userCommandService.deductBalance(command.getUserId(), reservation.getPaymentAmount());
 
             reservation.completePayment();
             reservationService.update(reservation);

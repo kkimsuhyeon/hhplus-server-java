@@ -30,10 +30,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ConcertServiceTest {
+class ConcertQueryServiceTest {
 
     @InjectMocks
-    ConcertService concertService;
+    ConcertQueryService concertQueryService;
 
     @Mock
     ConcertRepository concertRepository;
@@ -44,7 +44,7 @@ class ConcertServiceTest {
         Concert expectedConcert = Concert.builder().id("123").title("title").build();
         when(concertRepository.findById("123")).thenReturn(Optional.of(expectedConcert));
 
-        Concert actualConcert = concertService.getConcert("123");
+        Concert actualConcert = concertQueryService.getConcert("123");
 
         assertThat(actualConcert).isNotNull();
         assertThat(actualConcert.getId()).isEqualTo(expectedConcert.getId());
@@ -55,7 +55,7 @@ class ConcertServiceTest {
     void getConcert_Fail() {
         when(concertRepository.findById("123")).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> concertService.getConcert("123"))
+        assertThatThrownBy(() -> concertQueryService.getConcert("123"))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(ConcertErrorCode.NOT_FOUND.getMessage());
     }
@@ -75,7 +75,7 @@ class ConcertServiceTest {
                 .thenReturn(expectedPage);
 
         // when
-        Page<Concert> actual = concertService.getConcerts(query, pageable);
+        Page<Concert> actual = concertQueryService.getConcerts(query, pageable);
 
         // then
         ArgumentCaptor<ConcertCriteria> criteriaCaptor = ArgumentCaptor.forClass(ConcertCriteria.class);
@@ -102,7 +102,7 @@ class ConcertServiceTest {
         Page<Concert> expected = Page.empty();
         when(concertRepository.findAllByCriteria(any(ConcertCriteria.class), eq(pageable))).thenReturn(expected);
 
-        Page<Concert> actual = concertService.getConcerts(query, pageable);
+        Page<Concert> actual = concertQueryService.getConcerts(query, pageable);
 
         assertThat(actual.getContent()).hasSize(0);
         assertThat(actual.getTotalElements()).isZero();
@@ -119,7 +119,7 @@ class ConcertServiceTest {
 
         when(concertRepository.findAllByCriteria(any(ConcertCriteria.class), eq(pageable))).thenReturn(expected);
 
-        Page<Concert> actual = concertService.getConcerts(query, pageable);
+        Page<Concert> actual = concertQueryService.getConcerts(query, pageable);
 
         ArgumentCaptor<ConcertCriteria> criteriaCaptor = ArgumentCaptor.forClass(ConcertCriteria.class);
         ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);

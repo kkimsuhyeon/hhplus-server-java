@@ -6,7 +6,7 @@ import kr.hhplus.be.server.domain.concert.application.dto.command.CreateConcertC
 import kr.hhplus.be.server.domain.concert.application.dto.command.CreateScheduleCommand;
 import kr.hhplus.be.server.domain.concert.application.repository.SeatRepository;
 import kr.hhplus.be.server.domain.concert.application.service.ConcertScheduleService;
-import kr.hhplus.be.server.domain.concert.application.service.ConcertService;
+import kr.hhplus.be.server.domain.concert.application.service.ConcertCommandService;
 import kr.hhplus.be.server.domain.concert.application.service.SeatService;
 import kr.hhplus.be.server.domain.concert.model.Concert;
 import kr.hhplus.be.server.domain.concert.model.ConcertSchedule;
@@ -20,7 +20,7 @@ import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
 import kr.hhplus.be.server.domain.reservation.model.ReservationStatus;
 import kr.hhplus.be.server.domain.user.application.UserRepository;
-import kr.hhplus.be.server.domain.user.application.UserService;
+import kr.hhplus.be.server.domain.user.application.service.UserQueryService;
 import kr.hhplus.be.server.domain.user.model.User;
 import kr.hhplus.be.server.domain.user.model.UserRole;
 import org.junit.jupiter.api.Test;
@@ -45,13 +45,13 @@ class PaymentUseCaseIntegrationTest {
     private SeatService seatService;
 
     @Autowired
-    private ConcertService concertService;
+    private ConcertCommandService concertCommandService;
 
     @Autowired
     private ConcertScheduleService concertScheduleService;
 
     @Autowired
-    private UserService userService;
+    private UserQueryService userQueryService;
 
     @Autowired
     private ReservationService reservationService;
@@ -71,7 +71,7 @@ class PaymentUseCaseIntegrationTest {
         PayCommand command = PayCommand.builder().userId(user.getId()).reservationId(reservation.getId()).build();
         Payment payment = paymentUseCase.pay(command);
 
-        User actualUser = userService.getUser(user.getId());
+        User actualUser = userQueryService.getUser(user.getId());
         Seat actualSeat = seatService.getSeat(seat.getId());
         Reservation actualReservation = reservationService.getReservation(reservation.getId());
 
@@ -94,7 +94,7 @@ class PaymentUseCaseIntegrationTest {
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(ReservationErrorCode.ALREADY_PAID.getMessage());
 
-        User actualUser = userService.getUser(user.getId());
+        User actualUser = userQueryService.getUser(user.getId());
         Seat actualSeat = seatService.getSeat(seat.getId());
         Reservation actualReservation = reservationService.getReservation(reservation.getId());
 
@@ -135,7 +135,7 @@ class PaymentUseCaseIntegrationTest {
                 .description("desc")
                 .build();
 
-        Concert concert = concertService.create(createConcertCommand);
+        Concert concert = concertCommandService.create(createConcertCommand);
 
         CreateScheduleCommand createScheduleCommand = CreateScheduleCommand.builder()
                 .concertId(concert.getId())

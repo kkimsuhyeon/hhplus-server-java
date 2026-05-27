@@ -27,7 +27,8 @@ import kr.hhplus.be.server.domain.user.adapter.in.web.request.CreateUserRequest;
 import kr.hhplus.be.server.domain.user.adapter.in.web.request.FindUserRequest;
 import kr.hhplus.be.server.domain.user.adapter.in.web.response.BalanceResponse;
 import kr.hhplus.be.server.domain.user.adapter.in.web.response.UserResponse;
-import kr.hhplus.be.server.domain.user.application.UserService;
+import kr.hhplus.be.server.domain.user.application.service.UserCommandService;
+import kr.hhplus.be.server.domain.user.application.service.UserQueryService;
 import kr.hhplus.be.server.domain.user.application.dto.command.CreateUserCommand;
 import kr.hhplus.be.server.domain.user.application.dto.query.FindUserQuery;
 import kr.hhplus.be.server.domain.user.model.User;
@@ -42,7 +43,8 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/users")
 public class UserController {
 
-    private final UserService userService;
+    private final UserQueryService userQueryService;
+    private final UserCommandService userCommandService;
 
     @PatchMapping("/balance")
     @Operation(summary = "잔액 충전", description = "잔액 충전 API")
@@ -50,7 +52,7 @@ public class UserController {
             @RequestBody @Valid BalanceChargeRequest request,
             @AuthenticationPrincipal AuthUser authUser) {
 
-        userService.addBalance(authUser.getId(), request.getAmount());
+        userCommandService.addBalance(authUser.getId(), request.getAmount());
         return ResponseEntity.ok().body(BaseResponse.success());
     }
 
@@ -59,7 +61,7 @@ public class UserController {
     public ResponseEntity<BaseResponse<BalanceResponse>> getBalanceInfo(
             @AuthenticationPrincipal AuthUser authUser
     ) {
-        User user = userService.getUser(authUser.getId());
+        User user = userQueryService.getUser(authUser.getId());
 
         BalanceResponse response = BalanceResponse.builder()
                 .amount(user.getBalance())
@@ -75,7 +77,7 @@ public class UserController {
             @ParameterObject Pageable pageable
     ) {
         FindUserQuery query = UserQueryMapper.toFindQuery(request);
-        Page<User> users = userService.getUsers(query, pageable);
+        Page<User> users = userQueryService.getUsers(query, pageable);
         Page<UserResponse> response = users.map(UserResponse::fromModel);
 
         PageResponse<UserResponse> parsedResponse = PageResponse.of(response);
@@ -88,7 +90,7 @@ public class UserController {
             @Parameter @RequestBody CreateUserRequest request
     ) {
         CreateUserCommand command = UserCommandMapper.toCreateCommand(request);
-        userService.create(command);
+        userCommandService.create(command);
         return ResponseEntity.ok().body(BaseResponse.success());
     }
 }

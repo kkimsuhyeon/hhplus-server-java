@@ -15,7 +15,8 @@ import kr.hhplus.be.server.domain.concert.adapter.in.web.response.ConcertRespons
 import kr.hhplus.be.server.domain.concert.adapter.in.web.response.ScheduleResponse;
 import kr.hhplus.be.server.domain.concert.application.dto.command.CreateConcertCommand;
 import kr.hhplus.be.server.domain.concert.application.dto.query.FindConcertQuery;
-import kr.hhplus.be.server.domain.concert.application.service.ConcertService;
+import kr.hhplus.be.server.domain.concert.application.service.ConcertCommandService;
+import kr.hhplus.be.server.domain.concert.application.service.ConcertQueryService;
 import kr.hhplus.be.server.domain.concert.model.Concert;
 import kr.hhplus.be.server.shared.dto.BaseResponse;
 import kr.hhplus.be.server.shared.dto.PageResponse;
@@ -41,7 +42,8 @@ import java.util.List;
 @RequestMapping("/api/v1/concerts")
 public class ConcertController {
 
-    private final ConcertService concertService;
+    private final ConcertQueryService concertQueryService;
+    private final ConcertCommandService concertCommandService;
 
     @GetMapping
     @Operation(summary = "콘서트 조회", description = "콘서트 조회 API")
@@ -50,7 +52,7 @@ public class ConcertController {
             @ParameterObject Pageable pageable) {
 
         FindConcertQuery query = ConcertQueryMapper.toFindQuery(request);
-        Page<ConcertResponse> concerts = concertService.getConcerts(query, pageable).map(ConcertResponse::fromModel);
+        Page<ConcertResponse> concerts = concertQueryService.getConcerts(query, pageable).map(ConcertResponse::fromModel);
         PageResponse<ConcertResponse> concertResponse = PageResponse.of(concerts);
 
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.success(concertResponse));
@@ -70,7 +72,7 @@ public class ConcertController {
     @Operation(summary = "콘서트 생성", description = "콘서트 생성 API [DEV]")
     public ResponseEntity<BaseResponse<Concert>> createConcert(@RequestBody CreateConcertRequest request) {
         CreateConcertCommand command = ConcertCommandMapper.toCreateCommand(request);
-        Concert response = concertService.create(command);
+        Concert response = concertCommandService.create(command);
 
         return ResponseEntity.ok().body(BaseResponse.success(response));
     }

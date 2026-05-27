@@ -1,9 +1,7 @@
 package kr.hhplus.be.server.domain.concert.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.concert.application.dto.command.CreateConcertCommand;
 import kr.hhplus.be.server.domain.concert.application.dto.criteria.ConcertCriteria;
-import kr.hhplus.be.server.domain.concert.application.assembler.ConcertAssembler;
 import kr.hhplus.be.server.domain.concert.application.dto.query.FindConcertQuery;
 import kr.hhplus.be.server.domain.concert.application.repository.ConcertRepository;
 import kr.hhplus.be.server.domain.concert.exception.ConcertErrorCode;
@@ -16,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ConcertService {
+public class ConcertQueryService {
 
     private final ConcertRepository repository;
 
@@ -31,16 +29,5 @@ public class ConcertService {
         ConcertCriteria criteria = ConcertCriteria.from(query);
 
         return repository.findAllByCriteria(criteria, pageable);
-    }
-
-    @Transactional
-    public Concert create(CreateConcertCommand command) {
-        Concert concert = ConcertAssembler.toModel(command);
-        return repository.save(concert);
-    }
-
-    @Transactional
-    public Concert save(Concert concert) {
-        return repository.save(concert);
     }
 }

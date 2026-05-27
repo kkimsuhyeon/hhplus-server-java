@@ -6,7 +6,7 @@ import kr.hhplus.be.server.domain.concert.application.dto.command.CreateConcertC
 import kr.hhplus.be.server.domain.concert.application.dto.command.CreateScheduleCommand;
 import kr.hhplus.be.server.domain.concert.application.dto.command.CreateSeatCommand;
 import kr.hhplus.be.server.domain.concert.application.service.ConcertScheduleService;
-import kr.hhplus.be.server.domain.concert.application.service.ConcertService;
+import kr.hhplus.be.server.domain.concert.application.service.ConcertCommandService;
 import kr.hhplus.be.server.domain.concert.application.service.SeatService;
 import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import kr.hhplus.be.server.domain.concert.model.Concert;
@@ -15,7 +15,7 @@ import kr.hhplus.be.server.domain.concert.model.Seat;
 import kr.hhplus.be.server.domain.concert.model.SeatStatus;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
 import kr.hhplus.be.server.domain.reservation.model.ReservationStatus;
-import kr.hhplus.be.server.domain.user.application.UserService;
+import kr.hhplus.be.server.domain.user.application.service.UserCommandService;
 import kr.hhplus.be.server.domain.user.application.dto.command.CreateUserCommand;
 import kr.hhplus.be.server.domain.user.model.User;
 import org.junit.jupiter.api.Test;
@@ -37,10 +37,10 @@ class ReservationUseCaseIntegrationTest {
     private ReservationUseCase reservationUseCase;
 
     @Autowired
-    private UserService userService;
+    private UserCommandService userCommandService;
 
     @Autowired
-    private ConcertService concertService;
+    private ConcertCommandService concertCommandService;
 
     @Autowired
     private ConcertScheduleService concertScheduleService;
@@ -91,7 +91,7 @@ class ReservationUseCaseIntegrationTest {
                 .email("test" + System.nanoTime() + "@test.com")
                 .password("password123")
                 .build();
-        return userService.create(command);
+        return userCommandService.create(command);
     }
 
     private Seat createSeat(BigDecimal price) {
@@ -100,7 +100,7 @@ class ReservationUseCaseIntegrationTest {
                 .description("desc")
                 .build();
 
-        Concert concert = concertService.create(createConcertCommand);
+        Concert concert = concertCommandService.create(createConcertCommand);
 
         CreateScheduleCommand createScheduleCommand = CreateScheduleCommand.builder()
                 .concertId(concert.getId())

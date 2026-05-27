@@ -3,7 +3,6 @@ package kr.hhplus.be.server.domain.user.application.service;
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
 import kr.hhplus.be.server.domain.user.application.UserRepository;
-import kr.hhplus.be.server.domain.user.application.UserService;
 import kr.hhplus.be.server.domain.user.application.dto.command.CreateUserCommand;
 import kr.hhplus.be.server.domain.user.exception.UserErrorCode;
 import kr.hhplus.be.server.domain.user.model.User;
@@ -25,42 +24,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("UserService 테스트")
-class UserServiceImplTest {
+@DisplayName("UserCommandService 테스트")
+class UserCommandServiceTest {
 
     @InjectMocks
-    private UserService userService;
+    private UserCommandService userCommandService;
 
     @Mock
     private UserRepository repository;
-
-    @Test
-    @DisplayName("유저 조회 - 성공")
-    void getUser_Success() {
-        // given
-        User expectedUser = User.builder().id("123").build();
-        when(repository.findById("123")).thenReturn(Optional.of(expectedUser));
-
-        // when
-        User actualUser = userService.getUser("123");
-
-        // then
-        assertThat(actualUser.getId()).isEqualTo(expectedUser.getId());
-        verify(repository).findById("123");
-    }
-
-    @Test
-    @DisplayName("유저 조회 - 실패")
-    void getUser_Fail() {
-
-        // given
-        when(repository.findById("123")).thenReturn(Optional.empty());
-
-        // when, then
-        assertThatThrownBy(() -> userService.getUser("123"))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(UserErrorCode.NOT_FOUND.getMessage());
-    }
 
     @Test
     @DisplayName("유저 생성")
@@ -72,7 +43,7 @@ class UserServiceImplTest {
                 .build();
 
         // when
-        userService.create(command);
+        userCommandService.create(command);
 
         // then
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
@@ -95,7 +66,7 @@ class UserServiceImplTest {
         when(repository.findByIdWithLock(userId)).thenReturn(Optional.of(expectedUser));
 
         // when
-        userService.addBalance(userId, amount);
+        userCommandService.addBalance(userId, amount);
 
         // then
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
@@ -113,7 +84,7 @@ class UserServiceImplTest {
         when(repository.findByIdWithLock("123")).thenReturn(Optional.of(expectedUser));
 
         // when, then
-        assertThatThrownBy(() -> userService.addBalance("123", BigDecimal.valueOf(-100)))
+        assertThatThrownBy(() -> userCommandService.addBalance("123", BigDecimal.valueOf(-100)))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(CommonErrorCode.INVALID_INPUT.getMessage());
 
@@ -126,7 +97,7 @@ class UserServiceImplTest {
         User expectedUser = User.builder().id("123").balance(BigDecimal.valueOf(1000)).build();
         when(repository.findByIdWithLock("123")).thenReturn(Optional.of(expectedUser));
 
-        userService.deductBalance("123", BigDecimal.valueOf(100));
+        userCommandService.deductBalance("123", BigDecimal.valueOf(100));
 
         assertThat(expectedUser.getBalance()).isEqualTo(BigDecimal.valueOf(900));
         verify(repository, times(1)).update(expectedUser);
@@ -138,9 +109,8 @@ class UserServiceImplTest {
         User expectedUser = User.builder().id("123").balance(BigDecimal.valueOf(100)).build();
         when(repository.findByIdWithLock("123")).thenReturn(Optional.of(expectedUser));
 
-        assertThatThrownBy(() -> userService.deductBalance("123", BigDecimal.valueOf(500)))
+        assertThatThrownBy(() -> userCommandService.deductBalance("123", BigDecimal.valueOf(500)))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(UserErrorCode.NOT_ENOUGH_POINT.getMessage());
     }
-
 }
