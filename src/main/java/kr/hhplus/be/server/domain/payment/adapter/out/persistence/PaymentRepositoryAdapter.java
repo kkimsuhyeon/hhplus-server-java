@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.domain.payment.adapter.out.persistence;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.payment.application.PaymentRepository;
+import kr.hhplus.be.server.domain.payment.application.repository.PaymentRepository;
 import kr.hhplus.be.server.domain.payment.exception.PaymentErrorCode;
 import kr.hhplus.be.server.domain.payment.model.Payment;
 import lombok.RequiredArgsConstructor;

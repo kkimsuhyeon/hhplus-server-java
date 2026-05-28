@@ -7,7 +7,7 @@ import kr.hhplus.be.server.domain.auth.adapter.in.web.response.TokenResponse;
 import kr.hhplus.be.server.domain.auth.application.dto.command.SignInCommand;
 import kr.hhplus.be.server.domain.auth.application.dto.command.SignUpCommand;
 import kr.hhplus.be.server.domain.auth.exception.AuthErrorCode;
-import kr.hhplus.be.server.domain.user.application.UserRepository;
+import kr.hhplus.be.server.domain.user.application.repository.UserRepository;
 import kr.hhplus.be.server.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

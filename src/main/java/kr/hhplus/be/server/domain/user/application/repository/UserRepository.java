@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.user.application;
+package kr.hhplus.be.server.domain.user.application.repository;
 
 import kr.hhplus.be.server.domain.user.application.dto.UserCriteria;
 import kr.hhplus.be.server.domain.user.model.User;

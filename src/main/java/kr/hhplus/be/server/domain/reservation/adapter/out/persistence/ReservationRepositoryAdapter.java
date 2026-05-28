@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.domain.reservation.adapter.out.persistence;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.reservation.application.ReservationRepository;
+import kr.hhplus.be.server.domain.reservation.application.repository.ReservationRepository;
 import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
 import lombok.RequiredArgsConstructor;

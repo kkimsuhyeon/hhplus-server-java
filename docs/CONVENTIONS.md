@@ -124,7 +124,7 @@ DTO도, Service도 **쓰기(Command)와 읽기(Query)를 분리**한다.
 | REST 컨트롤러 | `{Domain}Controller` | `adapter/in/web` | `UserController` |
 | 도메인 서비스 (쓰기) | `{Domain}CommandService` | `application/service` | `UserCommandService` |
 | 도메인 서비스 (읽기) | `{Domain}QueryService` | `application/service` | `UserQueryService` |
-| 리포지토리 포트(인터페이스) | `{Domain}Repository` | `application` | `UserRepository` |
+| 리포지토리 포트(인터페이스) | `{Domain}Repository` | `application/repository` | `UserRepository` |
 | 리포지토리 구현(어댑터) | `{Domain}RepositoryAdapter` | `adapter/out/persistence` | `UserRepositoryAdapter` |
 | Spring Data JPA | `{Domain}JpaRepository` | `adapter/out/persistence` | `UserJpaRepository` |
 | JPA 엔티티 | `{Domain}Entity` | `adapter/out/persistence` | `UserEntity` |
@@ -133,6 +133,10 @@ DTO도, Service도 **쓰기(Command)와 읽기(Query)를 분리**한다.
 | 요청→Query 변환 | `{Domain}QueryMapper` | `adapter/in/web/mapper` | `UserQueryMapper` |
 | Command/Query→Model 변환 | `{Domain}Assembler` | `application/assembler` | `UserAssembler` |
 | 에러 코드 | `{Domain}ErrorCode` | `exception` | `UserErrorCode` |
+
+> **리포지토리 포트는 개수와 무관하게 항상 `application/repository/`에 둔다.**
+> 포트가 1개인 도메인이라도 `application` 직속에 두지 않는다 — 나중에 포트가 늘 때
+> 파일을 옮길 필요가 없고, 모든 도메인의 모양이 동일해진다. (concert는 3개로 이미 이 형태)
 
 ### 3.2 user 도메인 전체 구조 (레퍼런스)
 
@@ -150,7 +154,7 @@ domain/user/
 │       ├── UserRepositoryAdapter.java
 │       └── UserSpecification.java
 ├── application/
-│   ├── UserRepository.java          ← 포트(인터페이스)
+│   ├── repository/   UserRepository          ← 포트(인터페이스)
 │   ├── service/      UserCommandService, UserQueryService
 │   ├── assembler/    UserAssembler
 │   └── dto/

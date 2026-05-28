@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.token.adapter.out.memory;
 
-import kr.hhplus.be.server.domain.token.application.QueueTokenRepository;
+import kr.hhplus.be.server.domain.token.application.repository.QueueTokenRepository;
 import kr.hhplus.be.server.domain.token.model.QueueToken;
 import kr.hhplus.be.server.domain.token.model.TokenStatus;
 import lombok.RequiredArgsConstructor;

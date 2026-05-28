@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.domain.user.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.user.application.UserRepository;
+import kr.hhplus.be.server.domain.user.application.repository.UserRepository;
 import kr.hhplus.be.server.domain.user.application.dto.UserCriteria;
 import kr.hhplus.be.server.domain.user.application.dto.query.FindUserQuery;
 import kr.hhplus.be.server.domain.user.exception.UserErrorCode;
