@@ -12,18 +12,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class UserTest {
 
+    private static final String EMAIL = "test@test.com";
+    private static final String PASSWORD = "password123";
+
     @Test
     void create_User_Success() {
-        User user = User.createUser("test@test.com", "password123");
+        User user = getTestUser();
 
         assertThat(user.getBalance()).isEqualTo(BigDecimal.ZERO);
-        assertThat(user.getEmail()).isEqualTo("test@test.com");
+        assertThat(user.getEmail()).isEqualTo(EMAIL);
         assertThat(user.getRole()).isEqualTo(UserRole.USER);
     }
 
     @Test
     void addBalance_Success() {
-        User user = User.builder().balance(BigDecimal.ZERO).build();
+        User user = getTestUser();
 
         user.addBalance(BigDecimal.valueOf(100));
 
@@ -55,6 +58,10 @@ class UserTest {
         assertThatThrownBy(() -> user.deductBalance(BigDecimal.valueOf(1500)))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(UserErrorCode.NOT_ENOUGH_POINT.getMessage());
+    }
+
+    private User getTestUser() {
+        return User.createUser(EMAIL, PASSWORD);
     }
 
 }

@@ -21,6 +21,8 @@
 
 ## 1. 테스트 종류와 선택 기준
 
+### 1.1 어떤 테스트 종류를 고를까
+
 | 종류 | 부팅 | 속도 | 언제 쓰나 |
 |---|---|---|---|
 | **단위 테스트** | 없음 | 매우 빠름 | 도메인 모델 비즈니스 로직(`Seat.reserve()`, `User.deductBalance()` 등), 순수 계산/검증, 정적 팩토리 |
@@ -30,6 +32,77 @@
 | **동시성 테스트** | `@SpringBootTest` + Testcontainers (MySQL) | 가장 느림 | `ExecutorService` + `CountDownLatch` 기반 race condition 재현 |
 
 > 단위 테스트로 충분한 것을 통합 테스트로 쓰지 말 것. 통합 테스트로만 검증 가능한 것을 단위 테스트로 흉내 내지도 말 것.
+
+### 1.2 테스트할까 말까 — 단 하나의 질문
+
+새 코드를 보면 딱 이것만 물어본다:
+
+> **"이 메서드 안에 `if` / 예외 던지기 / 계산 / 상태 변경이 있나?"**
+> - **있다 → 테스트한다.** 그 판단이 틀리면 곧 버그다.
+> - **없다 (값을 그냥 옮기기만 함) → 테스트하지 않는다.** 검증할 게 없다.
+
+**테스트하는 것 (이 프로젝트 실제 예시)**
+
+```java
+// Seat.reserve() — 한 메서드 안에 판단 + 예외 + 상태 변경이 다 있다 → 1순위 테스트 대상
+public void reserve(String userId) {
+    if (!isReservable()) {                                          // 분기
+        throw new BusinessException(SeatErrorCode.ALREADY_RESERVED); // 예외
+    }
+    this.status = SeatStatus.RESERVING;                            // 상태 변경
+    this.userId = userId;
+    this.holdExpiresAt = LocalDateTime.now().plusMinutes(5);
+}
+```
+
+`User.addBalance()`(음수 방어), `User.deductBalance()`(잔액 부족), `Seat.confirm()`(상태 검증)도 같은 이유로 전부 테스트한다.
+
+**테스트하지 않는 것**
+
+| 안 하는 것 | 이 프로젝트 예시 | 이유 |
+|-----------|----------------|------|
+| 단순 Getter/Setter | Lombok `@Getter` | 내가 짠 로직이 아님 |
+| 1:1 값 복사 변환 | `UserAssembler.toModel()`, `UserCommandMapper` | 판단·계산이 없음 |
+| 프레임워크가 보장하는 것 | `JpaRepository.save()` 자체 | 스프링/하이버네이트가 이미 검증함 |
+| 단순 위임 | 다른 객체를 호출만 하는 메서드 | 검증할 분기가 없음 |
+
+> 단, `Assembler`/`Mapper`라도 **안에 조건 분기나 계산이 생기면** 그 순간부터 테스트 대상이다.
+> 기준은 클래스 "이름"이 아니라 "안에 판단 로직이 있나"다.
+
+### 1.3 한 메서드에 케이스를 몇 개 짜야 하나?
+
+**경로(분기) 하나당 테스트 하나.** 빠뜨리지 않는 공식:
+
+> **성공 경로 1개 + `if`/예외마다 1개씩** (+ 여유 되면 경계값 1개)
+
+`User.deductBalance()` 예시:
+
+```java
+public void deductBalance(BigDecimal amount) {
+    if (this.balance.compareTo(amount) < 0) {     // 경로 A: 잔액 부족
+        throw new BusinessException(UserErrorCode.NOT_ENOUGH_POINT);
+    }
+    this.balance = this.balance.subtract(amount); // 경로 B: 정상 차감
+}
+```
+
+경로가 2개 → 테스트도 2개 (실제 `UserCommandServiceTest`에 이대로 있다):
+- ✅ `deductBalance_Success` — 잔액 충분 → 잔액이 줄어드는가
+- ✅ `deductBalance_Fail` — 잔액 부족 → `NOT_ENOUGH_POINT` 예외가 나는가
+- (＋) 경계값: 잔액과 **딱 같은 금액** 차감 → 0원으로 성공하는가
+
+**then(검증)에 뭘 적을지 모르겠다면** → "이 메서드가 바꾼 것을 전부" 적는다.
+`reserve()`는 status·userId·holdExpiresAt 3개를 바꾸므로 → 3개 모두 검증 (2.1 예시 참고).
+
+### 1.4 막힐 때 보는 결정 순서
+
+새 클래스를 만들었다 → 위에서부터 따라간다:
+
+1. 안에 `if`/예외/계산/상태변경이 있나? → 없으면 **스킵**, 있으면 계속
+2. 의존성(Repository 등)이 있나? → 없으면 **모델 단위 테스트**(3장), 있으면 **`@Mock` 서비스 테스트**(5장)
+3. 메서드의 경로를 센다 → **성공 1개 + 분기/예외마다 1개** (1.3)
+4. 각 테스트는 given(상태) → when(동작) → then(바뀐 것 전부 검증) (2.1)
+5. 잔액·좌석처럼 동시성이 중요한 흐름이면 → 동시성 통합 테스트 추가 (5.3)
 
 ---
 
