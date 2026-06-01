@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.token.application;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.domain.token.application.repository.QueueTokenRepository;
 import kr.hhplus.be.server.domain.token.exception.TokenErrorCode;
 import kr.hhplus.be.server.domain.token.model.QueueToken;
 import kr.hhplus.be.server.domain.token.model.TokenStatus;

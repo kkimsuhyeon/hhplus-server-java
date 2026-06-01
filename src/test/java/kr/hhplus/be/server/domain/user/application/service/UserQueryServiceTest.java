@@ -32,7 +32,7 @@ class UserQueryServiceTest {
     @DisplayName("유저 조회 - 성공")
     void getUser_Success() {
         // given
-        User expectedUser = User.builder().id("123").build();
+        User expectedUser = User.of("123", null, null, null, null);
         when(repository.findById("123")).thenReturn(Optional.of(expectedUser));
 
         // when

@@ -67,13 +67,7 @@ public class UserEntity {
     }
 
     public User toModel() {
-        return User.builder()
-                .id(this.id)
-                .email(this.email)
-                .password(this.password)
-                .balance(this.balance)
-                .role(this.role)
-                .build();
+        return User.of(this.id, this.email, this.password, this.balance, this.role);
     }
 
     public void update(User user) {

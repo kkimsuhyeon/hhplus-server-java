@@ -61,7 +61,7 @@ class UserCommandServiceTest {
         // given
         String userId = "123";
         BigDecimal amount = BigDecimal.valueOf(1000);
-        User expectedUser = User.builder().id(userId).balance(BigDecimal.ZERO).build();
+        User expectedUser = User.of(userId, null, null, BigDecimal.ZERO, null);
 
         when(repository.findByIdForUpdate(userId)).thenReturn(Optional.of(expectedUser));
 
@@ -80,7 +80,7 @@ class UserCommandServiceTest {
     @DisplayName("포인트 추가 - 실패")
     void addBalance_Fail() {
         // given
-        User expectedUser = User.builder().id("123").balance(BigDecimal.ZERO).build();
+        User expectedUser = User.of("123", null, null, BigDecimal.ZERO, null);
         when(repository.findByIdForUpdate("123")).thenReturn(Optional.of(expectedUser));
 
         // when, then
@@ -94,7 +94,7 @@ class UserCommandServiceTest {
     @Test
     @DisplayName("포인트 차감 - 성공")
     void deductBalance_Success() {
-        User expectedUser = User.builder().id("123").balance(BigDecimal.valueOf(1000)).build();
+        User expectedUser = User.of("123", null, null, BigDecimal.valueOf(1000), null);
         when(repository.findByIdForUpdate("123")).thenReturn(Optional.of(expectedUser));
 
         userCommandService.deductBalance("123", BigDecimal.valueOf(100));
@@ -106,7 +106,7 @@ class UserCommandServiceTest {
     @Test
     @DisplayName("포인트 차감 - 실패")
     void deductBalance_Fail() {
-        User expectedUser = User.builder().id("123").balance(BigDecimal.valueOf(100)).build();
+        User expectedUser = User.of("123", null, null, BigDecimal.valueOf(100), null);
         when(repository.findByIdForUpdate("123")).thenReturn(Optional.of(expectedUser));
 
         assertThatThrownBy(() -> userCommandService.deductBalance("123", BigDecimal.valueOf(500)))
