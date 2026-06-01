@@ -286,26 +286,38 @@ ReservationEntity saved = em.persistAndFlush(entity);
 assertThat(saved.getCreatedAt()).isNotNull(); // 이제 채워짐
 ```
 
-### 4.5 Testcontainers (실DB 필요할 때)
+### 4.5 H2냐 Docker(MySQL)냐
 
-H2로는 못 잡는 MySQL 특화 동작(예: `FOR UPDATE` 정확한 시맨틱, 인덱스 동작)이 필요하면 Testcontainers.
+repository 테스트는 **클래스 단위로** DB를 고른다. 전역 스위치가 아니라 어노테이션 차이일 뿐이다.
+
+- **H2 (기본, 빠름)**: 단순 CRUD, 기본 JPA 메서드, 매핑·제약조건 확인. `@DataJpaTest`가 datasource를 H2로 자동 교체한다.
+- **Docker MySQL (느림)**: H2로는 못 잡는 MySQL 특화 동작(`FOR UPDATE` 락 시맨틱, MySQL 방언/함수, 네이티브 쿼리, 동시성)이 필요할 때만.
+
+차이는 딱 두 줄(`@AutoConfigureTestDatabase(replace = NONE)` + `@Testcontainers`)이다.
 
 ```java
-@SpringBootTest
+// H2 — 기본값. @DataJpaTest가 알아서 H2로 교체
+@DataJpaTest
+@Import(SeatRepositoryAdapter.class)
+class SeatRepositoryAdapterTest { ... }
+```
+
+```java
+// Docker MySQL — H2 교체를 끄고 실제 컨테이너를 띄움
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
-class ReservationUseCaseConcurrencyTest {
+@Import(SeatRepositoryAdapter.class)
+class SeatLockRepositoryTest {
 
     @Container
+    @ServiceConnection   // 컨테이너 접속정보를 Spring에 자동 주입 (Boot 3.1+)
     static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0");
-
-    @DynamicPropertySource
-    static void props(DynamicPropertyRegistry r) {
-        r.add("spring.datasource.url", mysql::getJdbcUrl);
-        r.add("spring.datasource.username", mysql::getUsername);
-        r.add("spring.datasource.password", mysql::getPassword);
-    }
 }
 ```
+
+> `@ServiceConnection`이 url/username/password를 자동 연결해주므로 `@DynamicPropertySource` 수동 등록은 필요 없다.
+> 단, MySQL 전용 네이티브 쿼리(`@Query(nativeQuery = true)`)를 쓰는 repository는 H2에서 깨질 수 있으니 처음부터 Testcontainers로 검증한다.
 
 ---
 
@@ -377,7 +389,23 @@ class ReservationUseCaseIntegrationTest {
 
 ### 5.3 동시성 테스트
 
-`ExecutorService` + `CountDownLatch`로 race를 강제한다.
+실제 락(`FOR UPDATE` 등)을 검증해야 하므로 H2가 아니라 **Testcontainers MySQL**이 필수다. 클래스 골격은 다음과 같다.
+
+```java
+@SpringBootTest
+@Testcontainers
+class ReservationUseCaseConcurrencyTest {
+
+    @Container
+    @ServiceConnection
+    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0");
+
+    @Autowired private ReservationUseCase useCase;
+    // ...
+}
+```
+
+테스트 메서드는 `ExecutorService` + `CountDownLatch`로 race를 강제한다.
 
 ```java
 @Test
