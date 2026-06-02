@@ -46,7 +46,7 @@ public class AuthService {
 
         String encodedPassword = passwordEncoder.encode(command.getPassword());
 
-        User user = User.createUser(command.getEmail(), encodedPassword);
+        User user = User.create(command.getEmail(), encodedPassword);
         userRepository.save(user);
     }
 

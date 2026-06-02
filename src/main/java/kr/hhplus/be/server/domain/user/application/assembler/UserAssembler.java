@@ -6,6 +6,6 @@ import kr.hhplus.be.server.domain.user.model.User;
 public class UserAssembler {
 
     public static User toModel(CreateUserCommand command) {
-        return User.createUser(command.getEmail(), command.getPassword());
+        return User.create(command.getEmail(), command.getPassword());
     }
 }
