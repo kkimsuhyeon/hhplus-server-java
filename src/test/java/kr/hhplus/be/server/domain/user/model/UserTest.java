@@ -39,7 +39,7 @@ class UserTest {
         @Test
         @DisplayName("정상 금액 충전 시 잔액이 증가한다")
         void addBalance_success() {
-            User user = UserFixture.withBalance(BigDecimal.ZERO);
+            User user = UserFixture.aUser().balance(BigDecimal.ZERO).build();
 
             user.addBalance(BigDecimal.valueOf(100));
 
@@ -49,7 +49,7 @@ class UserTest {
         @Test
         @DisplayName("음수 금액 충전 시 INVALID_INPUT 예외가 발생한다")
         void addBalance_fail1() {
-            User user = UserFixture.withBalance(BigDecimal.ZERO);
+            User user = UserFixture.aUser().balance(BigDecimal.ZERO).build();
 
             assertThatThrownBy(() -> user.addBalance(BigDecimal.valueOf(-100)))
                     .isInstanceOf(BusinessException.class)
@@ -59,7 +59,7 @@ class UserTest {
         @Test
         @DisplayName("0원 충전 시 INVALID_INPUT 예외가 발생한다")
         void addBalance_fail2() {
-            User user = UserFixture.withBalance(BigDecimal.ZERO);
+            User user = UserFixture.aUser().balance(BigDecimal.ZERO).build();
 
             assertThatThrownBy(() -> user.addBalance(BigDecimal.valueOf(0)))
                     .isInstanceOf(BusinessException.class)
@@ -69,7 +69,7 @@ class UserTest {
         @Test
         @DisplayName("null 금액 충전 시 INVALID_INPUT 예외가 발생한다")
         void addBalance_fail3() {
-            User user = UserFixture.withBalance(BigDecimal.ZERO);
+            User user = UserFixture.aUser().balance(BigDecimal.ZERO).build();
 
             assertThatThrownBy(() -> user.addBalance(null))
                     .isInstanceOf(BusinessException.class)
@@ -83,7 +83,7 @@ class UserTest {
         @Test
         @DisplayName("정상 금액 차감 시 잔액이 감소한다")
         void deductBalance_success1() {
-            User user = UserFixture.withBalance(BigDecimal.valueOf(1000));
+            User user = UserFixture.aUser().balance(BigDecimal.valueOf(1000)).build();
 
             user.deductBalance(BigDecimal.valueOf(500));
 
@@ -93,7 +93,7 @@ class UserTest {
         @Test
         @DisplayName("잔액 전액 차감 시 잔액이 0이 된다")
         void deductBalance_success2() {
-            User user = UserFixture.withBalance(BigDecimal.valueOf(1000));
+            User user = UserFixture.aUser().balance(BigDecimal.valueOf(1000)).build();
 
             user.deductBalance(BigDecimal.valueOf(1000));
 
@@ -103,7 +103,7 @@ class UserTest {
         @Test
         @DisplayName("음수 금액 차감 시 INVALID_INPUT 예외가 발생한다")
         void deductBalance_fail1() {
-            User user = UserFixture.withBalance(BigDecimal.valueOf(1000));
+            User user = UserFixture.aUser().balance(BigDecimal.valueOf(1000)).build();
 
             assertThatThrownBy(() -> user.deductBalance(BigDecimal.valueOf(-100)))
                     .isInstanceOf(BusinessException.class)
@@ -113,7 +113,7 @@ class UserTest {
         @Test
         @DisplayName("잔액보다 큰 금액 차감 시 NOT_ENOUGH_POINT 예외가 발생한다")
         void deductBalance_fail2() {
-            User user = UserFixture.withBalance(BigDecimal.valueOf(1000));
+            User user = UserFixture.aUser().balance(BigDecimal.valueOf(1000)).build();
 
             assertThatThrownBy(() -> user.deductBalance(BigDecimal.valueOf(1001)))
                     .isInstanceOf(BusinessException.class)
@@ -123,7 +123,7 @@ class UserTest {
         @Test
         @DisplayName("null 금액 차감 시 INVALID_INPUT 예외가 발생한다")
         void deductBalance_fail3() {
-            User user = UserFixture.withBalance(BigDecimal.valueOf(1000));
+            User user = UserFixture.aUser().balance(BigDecimal.valueOf(1000)).build();
 
             assertThatThrownBy(() -> user.deductBalance(null))
                     .isInstanceOf(BusinessException.class)

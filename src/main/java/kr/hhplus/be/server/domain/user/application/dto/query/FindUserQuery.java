@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.user.application.dto.query;
 
+import kr.hhplus.be.server.domain.user.model.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,7 +8,6 @@ import lombok.Getter;
 @Builder
 public class FindUserQuery {
 
-    private String id;
-    private String name;
     private String email;
+    private UserRole role;
 }

@@ -7,10 +7,32 @@ import java.math.BigDecimal;
 
 public class UserFixture {
 
-    private static final String EMAIL = "test@test.com";
     private static final String PASSWORD = "password123";
 
-    public static User withBalance(BigDecimal balance) {
-        return User.of(null, EMAIL, PASSWORD, balance, UserRole.USER);
+    private String email = "test@test.com";
+    private BigDecimal balance = BigDecimal.ZERO;
+    private UserRole role = UserRole.USER;
+
+    public static UserFixture aUser() {
+        return new UserFixture();
+    }
+
+    public UserFixture email(String v) {
+        this.email = v;
+        return this;
+    }
+
+    public UserFixture role(UserRole v) {
+        this.role = v;
+        return this;
+    }
+
+    public UserFixture balance(BigDecimal v) {
+        this.balance = v;
+        return this;
+    }
+
+    public User build() {
+        return User.of(null, email, PASSWORD, balance, role);
     }
 }

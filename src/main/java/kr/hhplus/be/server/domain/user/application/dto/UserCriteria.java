@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.user.application.dto;
 
 import kr.hhplus.be.server.domain.user.application.dto.query.FindUserQuery;
+import kr.hhplus.be.server.domain.user.model.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,17 +9,15 @@ import lombok.Getter;
 @Builder
 public class UserCriteria {
 
-    private String id;
-    private String name;
     private String email;
+    private UserRole role;
 
     public static UserCriteria from(FindUserQuery query) {
         if (query == null) return UserCriteria.empty();
 
         return UserCriteria.builder()
-                .id(query.getId())
-                .name(query.getName())
                 .email(query.getEmail())
+                .role(query.getRole())
                 .build();
     }
 

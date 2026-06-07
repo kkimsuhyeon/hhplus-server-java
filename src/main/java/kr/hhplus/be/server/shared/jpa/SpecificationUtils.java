@@ -14,4 +14,11 @@ public final class SpecificationUtils {
             return criteriaBuilder.like(criteriaBuilder.lower(root.get(fieldName)), "%" + value.toLowerCase() + "%");
         };
     }
+
+    public static <T> Specification<T> equal(String field, Object value) {
+        return (root, query, cb) -> {
+            if (value == null) return null;
+            return cb.equal(root.get(field), value);
+        };
+    }
 }

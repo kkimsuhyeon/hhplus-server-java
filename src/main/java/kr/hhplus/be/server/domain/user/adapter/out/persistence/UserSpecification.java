@@ -10,12 +10,19 @@ import org.springframework.data.jpa.domain.Specification;
 public class UserSpecification {
 
     public static Specification<UserEntity> withCriteria(UserCriteria criteria) {
-        return Specification.where(likeName(criteria));
+        return Specification
+                .where(likeEmail(criteria))
+                .and(equalRole(criteria));
     }
 
-    private static Specification<UserEntity> likeName(UserCriteria criteria) {
-        if (criteria == null || criteria.getName() == null) return null;
-        return SpecificationUtils.likeIgnoreCase("name", criteria.getName());
+    private static Specification<UserEntity> likeEmail(UserCriteria criteria) {
+        if (criteria == null || criteria.getEmail() == null) return null;
+        return SpecificationUtils.likeIgnoreCase("email", criteria.getEmail());
+    }
+
+    private static Specification<UserEntity> equalRole(UserCriteria criteria) {
+        if (criteria == null || criteria.getRole() == null) return null;
+        return SpecificationUtils.equal("role", criteria.getRole());
     }
 
 }

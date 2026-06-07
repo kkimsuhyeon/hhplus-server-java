@@ -10,9 +10,8 @@ public class UserQueryMapper {
 
     public static FindUserQuery toFindQuery(FindUserRequest request) {
         return FindUserQuery.builder()
-                .id(request.getId())
-                .name(request.getName())
                 .email(request.getEmail())
+                .role(request.getRole())
                 .build();
     }
 }
