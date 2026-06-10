@@ -19,7 +19,7 @@ import kr.hhplus.be.server.domain.reservation.application.ReservationService;
 import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
 import kr.hhplus.be.server.domain.reservation.model.ReservationStatus;
-import kr.hhplus.be.server.domain.user.application.repository.UserRepository;
+import kr.hhplus.be.server.domain.user.port.UserRepository;
 import kr.hhplus.be.server.domain.user.application.service.UserQueryService;
 import kr.hhplus.be.server.domain.user.model.User;
 import kr.hhplus.be.server.domain.user.model.UserRole;

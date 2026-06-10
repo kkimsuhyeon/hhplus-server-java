@@ -1,6 +1,5 @@
-package kr.hhplus.be.server.domain.user.application.repository;
+package kr.hhplus.be.server.domain.user.port;
 
-import kr.hhplus.be.server.domain.user.application.dto.UserCriteria;
 import kr.hhplus.be.server.domain.user.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -11,7 +11,7 @@ import kr.hhplus.be.server.domain.concert.application.service.SeatService;
 import kr.hhplus.be.server.domain.concert.model.Concert;
 import kr.hhplus.be.server.domain.concert.model.ConcertSchedule;
 import kr.hhplus.be.server.domain.concert.model.Seat;
-import kr.hhplus.be.server.domain.user.application.repository.UserRepository;
+import kr.hhplus.be.server.domain.user.port.UserRepository;
 import kr.hhplus.be.server.domain.user.application.service.UserCommandService;
 import kr.hhplus.be.server.domain.user.application.dto.command.CreateUserCommand;
 import kr.hhplus.be.server.domain.user.model.User;

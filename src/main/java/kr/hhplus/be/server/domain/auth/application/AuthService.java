@@ -7,8 +7,9 @@ import kr.hhplus.be.server.domain.auth.adapter.in.web.response.TokenResponse;
 import kr.hhplus.be.server.domain.auth.application.dto.command.SignInCommand;
 import kr.hhplus.be.server.domain.auth.application.dto.command.SignUpCommand;
 import kr.hhplus.be.server.domain.auth.exception.AuthErrorCode;
-import kr.hhplus.be.server.domain.user.application.repository.UserRepository;
 import kr.hhplus.be.server.domain.user.model.User;
+import kr.hhplus.be.server.domain.user.port.UserRepository;
+import kr.hhplus.be.server.domain.user.service.UserRegistration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
+
+    private final UserRegistration userRegistration;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -40,13 +43,7 @@ public class AuthService {
     }
 
     public void signUp(SignUpCommand command) {
-        if (userRepository.existsByEmail(command.getEmail())) {
-            throw new BusinessException(AuthErrorCode.EXISTS_EMAIL);
-        }
-
-        String encodedPassword = passwordEncoder.encode(command.getPassword());
-
-        User user = User.create(command.getEmail(), encodedPassword);
+        User user = userRegistration.register(command.getEmail(), command.getPassword());
         userRepository.save(user);
     }
 

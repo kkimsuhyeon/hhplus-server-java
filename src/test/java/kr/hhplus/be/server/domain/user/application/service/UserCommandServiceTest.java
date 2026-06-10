@@ -1,15 +1,18 @@
 package kr.hhplus.be.server.domain.user.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
-import kr.hhplus.be.server.domain.user.application.repository.UserRepository;
+import kr.hhplus.be.server.domain.user.UserFixture;
 import kr.hhplus.be.server.domain.user.application.dto.command.CreateUserCommand;
+import kr.hhplus.be.server.domain.user.port.UserRepository;
+import kr.hhplus.be.server.domain.user.service.UserRegistration;
 import kr.hhplus.be.server.domain.user.exception.UserErrorCode;
 import kr.hhplus.be.server.domain.user.model.User;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,9 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UserCommandService 테스트")
@@ -31,86 +32,115 @@ class UserCommandServiceTest {
     private UserCommandService userCommandService;
 
     @Mock
-    private UserRepository repository;
+    private UserRepository userRepository;
 
-    @Test
+    @Mock
+    private UserRegistration userRegistration;
+
+    @Captor
+    private ArgumentCaptor<User> userCaptor;
+
+    @Nested
     @DisplayName("유저 생성")
-    void create_User_Success() {
-        // given
-        CreateUserCommand command = CreateUserCommand.builder()
-                .email("test@test.com")
-                .password("password123")
-                .build();
+    class CreateUserTest {
+        @Test
+        @DisplayName("register가 생성한 유저를 그대로 저장한다")
+        void createUser_success() {
 
-        // when
-        userCommandService.create(command);
+            // given
+            CreateUserCommand command = CreateUserCommand.builder()
+                    .email("test@test.com")
+                    .password("password123")
+                    .build();
 
-        // then
-        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        verify(repository, times(1)).save(userCaptor.capture());
+            User user = UserFixture.aUser()
+                    .email("test@test.com")
+                    .password("hash")
+                    .build();
 
-        User actualUser = userCaptor.getValue();
-        assertThat(actualUser.getBalance()).isEqualTo(BigDecimal.ZERO);
-        assertThat(actualUser.getEmail()).isEqualTo("test@test.com");
+            when(userRegistration.register("test@test.com", "password123"))
+                    .thenReturn(user);
+
+            // when
+            userCommandService.create(command);
+
+            // then
+            verify(userRepository, times(1)).save(userCaptor.capture());
+
+            User actualUser = userCaptor.getValue();
+            assertThat(actualUser).isSameAs(user);
+        }
+
     }
 
-    @Test
-    @DisplayName("포인트 추가")
-    void addBalance_Success() {
+    @Nested
+    @DisplayName("잔액 충전")
+    class AddBalanceTest {
 
-        // given
-        String userId = "123";
-        BigDecimal amount = BigDecimal.valueOf(1000);
-        User expectedUser = User.of(userId, null, null, BigDecimal.ZERO, null);
+        @Test
+        @DisplayName("유저를 조회해 잔액을 더하고 저장한다")
+        void addBalance_success() {
+            when(userRepository.findByIdForUpdate("test@test.com"))
+                    .thenReturn(Optional.of(UserFixture.aUser()
+                            .email("test@test.com")
+                            .build()));
 
-        when(repository.findByIdForUpdate(userId)).thenReturn(Optional.of(expectedUser));
+            userCommandService.addBalance("test@test.com", BigDecimal.valueOf(1000));
 
-        // when
-        userCommandService.addBalance(userId, amount);
+            verify(userRepository, times(1)).update(userCaptor.capture());
 
-        // then
-        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        verify(repository, times(1)).update(userCaptor.capture());
+            User actualUser = userCaptor.getValue();
+            assertThat(actualUser.getBalance()).isEqualByComparingTo(BigDecimal.valueOf(1000));
+        }
 
-        User actualUser = userCaptor.getValue();
-        assertThat(actualUser.getBalance()).isEqualTo(amount);
+        @Test
+        @DisplayName("유저가 없으면 NOT_FOUND 예외가 발생한다")
+        void addBalance_notFound() {
+            when(userRepository.findByIdForUpdate("no-user"))
+                    .thenReturn(Optional.empty());
+
+            verify(userRepository, never()).update(any());
+
+            assertThatThrownBy(() -> userCommandService.addBalance("no-user", BigDecimal.valueOf(1000)))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessage(UserErrorCode.NOT_FOUND.getMessage());
+        }
     }
 
-    @Test
-    @DisplayName("포인트 추가 - 실패")
-    void addBalance_Fail() {
-        // given
-        User expectedUser = User.of("123", null, null, BigDecimal.ZERO, null);
-        when(repository.findByIdForUpdate("123")).thenReturn(Optional.of(expectedUser));
+    @Nested
+    @DisplayName("잔액 차감")
+    class DeductBalanceTest {
 
-        // when, then
-        assertThatThrownBy(() -> userCommandService.addBalance("123", BigDecimal.valueOf(-100)))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(CommonErrorCode.INVALID_INPUT.getMessage());
+        @Test
+        @DisplayName("유저를 조회해 잔액을 차감하고 저장한다")
+        void deductBalance_success() {
 
-        verify(repository, times(0)).update(expectedUser);
-    }
+            when(userRepository.findByIdForUpdate("test@test.com"))
+                    .thenReturn(Optional.of(UserFixture.aUser()
+                            .email("test@test.com")
+                            .balance(BigDecimal.valueOf(2000))
+                            .build()));
 
-    @Test
-    @DisplayName("포인트 차감 - 성공")
-    void deductBalance_Success() {
-        User expectedUser = User.of("123", null, null, BigDecimal.valueOf(1000), null);
-        when(repository.findByIdForUpdate("123")).thenReturn(Optional.of(expectedUser));
+            userCommandService.deductBalance("test@test.com", BigDecimal.valueOf(500));
 
-        userCommandService.deductBalance("123", BigDecimal.valueOf(100));
+            verify(userRepository, times(1)).update(userCaptor.capture());
 
-        assertThat(expectedUser.getBalance()).isEqualTo(BigDecimal.valueOf(900));
-        verify(repository, times(1)).update(expectedUser);
-    }
+            User actualUser = userCaptor.getValue();
+            assertThat(actualUser.getBalance()).isEqualByComparingTo(BigDecimal.valueOf(1500));
 
-    @Test
-    @DisplayName("포인트 차감 - 실패")
-    void deductBalance_Fail() {
-        User expectedUser = User.of("123", null, null, BigDecimal.valueOf(100), null);
-        when(repository.findByIdForUpdate("123")).thenReturn(Optional.of(expectedUser));
+        }
 
-        assertThatThrownBy(() -> userCommandService.deductBalance("123", BigDecimal.valueOf(500)))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(UserErrorCode.NOT_ENOUGH_POINT.getMessage());
+        @Test
+        @DisplayName("유저가 없으면 NOT_FOUND 예외가 발생한다")
+        void deductBalance_notFound() {
+            when(userRepository.findByIdForUpdate("no-user"))
+                    .thenReturn(Optional.empty());
+
+            verify(userRepository, never()).update(any());
+
+            assertThatThrownBy(() -> userCommandService.deductBalance("no-user", BigDecimal.valueOf(1000)))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessage(UserErrorCode.NOT_FOUND.getMessage());
+        }
     }
 }

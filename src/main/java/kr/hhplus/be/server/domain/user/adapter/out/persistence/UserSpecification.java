@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.user.adapter.out.persistence;
 
-import kr.hhplus.be.server.domain.user.application.dto.UserCriteria;
+import kr.hhplus.be.server.domain.user.port.UserCriteria;
 import kr.hhplus.be.server.shared.jpa.SpecificationUtils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
