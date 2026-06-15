@@ -119,7 +119,7 @@ class PaymentUseCaseIntegrationTest {
     }
 
     private User createUser(BigDecimal balance) {
-        User user = User.of(null, "test" + System.nanoTime() + "@test.com", "password123", balance, UserRole.USER);
+        User user = User.of(null, "test" + System.nanoTime() + "@test.com", "password123", null, balance, UserRole.USER);
 
         return userRepository.save(user);
     }

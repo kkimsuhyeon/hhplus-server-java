@@ -18,6 +18,7 @@ public class AuthCommandMapper {
         return SignUpCommand.builder()
                 .email(request.getEmail())
                 .password(request.getPassword())
+                .name(request.getName())
                 .build();
     }
 }

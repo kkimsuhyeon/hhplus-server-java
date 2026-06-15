@@ -17,6 +17,7 @@ class UserTest {
 
     private static final String EMAIL = "test@test.com";
     private static final String PASSWORD = "password123";
+    private static final String NAME = "test123";
 
     @Nested
     @DisplayName("createUser")
@@ -24,11 +25,12 @@ class UserTest {
         @Test
         @DisplayName("유저 생성 시 잔액 0, 권한 USER로 초기화된다")
         void createUser_success() {
-            User user = User.create(EMAIL, PASSWORD);
+            User user = User.create(EMAIL, PASSWORD, NAME);
 
             assertThat(user.getBalance()).isEqualByComparingTo(BigDecimal.ZERO);
             assertThat(user.getEmail()).isEqualTo(EMAIL);
             assertThat(user.getPassword()).isEqualTo(PASSWORD);
+            assertThat(user.getName()).isEqualTo(NAME);
             assertThat(user.getRole()).isEqualTo(UserRole.USER);
         }
     }

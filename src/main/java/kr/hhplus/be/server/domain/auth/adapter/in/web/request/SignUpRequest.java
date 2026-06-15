@@ -14,4 +14,7 @@ public class SignUpRequest {
     @NotBlank
     @Schema(description = "패스워드")
     private String password;
+
+    @Schema(description = "이름")
+    private String name;
 }

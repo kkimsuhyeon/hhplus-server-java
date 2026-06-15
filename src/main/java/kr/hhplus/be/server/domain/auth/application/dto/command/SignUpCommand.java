@@ -8,4 +8,5 @@ import lombok.Getter;
 public class SignUpCommand {
     private String email;
     private String password;
+    private String name;
 }

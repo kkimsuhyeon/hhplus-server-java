@@ -11,6 +11,7 @@ public class UserCommandMapper {
         return CreateUserCommand.builder()
                 .email(request.getEmail())
                 .password(request.getPassword())
+                .name(request.getName())
                 .build();
     }
 

@@ -44,6 +44,10 @@ public class UserEntity {
     @Comment("패스워드")
     private String password;
 
+    @Column(name = "name", nullable = true)
+    @Comment("이름")
+    private String name;
+
     @Builder.Default
     @Column(name = "balance", nullable = false)
     @Comment("잔액")
@@ -61,18 +65,20 @@ public class UserEntity {
         return UserEntity.builder()
                 .email(user.getEmail())
                 .password(user.getPassword())
+                .name(user.getName())
                 .balance(user.getBalance())
                 .role(user.getRole())
                 .build();
     }
 
     public User toModel() {
-        return User.of(this.id, this.email, this.password, this.balance, this.role);
+        return User.of(this.id, this.email, this.password, this.name, this.balance, this.role);
     }
 
     public void update(User user) {
         this.email = user.getEmail();
         this.password = user.getPassword();
+        this.name = user.getName();
         this.balance = user.getBalance();
         this.role = user.getRole();
     }

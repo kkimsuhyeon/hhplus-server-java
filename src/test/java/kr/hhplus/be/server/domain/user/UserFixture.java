@@ -10,6 +10,7 @@ public class UserFixture {
     private String id = "hash";
     private String email = "test@test.com";
     private String password = "password123";
+    private String name = "test";
     private BigDecimal balance = BigDecimal.ZERO;
     private UserRole role = UserRole.USER;
 
@@ -32,6 +33,11 @@ public class UserFixture {
         return this;
     }
 
+    public UserFixture name(String v) {
+        this.name = v;
+        return this;
+    }
+
     public UserFixture role(UserRole v) {
         this.role = v;
         return this;
@@ -43,6 +49,6 @@ public class UserFixture {
     }
 
     public User build() {
-        return User.of(id, email, password, balance, role);
+        return User.of(id, email, password, name, balance, role);
     }
 }

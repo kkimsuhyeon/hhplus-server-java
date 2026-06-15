@@ -43,7 +43,7 @@ public class AuthService {
     }
 
     public void signUp(SignUpCommand command) {
-        User user = userRegistration.register(command.getEmail(), command.getPassword());
+        User user = userRegistration.register(command.getEmail(), command.getPassword(), command.getName());
         userRepository.save(user);
     }
 

@@ -21,7 +21,7 @@ public class UserCommandService {
 
     @Transactional
     public User create(CreateUserCommand command) {
-        User user = userRegistration.register(command.getEmail(), command.getPassword());
+        User user = userRegistration.register(command.getEmail(), command.getPassword(), command.getName());
         return repository.save(user);
     }
 

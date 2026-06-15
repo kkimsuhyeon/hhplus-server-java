@@ -16,6 +16,7 @@ public class User {
     private String id;
     private String email;
     private String password;
+    private String name;
     private BigDecimal balance;
     private UserRole role;
 
@@ -47,11 +48,11 @@ public class User {
         this.balance = this.balance.subtract(amount);
     }
 
-    public static User create(String email, String password) {
-        return new User(null, email, password, BigDecimal.ZERO, UserRole.USER);
+    public static User create(String email, String password, String name) {
+        return new User(null, email, password, name, BigDecimal.ZERO, UserRole.USER);
     }
 
-    public static User of(String id, String email, String password, BigDecimal balance, UserRole role) {
-        return new User(id, email, password, balance, role);
+    public static User of(String id, String email, String password, String name, BigDecimal balance, UserRole role) {
+        return new User(id, email, password, name, balance, role);
     }
 }

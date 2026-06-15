@@ -51,14 +51,16 @@ class UserCommandServiceTest {
             CreateUserCommand command = CreateUserCommand.builder()
                     .email("test@test.com")
                     .password("password123")
+                    .name("test123")
                     .build();
 
             User user = UserFixture.aUser()
                     .email("test@test.com")
                     .password("hash")
+                    .name("test123")
                     .build();
 
-            when(userRegistration.register("test@test.com", "password123"))
+            when(userRegistration.register("test@test.com", "password123", "test123"))
                     .thenReturn(user);
 
             // when

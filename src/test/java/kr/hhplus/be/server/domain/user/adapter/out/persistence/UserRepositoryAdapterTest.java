@@ -66,7 +66,7 @@ class UserRepositoryAdapterTest {
             User user = persistedUser("test@test.com");
             assertThat(user.getBalance()).isEqualByComparingTo(BigDecimal.ZERO);
 
-            User updatedUser = User.of(user.getId(), user.getEmail(), user.getPassword(), BigDecimal.valueOf(1000), UserRole.USER);
+            User updatedUser = User.of(user.getId(), user.getEmail(), user.getPassword(), null, BigDecimal.valueOf(1000), UserRole.USER);
 
             userRepository.update(updatedUser);
             em.flush();
@@ -81,7 +81,7 @@ class UserRepositoryAdapterTest {
 
         @Test
         void update_fail() {
-            User ghost = User.of("no_such_id", "test@test.com", "password", BigDecimal.ZERO, UserRole.USER);
+            User ghost = User.of("no_such_id", "test@test.com", "password", null, BigDecimal.ZERO, UserRole.USER);
             assertThatThrownBy(() -> userRepository.update(ghost))
                     .isInstanceOf(BusinessException.class)
                     .extracting("errorCode").isEqualTo(UserErrorCode.NOT_FOUND);

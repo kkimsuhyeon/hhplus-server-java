@@ -39,7 +39,7 @@ class UserRegistrationTest {
         when(userRepository.existsByEmail("test@test.com")).thenReturn(false);
 
         // when
-        User user = userRegistration.register("test@test.com", "password123");
+        User user = userRegistration.register("test@test.com", "password123", null);
 
         // then
         assertThat(user.getEmail()).isEqualTo("test@test.com");
@@ -55,7 +55,7 @@ class UserRegistrationTest {
         when(userRepository.existsByEmail("test@test.com")).thenReturn(true);
 
         // when, then
-        assertThatThrownBy(() -> userRegistration.register("test@test.com", "password123"))
+        assertThatThrownBy(() -> userRegistration.register("test@test.com", "password123", null))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(UserErrorCode.DUPLICATE_EMAIL.getMessage());
     }

@@ -15,12 +15,12 @@ public class UserRegistration {
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
 
-    public User register(String email, String password) {
+    public User register(String email, String password, String name) {
         if (userRepository.existsByEmail(email)) {
             throw new BusinessException(UserErrorCode.DUPLICATE_EMAIL);
         }
 
-        return User.create(email, passwordHasher.hash(password));
+        return User.create(email, passwordHasher.hash(password), name);
     }
 
 }
