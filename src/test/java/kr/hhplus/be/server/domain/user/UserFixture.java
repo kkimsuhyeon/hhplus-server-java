@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 
 public class UserFixture {
 
+    private String id = "hash";
     private String email = "test@test.com";
     private String password = "password123";
     private BigDecimal balance = BigDecimal.ZERO;
@@ -14,6 +15,11 @@ public class UserFixture {
 
     public static UserFixture aUser() {
         return new UserFixture();
+    }
+
+    public UserFixture id(String id) {
+        this.id = id;
+        return this;
     }
 
     public UserFixture email(String v) {

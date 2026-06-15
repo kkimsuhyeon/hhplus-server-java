@@ -8,7 +8,10 @@ import kr.hhplus.be.server.domain.user.application.dto.command.CreateUserCommand
 public class UserCommandMapper {
 
     public static CreateUserCommand toCreateCommand(CreateUserRequest request) {
-        return CreateUserCommand.builder().build();
+        return CreateUserCommand.builder()
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .build();
     }
 
     public static BalanceChargeCommand toChargeCommand(String userId, BalanceChargeRequest request) {
