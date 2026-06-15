@@ -43,6 +43,6 @@ public class UserFixture {
     }
 
     public User build() {
-        return User.of(null, email, password, balance, role);
+        return User.of(id, email, password, balance, role);
     }
 }
