@@ -48,6 +48,10 @@ public class User {
         this.balance = this.balance.subtract(amount);
     }
 
+    public void changeName(String name){
+        this.name = name;
+    }
+
     public static User create(String email, String password, String name) {
         return new User(null, email, password, name, BigDecimal.ZERO, UserRole.USER);
     }

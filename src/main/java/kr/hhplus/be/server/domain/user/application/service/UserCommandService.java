@@ -13,19 +13,26 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserCommandService {
 
     private final UserRegistration userRegistration;
     private final UserRepository repository;
 
-    @Transactional
     public User create(CreateUserCommand command) {
         User user = userRegistration.register(command.getEmail(), command.getPassword(), command.getName());
         return repository.save(user);
     }
 
-    @Transactional
+    public void changeName(String userId, String name){
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
+
+        user.changeName(name);
+        repository.update(user);
+    }
+
     public void addBalance(String userId, BigDecimal amount) {
         User user = repository.findByIdForUpdate(userId)
                 .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
@@ -34,7 +41,6 @@ public class UserCommandService {
         repository.update(user);
     }
 
-    @Transactional
     public void deductBalance(String userId, BigDecimal amount) {
         User user = repository.findByIdForUpdate(userId)
                 .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
@@ -43,12 +49,10 @@ public class UserCommandService {
         repository.update(user);
     }
 
-    @Transactional
     public User save(User user) {
         return repository.save(user);
     }
 
-    @Transactional
     public User update(User user) {
         return repository.update(user);
     }
