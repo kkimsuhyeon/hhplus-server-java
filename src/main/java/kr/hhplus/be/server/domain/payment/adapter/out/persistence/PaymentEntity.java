@@ -60,13 +60,13 @@ public class PaymentEntity {
     }
 
     public Payment toModel() {
-        return Payment.builder()
-                .id(this.id)
-                .status(this.status)
-                .amount(this.amount)
-                .rmk(this.rmk)
-                .reservationId(this.reservationId)
-                .build();
+        return Payment.of(
+                this.id,
+                this.status,
+                this.amount,
+                this.reservationId,
+                this.rmk
+        );
     }
 
     public void update(Payment payment) {

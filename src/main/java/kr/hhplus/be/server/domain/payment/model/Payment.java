@@ -1,14 +1,17 @@
 package kr.hhplus.be.server.domain.payment.model;
 
-import java.math.BigDecimal;
-
+import io.micrometer.common.util.StringUtils;
+import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
+import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
+import kr.hhplus.be.server.domain.payment.exception.PaymentErrorCode;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
+import java.math.BigDecimal;
+
 @Getter
-@Builder
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Payment {
 
     private String id;
@@ -21,25 +24,28 @@ public class Payment {
 
     private String rmk;
 
-    public static Payment createSuccess(String reservationId, BigDecimal amount) {
-        return Payment.builder()
-                .reservationId(reservationId)
-                .status(PaymentStatus.SUCCESS)
-                .amount(amount)
-                .build();
+    public static Payment create(String reservationId, BigDecimal amount) {
+        return Payment.of(null, PaymentStatus.PENDING, amount, reservationId, null);
     }
 
-    public static Payment createFail(String reservationId, BigDecimal amount, String rmk) {
-        return Payment.builder()
-                .reservationId(reservationId)
-                .status(PaymentStatus.FAIL)
-                .amount(amount)
-                .rmk(rmk)
-                .build();
+    public static Payment of(String id, PaymentStatus status, BigDecimal amount, String reservationId, String rmk) {
+        if (StringUtils.isEmpty(reservationId)) {
+            throw new BusinessException(CommonErrorCode.INVALID_INPUT);
+        }
+
+        return new Payment(id, status, amount, reservationId, rmk);
     }
 
-    public void cancel() {
-        this.status = PaymentStatus.CANCEL;
+    public void pay() {
+        if (this.status != PaymentStatus.PENDING) {
+            throw new BusinessException(PaymentErrorCode.DISABLE_PAY);
+        }
+
+        this.status = PaymentStatus.SUCCESS;
+    }
+
+    public void changeRmk(String rmk) {
+        this.rmk = rmk;
     }
 
     public boolean isSuccess() {

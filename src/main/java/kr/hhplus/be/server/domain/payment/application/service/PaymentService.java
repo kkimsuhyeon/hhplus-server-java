@@ -1,9 +1,9 @@
-package kr.hhplus.be.server.domain.payment.application;
+package kr.hhplus.be.server.domain.payment.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
-import kr.hhplus.be.server.domain.payment.adapter.out.persistence.PaymentRepositoryAdapter;
 import kr.hhplus.be.server.domain.payment.model.Payment;
+import kr.hhplus.be.server.domain.payment.port.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private final PaymentRepositoryAdapter repository;
+    private final PaymentRepository repository;
 
     @Transactional(readOnly = true)
     public Payment getPayment(String id) {

@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.payment.application.repository;
+package kr.hhplus.be.server.domain.payment.port;
 
 import kr.hhplus.be.server.domain.payment.model.Payment;
 
