@@ -3,7 +3,7 @@ package kr.hhplus.be.server.application.usecase;
 import kr.hhplus.be.server.application.dto.PayCommand;
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.concert.application.service.SeatService;
-import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
+import kr.hhplus.be.server.domain.payment.application.service.PaymentCommandService;
 import kr.hhplus.be.server.domain.payment.model.Payment;
 import kr.hhplus.be.server.domain.reservation.application.ReservationService;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
@@ -22,11 +22,14 @@ public class PaymentUseCase {
 
     private final ReservationService reservationService;
     private final UserCommandService userCommandService;
-    private final PaymentService paymentService;
+    private final PaymentCommandService paymentCommandService;
     private final SeatService seatService;
 
     @Transactional
     public Payment pay(PayCommand command) {
+
+        Reservation reservation = reservationService.getReservationForUpdate(command.getReservationId());
+
 //        try {
 //            Reservation reservation = reservationService.getReservationForUpdate(command.getReservationId());
 //            reservation.validateForPayment(command.getUserId());
@@ -39,16 +42,16 @@ public class PaymentUseCase {
 //            seatService.confirm(reservation.getSeatId(), command.getUserId());
 //
 //            Payment payment = Payment.createSuccess(reservation.getId(), reservation.getPaymentAmount());
-//            return paymentService.create(payment);
+//            return paymentCommandService.create(payment);
 //        } catch (BusinessException e) {
 //            Payment fail = Payment.createFail(command.getReservationId(), BigDecimal.ZERO, e.getMessage());
-//            paymentService.create(fail);
+//            paymentCommandService.create(fail);
 //            throw e;
 //        } catch (Exception e) {
 //            log.error("결제 처리 중 예상치 못한 오류 발생: reservationId={}, userId={}, error={}", command.getReservationId(), command.getUserId(), e.getMessage(), e);
 //
 //            Payment fail = Payment.createFail(command.getReservationId(), BigDecimal.ZERO, "결제 처리 중 알 수 없는 오류가 발생했습니다.");
-//            paymentService.create(fail);
+//            paymentCommandService.create(fail);
 //
 //            throw new RuntimeException("결제 처리 중 알 수 없는 오류가 발생했습니다.", e); // 시스템 예외는 RuntimeException으로 래핑하여 상위로 던집니다.
 //        }

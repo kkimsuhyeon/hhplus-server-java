@@ -1,9 +1,5 @@
 package kr.hhplus.be.server.domain.reservation.model;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.LocalDateTime;
-
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
 import kr.hhplus.be.server.config.exception.exceptions.ServerErrorException;
@@ -11,6 +7,9 @@ import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -32,6 +31,32 @@ public class Reservation {
     private String userId;
 
     private String seatId;
+
+    public static Reservation create(String userId, String seatId, BigDecimal paymentAmount) {
+        return Reservation.builder()
+                .status(ReservationStatus.PENDING_PAYMENT)
+                .paymentAmount(paymentAmount)
+                .expiresAt(LocalDateTime.now().plusMinutes(5))
+                .userId(userId)
+                .seatId(seatId)
+                .build();
+    }
+
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(expiresAt);
+    }
+
+    public boolean isPayable() {
+        return this.status == ReservationStatus.PENDING_PAYMENT;
+    }
+
+    public boolean isOwnedBy(String userId) {
+        return this.userId.equals(userId);
+    }
+
+    public void cancel() {
+        this.status = ReservationStatus.CANCELLED;
+    }
 
     public void completePayment() {
         if (!isPayable()) {
@@ -63,29 +88,5 @@ public class Reservation {
         }
     }
 
-    public void cancel() {
-        this.status = ReservationStatus.CANCELLED;
-    }
 
-    public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expiresAt);
-    }
-
-    public boolean isPayable() {
-        return this.status == ReservationStatus.PENDING_PAYMENT;
-    }
-
-    public boolean isOwnedBy(String userId) {
-        return this.userId.equals(userId);
-    }
-
-    public static Reservation create(String userId, String seatId, BigDecimal paymentAmount) {
-        return Reservation.builder()
-                .status(ReservationStatus.PENDING_PAYMENT)
-                .paymentAmount(paymentAmount)
-                .expiresAt(LocalDateTime.now().plusMinutes(5))
-                .userId(userId)
-                .seatId(seatId)
-                .build();
-    }
 }
