@@ -2,8 +2,8 @@ package kr.hhplus.be.server.domain.concert.application.service;
 
 import kr.hhplus.be.server.domain.concert.application.assembler.ConcertAssembler;
 import kr.hhplus.be.server.domain.concert.application.dto.command.CreateConcertCommand;
-import kr.hhplus.be.server.domain.concert.application.repository.ConcertRepository;
 import kr.hhplus.be.server.domain.concert.model.Concert;
+import kr.hhplus.be.server.domain.concert.port.ConcertRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,10 +1,10 @@
 package kr.hhplus.be.server.domain.token.application;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.token.application.repository.QueueTokenRepository;
 import kr.hhplus.be.server.domain.token.exception.TokenErrorCode;
 import kr.hhplus.be.server.domain.token.model.QueueToken;
 import kr.hhplus.be.server.domain.token.model.TokenStatus;
+import kr.hhplus.be.server.domain.token.port.QueueTokenRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

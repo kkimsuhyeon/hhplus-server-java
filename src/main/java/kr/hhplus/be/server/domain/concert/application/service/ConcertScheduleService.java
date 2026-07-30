@@ -3,7 +3,7 @@ package kr.hhplus.be.server.domain.concert.application.service;
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.concert.application.dto.command.CreateScheduleCommand;
 import kr.hhplus.be.server.domain.concert.application.assembler.ScheduleAssembler;
-import kr.hhplus.be.server.domain.concert.application.repository.ConcertScheduleRepository;
+import kr.hhplus.be.server.domain.concert.port.ConcertScheduleRepository;
 import kr.hhplus.be.server.domain.concert.exception.ConcertScheduleErrorCode;
 import kr.hhplus.be.server.domain.concert.model.ConcertSchedule;
 import lombok.RequiredArgsConstructor;

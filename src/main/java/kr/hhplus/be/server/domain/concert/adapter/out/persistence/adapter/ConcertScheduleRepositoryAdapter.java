@@ -5,7 +5,7 @@ import kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity.Concert
 import kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity.ConcertScheduleEntity;
 import kr.hhplus.be.server.domain.concert.adapter.out.persistence.repository.ConcertJpaRepository;
 import kr.hhplus.be.server.domain.concert.adapter.out.persistence.repository.ConcertScheduleJpaRepository;
-import kr.hhplus.be.server.domain.concert.application.repository.ConcertScheduleRepository;
+import kr.hhplus.be.server.domain.concert.port.ConcertScheduleRepository;
 import kr.hhplus.be.server.domain.concert.exception.ConcertErrorCode;
 import kr.hhplus.be.server.domain.concert.exception.ConcertScheduleErrorCode;
 import kr.hhplus.be.server.domain.concert.model.ConcertSchedule;

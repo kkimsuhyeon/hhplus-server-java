@@ -1,6 +1,5 @@
-package kr.hhplus.be.server.domain.concert.application.repository;
+package kr.hhplus.be.server.domain.concert.port;
 
-import kr.hhplus.be.server.domain.concert.application.dto.criteria.ConcertCriteria;
 import kr.hhplus.be.server.domain.concert.model.Concert;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
