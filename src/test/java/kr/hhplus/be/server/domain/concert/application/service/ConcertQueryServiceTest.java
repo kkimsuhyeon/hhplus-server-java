@@ -1,11 +1,11 @@
 package kr.hhplus.be.server.domain.concert.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.concert.application.dto.criteria.ConcertCriteria;
 import kr.hhplus.be.server.domain.concert.application.dto.query.FindConcertQuery;
-import kr.hhplus.be.server.domain.concert.application.repository.ConcertRepository;
 import kr.hhplus.be.server.domain.concert.exception.ConcertErrorCode;
 import kr.hhplus.be.server.domain.concert.model.Concert;
+import kr.hhplus.be.server.domain.concert.port.ConcertCriteria;
+import kr.hhplus.be.server.domain.concert.port.ConcertRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

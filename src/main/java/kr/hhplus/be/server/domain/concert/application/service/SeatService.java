@@ -4,7 +4,7 @@ import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
 import kr.hhplus.be.server.domain.concert.application.dto.command.CreateSeatCommand;
 import kr.hhplus.be.server.domain.concert.application.assembler.SeatAssembler;
-import kr.hhplus.be.server.domain.concert.application.repository.SeatRepository;
+import kr.hhplus.be.server.domain.concert.port.SeatRepository;
 import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.concert.model.Seat;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.token.application.repository;
+package kr.hhplus.be.server.domain.token.port;
 
 import kr.hhplus.be.server.domain.token.model.QueueToken;
 import kr.hhplus.be.server.domain.token.model.TokenStatus;

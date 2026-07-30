@@ -2,9 +2,9 @@ package kr.hhplus.be.server.domain.reservation.application;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.reservation.application.assembler.ReservationAssembler;
-import kr.hhplus.be.server.domain.reservation.application.repository.ReservationRepository;
 import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
+import kr.hhplus.be.server.domain.reservation.port.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

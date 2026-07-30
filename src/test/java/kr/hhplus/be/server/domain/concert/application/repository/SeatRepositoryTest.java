@@ -4,6 +4,7 @@ import kr.hhplus.be.server.domain.concert.adapter.out.persistence.adapter.SeatRe
 import kr.hhplus.be.server.domain.concert.adapter.out.persistence.entity.SeatEntity;
 import kr.hhplus.be.server.domain.concert.adapter.out.persistence.repository.SeatJpaRepository;
 import kr.hhplus.be.server.domain.concert.model.SeatStatus;
+import kr.hhplus.be.server.domain.concert.port.SeatRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
