@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.domain.token.adapter.in.web.request.IssueTokenRequest;
 import kr.hhplus.be.server.domain.token.adapter.in.web.response.TokenResponse;
-import kr.hhplus.be.server.domain.token.application.QueueTokenService;
+import kr.hhplus.be.server.domain.token.application.service.QueueTokenService;
 import kr.hhplus.be.server.domain.token.model.QueueToken;
 import kr.hhplus.be.server.shared.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;

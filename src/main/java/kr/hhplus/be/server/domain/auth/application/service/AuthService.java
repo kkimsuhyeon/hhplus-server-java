@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.auth.application;
+package kr.hhplus.be.server.domain.auth.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.config.security.jwt.JwtTokenPayload;

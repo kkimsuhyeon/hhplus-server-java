@@ -8,7 +8,7 @@ import jakarta.validation.Valid;
 import kr.hhplus.be.server.application.dto.ReserveSeatCommand;
 import kr.hhplus.be.server.application.usecase.ReservationUseCase;
 import kr.hhplus.be.server.config.security.AuthUser;
-import kr.hhplus.be.server.domain.reservation.adapter.in.web.factory.ReservationCommandFactory;
+import kr.hhplus.be.server.domain.reservation.adapter.in.web.mapper.ReservationCommandMapper;
 import kr.hhplus.be.server.domain.reservation.adapter.in.web.request.ReserveSeatRequest;
 import kr.hhplus.be.server.shared.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ReservationController {
 
-    private final ReservationCommandFactory commandFactory;
-
     private final ReservationUseCase reservationUseCase;
 
     @PostMapping
@@ -45,7 +43,7 @@ public class ReservationController {
             @RequestBody @Valid ReserveSeatRequest request,
             @AuthenticationPrincipal AuthUser authUser
     ) {
-        ReserveSeatCommand command = commandFactory.toReserveSeatCommand(request, authUser.getId());
+        ReserveSeatCommand command = ReservationCommandMapper.toReserveSeatCommand(request, authUser.getId());
         reservationUseCase.reserve(command);
         return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponse.success());
     }

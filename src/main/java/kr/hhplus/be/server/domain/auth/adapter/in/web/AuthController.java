@@ -6,7 +6,7 @@ import kr.hhplus.be.server.domain.auth.adapter.in.web.mapper.AuthCommandMapper;
 import kr.hhplus.be.server.domain.auth.adapter.in.web.request.SignInRequest;
 import kr.hhplus.be.server.domain.auth.adapter.in.web.request.SignUpRequest;
 import kr.hhplus.be.server.domain.auth.adapter.in.web.response.TokenResponse;
-import kr.hhplus.be.server.domain.auth.application.AuthService;
+import kr.hhplus.be.server.domain.auth.application.service.AuthService;
 import kr.hhplus.be.server.domain.auth.application.dto.command.SignInCommand;
 import kr.hhplus.be.server.domain.auth.application.dto.command.SignUpCommand;
 import kr.hhplus.be.server.shared.dto.BaseResponse;

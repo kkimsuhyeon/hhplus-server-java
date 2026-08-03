@@ -1,13 +1,11 @@
-package kr.hhplus.be.server.domain.reservation.adapter.in.web.factory;
+package kr.hhplus.be.server.domain.reservation.adapter.in.web.mapper;
 
 import kr.hhplus.be.server.application.dto.ReserveSeatCommand;
 import kr.hhplus.be.server.domain.reservation.adapter.in.web.request.ReserveSeatRequest;
-import org.springframework.stereotype.Component;
 
-@Component
-public class ReservationCommandFactory {
+public class ReservationCommandMapper {
 
-    public ReserveSeatCommand toReserveSeatCommand(ReserveSeatRequest request, String userId) {
+    public static ReserveSeatCommand toReserveSeatCommand(ReserveSeatRequest request, String userId) {
         return ReserveSeatCommand.builder()
                 .userId(userId)
                 .seatId(request.getSeatId())

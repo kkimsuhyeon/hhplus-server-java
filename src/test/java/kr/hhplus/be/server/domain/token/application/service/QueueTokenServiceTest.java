@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.token.application;
+package kr.hhplus.be.server.domain.token.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.token.exception.TokenErrorCode;

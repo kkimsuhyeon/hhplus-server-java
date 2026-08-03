@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.domain.reservation.adapter.in.scheduler;
 
 import kr.hhplus.be.server.domain.concert.application.service.SeatService;
-import kr.hhplus.be.server.domain.reservation.application.ReservationService;
+import kr.hhplus.be.server.domain.reservation.application.service.ReservationService;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
