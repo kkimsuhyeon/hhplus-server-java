@@ -3,7 +3,7 @@ package kr.hhplus.be.server.config.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.token.application.QueueTokenService;
+import kr.hhplus.be.server.domain.token.application.service.QueueTokenService;
 import kr.hhplus.be.server.domain.token.exception.TokenErrorCode;
 import kr.hhplus.be.server.domain.token.model.QueueToken;
 import lombok.RequiredArgsConstructor;

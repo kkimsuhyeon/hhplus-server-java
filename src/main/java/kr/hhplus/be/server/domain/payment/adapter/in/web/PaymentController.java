@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import kr.hhplus.be.server.application.dto.PayCommand;
 import kr.hhplus.be.server.application.usecase.PaymentUseCase;
 import kr.hhplus.be.server.config.security.AuthUser;
-import kr.hhplus.be.server.domain.payment.adapter.in.web.factory.PaymentCommandFactory;
+import kr.hhplus.be.server.domain.payment.adapter.in.web.mapper.PaymentCommandMapper;
 import kr.hhplus.be.server.domain.payment.adapter.in.web.request.PayRequest;
 import kr.hhplus.be.server.shared.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/payments")
 public class PaymentController {
 
-    private final PaymentCommandFactory commandFactory;
-
     private final PaymentUseCase paymentUseCase;
 
     @PostMapping
@@ -41,7 +39,7 @@ public class PaymentController {
             @RequestBody @Valid PayRequest request,
             @AuthenticationPrincipal AuthUser authUser
     ) {
-        PayCommand command = commandFactory.toPayCommand(request, authUser.getId());
+        PayCommand command = PaymentCommandMapper.toPayCommand(request, authUser.getId());
         paymentUseCase.pay(command);
         return ResponseEntity.ok().body(BaseResponse.success());
     }

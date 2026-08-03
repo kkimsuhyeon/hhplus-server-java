@@ -5,7 +5,7 @@ import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.concert.application.service.SeatService;
 import kr.hhplus.be.server.domain.payment.application.service.PaymentCommandService;
 import kr.hhplus.be.server.domain.payment.model.Payment;
-import kr.hhplus.be.server.domain.reservation.application.ReservationService;
+import kr.hhplus.be.server.domain.reservation.application.service.ReservationService;
 import kr.hhplus.be.server.domain.reservation.model.Reservation;
 import kr.hhplus.be.server.domain.user.application.service.UserCommandService;
 import lombok.RequiredArgsConstructor;

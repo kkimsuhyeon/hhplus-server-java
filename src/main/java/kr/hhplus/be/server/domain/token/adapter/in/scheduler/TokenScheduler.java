@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.token.adapter.in.scheduler;
 
-import kr.hhplus.be.server.domain.token.application.QueueTokenService;
+import kr.hhplus.be.server.domain.token.application.service.QueueTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
