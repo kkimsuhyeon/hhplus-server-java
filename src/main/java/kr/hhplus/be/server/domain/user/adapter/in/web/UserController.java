@@ -20,6 +20,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import kr.hhplus.be.server.application.dto.ChargeCommand;
+import kr.hhplus.be.server.application.usecase.ChargeUseCase;
 import kr.hhplus.be.server.domain.user.adapter.in.web.mapper.UserCommandMapper;
 import kr.hhplus.be.server.domain.user.adapter.in.web.mapper.UserQueryMapper;
 import kr.hhplus.be.server.domain.user.adapter.in.web.request.BalanceChargeRequest;
@@ -45,6 +47,7 @@ public class UserController {
 
     private final UserQueryService userQueryService;
     private final UserCommandService userCommandService;
+    private final ChargeUseCase chargeUseCase;
 
     @PatchMapping("/balance")
     @Operation(summary = "잔액 충전", description = "잔액 충전 API")
@@ -52,7 +55,8 @@ public class UserController {
             @RequestBody @Valid BalanceChargeRequest request,
             @AuthenticationPrincipal AuthUser authUser) {
 
-        userCommandService.addBalance(authUser.getId(), request.getAmount());
+        ChargeCommand command = UserCommandMapper.toChargeCommand(authUser.getId(), request);
+        chargeUseCase.charge(command);
         return ResponseEntity.ok().body(BaseResponse.success());
     }
 
