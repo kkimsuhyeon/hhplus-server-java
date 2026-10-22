@@ -2,7 +2,6 @@ package kr.hhplus.be.server.domain.reservation.model;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
-import kr.hhplus.be.server.config.exception.exceptions.ServerErrorException;
 import kr.hhplus.be.server.domain.reservation.exception.ReservationErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -84,7 +83,7 @@ public class Reservation {
                 throw new BusinessException(ReservationErrorCode.CANCELED);
             }
 
-            throw new ServerErrorException("validateForPayment : 이상한 에러");
+            throw new IllegalStateException("결제할 수 없는 예약 상태: reservationId=%s, status=%s".formatted(this.id, this.status));
         }
     }
 
