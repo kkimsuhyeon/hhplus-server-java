@@ -7,14 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,6 +31,8 @@ import kr.hhplus.be.server.shared.dto.BaseResponse;
 import kr.hhplus.be.server.shared.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 @Validated
 @RequiredArgsConstructor
 @RestController
@@ -52,11 +47,11 @@ public class UserController {
     @PatchMapping("/balance")
     @Operation(summary = "잔액 충전", description = "잔액 충전 API")
     public ResponseEntity<BaseResponse<Void>> charge(
-            @RequestBody @Valid BalanceChargeRequest request,
-            @AuthenticationPrincipal AuthUser authUser) {
-
+            @RequestHeader("Idempotency-Key") UUID idempotencyKey,
+            @AuthenticationPrincipal AuthUser authUser,
+            @RequestBody @Valid BalanceChargeRequest request) {
         ChargeCommand command = UserCommandMapper.toChargeCommand(authUser.getId(), request);
-        chargeUseCase.charge(command);
+        chargeUseCase.charge(command, idempotencyKey);
         return ResponseEntity.ok().body(BaseResponse.success());
     }
 

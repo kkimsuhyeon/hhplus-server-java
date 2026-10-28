@@ -20,12 +20,17 @@ public class UserCommandService {
     private final UserRegistration userRegistration;
     private final UserRepository repository;
 
+    public void lockForUpdate(String userId) {
+        repository.findByIdForUpdate(userId)
+                .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
+    }
+
     public User create(CreateUserCommand command) {
         User user = userRegistration.register(command.getEmail(), command.getPassword(), command.getName());
         return repository.save(user);
     }
 
-    public void changeName(String userId, String name){
+    public void changeName(String userId, String name) {
         User user = repository.findById(userId)
                 .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND));
 
