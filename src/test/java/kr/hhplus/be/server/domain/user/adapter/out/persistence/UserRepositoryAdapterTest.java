@@ -2,11 +2,11 @@ package kr.hhplus.be.server.domain.user.adapter.out.persistence;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.domain.user.UserFixture;
-import kr.hhplus.be.server.domain.user.port.UserCriteria;
-import kr.hhplus.be.server.domain.user.port.UserRepository;
 import kr.hhplus.be.server.domain.user.exception.UserErrorCode;
 import kr.hhplus.be.server.domain.user.model.User;
 import kr.hhplus.be.server.domain.user.model.UserRole;
+import kr.hhplus.be.server.domain.user.port.UserCriteria;
+import kr.hhplus.be.server.domain.user.port.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

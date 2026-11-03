@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.domain.payment.adapter.out.persistence;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.payment.port.PaymentRepository;
 import kr.hhplus.be.server.domain.payment.exception.PaymentErrorCode;
 import kr.hhplus.be.server.domain.payment.model.Payment;
+import kr.hhplus.be.server.domain.payment.port.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;

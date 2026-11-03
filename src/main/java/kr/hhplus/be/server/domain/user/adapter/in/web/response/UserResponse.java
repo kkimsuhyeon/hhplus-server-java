@@ -1,11 +1,11 @@
 package kr.hhplus.be.server.domain.user.adapter.in.web.response;
 
-import java.math.BigDecimal;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.hhplus.be.server.domain.user.model.User;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.math.BigDecimal;
 
 @Getter
 @Builder

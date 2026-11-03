@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.domain.token.adapter.out.redis;
 
-import kr.hhplus.be.server.domain.token.port.QueueTokenRepository;
 import kr.hhplus.be.server.domain.token.model.QueueToken;
 import kr.hhplus.be.server.domain.token.model.TokenStatus;
+import kr.hhplus.be.server.domain.token.port.QueueTokenRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;

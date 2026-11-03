@@ -4,8 +4,6 @@ import kr.hhplus.be.server.application.dto.ChargeCommand;
 import kr.hhplus.be.server.domain.requestkey.application.service.RequestKeyCommandService;
 import kr.hhplus.be.server.domain.requestkey.model.RequestKey;
 import kr.hhplus.be.server.domain.user.application.service.UserCommandService;
-import kr.hhplus.be.server.domain.user.application.service.UserQueryService;
-import kr.hhplus.be.server.domain.user.model.User;
 import kr.hhplus.be.server.shared.hash.HashUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

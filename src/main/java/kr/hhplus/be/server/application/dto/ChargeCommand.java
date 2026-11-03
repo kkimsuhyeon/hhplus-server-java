@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.application.dto;
 
-import java.math.BigDecimal;
-
 import lombok.Builder;
 import lombok.Getter;
+
+import java.math.BigDecimal;
 
 @Getter
 @Builder

@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum RequestKeyErrorCode implements ErrorCode {
 
-    NOT_FOUND(HttpStatus.NOT_FOUND, "RQK001", "임시에러"),
+    KEY_REUSED(HttpStatus.CONFLICT, "RQK001", "이미 다른 요청에 사용된 멱등 키 입니다."),
     ;
 
     private final HttpStatus status;

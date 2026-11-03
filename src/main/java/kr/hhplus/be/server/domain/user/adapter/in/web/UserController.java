@@ -1,20 +1,12 @@
 package kr.hhplus.be.server.domain.user.adapter.in.web;
 
-import kr.hhplus.be.server.config.security.AuthUser;
-import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.hhplus.be.server.application.dto.ChargeCommand;
 import kr.hhplus.be.server.application.usecase.ChargeUseCase;
+import kr.hhplus.be.server.config.security.AuthUser;
 import kr.hhplus.be.server.domain.user.adapter.in.web.mapper.UserCommandMapper;
 import kr.hhplus.be.server.domain.user.adapter.in.web.mapper.UserQueryMapper;
 import kr.hhplus.be.server.domain.user.adapter.in.web.request.BalanceChargeRequest;
@@ -22,14 +14,21 @@ import kr.hhplus.be.server.domain.user.adapter.in.web.request.CreateUserRequest;
 import kr.hhplus.be.server.domain.user.adapter.in.web.request.FindUserRequest;
 import kr.hhplus.be.server.domain.user.adapter.in.web.response.BalanceResponse;
 import kr.hhplus.be.server.domain.user.adapter.in.web.response.UserResponse;
-import kr.hhplus.be.server.domain.user.application.service.UserCommandService;
-import kr.hhplus.be.server.domain.user.application.service.UserQueryService;
 import kr.hhplus.be.server.domain.user.application.dto.command.CreateUserCommand;
 import kr.hhplus.be.server.domain.user.application.dto.query.FindUserQuery;
+import kr.hhplus.be.server.domain.user.application.service.UserCommandService;
+import kr.hhplus.be.server.domain.user.application.service.UserQueryService;
 import kr.hhplus.be.server.domain.user.model.User;
 import kr.hhplus.be.server.shared.dto.BaseResponse;
 import kr.hhplus.be.server.shared.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 

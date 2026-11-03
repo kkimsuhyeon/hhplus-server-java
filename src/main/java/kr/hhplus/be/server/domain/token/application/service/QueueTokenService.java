@@ -1,10 +1,10 @@
 package kr.hhplus.be.server.domain.token.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
-import kr.hhplus.be.server.domain.token.port.QueueTokenRepository;
 import kr.hhplus.be.server.domain.token.exception.TokenErrorCode;
 import kr.hhplus.be.server.domain.token.model.QueueToken;
 import kr.hhplus.be.server.domain.token.model.TokenStatus;
+import kr.hhplus.be.server.domain.token.port.QueueTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

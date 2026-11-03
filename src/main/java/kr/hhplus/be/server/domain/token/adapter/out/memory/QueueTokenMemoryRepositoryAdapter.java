@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.domain.token.adapter.out.memory;
 
-import kr.hhplus.be.server.domain.token.port.QueueTokenRepository;
 import kr.hhplus.be.server.domain.token.model.QueueToken;
 import kr.hhplus.be.server.domain.token.model.TokenStatus;
+import kr.hhplus.be.server.domain.token.port.QueueTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;

@@ -2,11 +2,11 @@ package kr.hhplus.be.server.domain.concert.application.service;
 
 import kr.hhplus.be.server.config.exception.exceptions.BusinessException;
 import kr.hhplus.be.server.config.exception.exceptions.CommonErrorCode;
-import kr.hhplus.be.server.domain.concert.application.dto.command.CreateSeatCommand;
 import kr.hhplus.be.server.domain.concert.application.assembler.SeatAssembler;
-import kr.hhplus.be.server.domain.concert.port.SeatRepository;
+import kr.hhplus.be.server.domain.concert.application.dto.command.CreateSeatCommand;
 import kr.hhplus.be.server.domain.concert.exception.SeatErrorCode;
 import kr.hhplus.be.server.domain.concert.model.Seat;
+import kr.hhplus.be.server.domain.concert.port.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
